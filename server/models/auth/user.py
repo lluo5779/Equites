@@ -11,13 +11,13 @@ class User(UserMixin, db.DATABASE.Model):
                                        String(255))
 
     # posts = db.relationship('Post', backref='author', lazy='dynamic')
-
-    def __repr__(self):
-        return '<User {}>'.format(self.username)
-
+    #
     # def __init__(self, username, password):
     #     self.username = username
     #     self.set_password(password)
+
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

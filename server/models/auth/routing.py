@@ -1,9 +1,9 @@
 from server.common.schemas import User
-from server.models.auth.forms import LoginForm
+from server.models.auth.forms import LoginForm, RegistrationForm
 from flask_login import login_user, logout_user, login_required, current_user
 from flask import redirect, url_for, flash, render_template
 from flask import Blueprint
-from server import login_manager
+from server import login_manager, db
 
 auth_mold = Blueprint("auth", __name__)
 
@@ -48,6 +48,21 @@ def logout():
     print('>>> log out user')
     return redirect(url_for('index'))
 
+
+@auth_mold.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('../home'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+
+        db.DATABASE.session.add(user)
+        db.DATABASE.session.commit()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('auth.login'))
+    return render_template('register.html', title='Register', form=form)
 
 @login_required
 def exampleUser():
