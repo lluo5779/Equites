@@ -3,19 +3,30 @@ info:
   description: This is the swagger file that goes with our server code
   version: "1.0.0"
   title: Swagger Rest Article
-consumes:
-  - application/json
-produces:
-  - application/json
 
-basePath: /
+basePath: "/server"
 
 # Paths supported by the server application
 paths:
-  /books:
+  /home:
     get:
-      operationId: api.renderBooks
-      tags:
-        - People
-      summary: Read one person
-      description: Read one person
+      operationId: "server.routing.home"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+  /stock_page:
+      get:
+        operationId: "server.models.stock.routing.stock_page"
+        parameters:
+          - name: stock_ticker
+            description: stock_ticker
+            in: query
+            type: string
+            required: true
+        produces:
+          - text/html
+        responses:
+          200:
+            description: A list of users
