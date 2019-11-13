@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 # from app.forms import LoginForm, RegistrationForm
 
 # Render home page
-# @app.route('/home')
+# @app.route('/')
 def home():
     return render_template('home.jinja2')
 
