@@ -7,7 +7,7 @@ Hi Giorgio!
 ```pip3 install -r requirements.txt ```
 
 2. Please run the following to populate the database (with PostgreSQL running):
-```pip3 update_databases.py```
+```python3 update_databases.py```
     - Note only Tiingo data currently populates. The factor models are yet to be implemented.
 
 Also, **Make sure your PostgreSQL server is running**. I am currently using PostgreSQL 11.5. For where to install, go here for installation exe: 

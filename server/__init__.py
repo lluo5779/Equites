@@ -18,6 +18,9 @@ def create_app():
     db.initialize(app)
 
     app.config['SECRET_KEY'] = SECRET_KEY
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
+    app.config['EXPLAIN_TEMPLATE_LOADING'] = True
+    #app.config['DEBUG'] = True
 
     connex_app.add_api('swagger.yaml', base_path='/')
 
