@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="stylesheet.css">
+        <script src="./scripts/scripts.js"></script>
+        <style>
+            div {
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="./scripts/Nav.js"></script>
+        <form action="">
+            <div class="slidecontainer">
+                <p>Age</p>
+                <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                <p>Value: <span id="demo"></span></p>
+            </div><br>
+            <div class="slidecontainer">
+                <p>Expected Age of Retirement</p>
+                <input type="range" min="1" max="100" value="50" class="slider" id="myRange2">
+                <p>Value: <span id="demo2"></span></p>
+            </div><br>
+            <div class="slidecontainer">
+                <p>Initial Investment</p>
+                <input type="range" min="1" max="100" value="50" class="slider" id="myRange3">
+                <p>Value: <span id="demo3"></span></p>
+            </div><br>
+            <div class="slidecontainer">
+                <p>Annual Contribution</p>
+                <input type="range" min="1" max="100" value="50" class="slider" id="myRange4">
+                <p>Value: <span id="demo4"></span></p>
+            </div><br>
+            <div class="slidecontainer">
+                <p>Risk Level</p>
+                <input type="range" min="1" max="5" value="3" class="slider" id="myRange5">
+                <p>Value: <span id="demo5"></span></p>
+            </div><br>
+            <div class="slidecontainer">
+                <p>Large Purchase 1: Years Away</p>
+                <input type="range" min="1" max="100" value="50" class="slider" id="myRange6">
+                <p>Value: <span id="demo6"></span></p>
+            </div><br>
+                        <div class="slidecontainer">
+                <p>Large Purchase 1: Amount</p>
+                <input type="range" min="1" max="100" value="50" class="slider" id="myRange7">
+                <p>Value: <span id="demo7"></span></p>
+            </div><br>
+            <input type="submit" value="Submit" style="">
+            <script>
+                moveSlider(document.getElementById("myRange"), document.getElementById("demo"));
+                moveSlider(document.getElementById("myRange2"), document.getElementById("demo2"));
+                moveSlider(document.getElementById("myRange3"), document.getElementById("demo3"));
+                moveSlider(document.getElementById("myRange4"), document.getElementById("demo4"));
+                moveSlider(document.getElementById("myRange5"), document.getElementById("demo5"));
+                moveSlider(document.getElementById("myRange6"), document.getElementById("demo6"));
+                moveSlider(document.getElementById("myRange7"), document.getElementById("demo7"));
+            </script>
+        </form>
+    </body>
+</html>

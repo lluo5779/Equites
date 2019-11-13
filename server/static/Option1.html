@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="stylesheet.css">
+        <script src="./scripts/scripts.js"></script>
+        <style>
+            * { box-sizing: border-box; }
+            body {
+              font: 16px Arial;
+            }
+            .autocomplete {
+              /*the container must be positioned relative:*/
+              position: relative;
+              display: inline-block;
+            }
+            input {
+              border: 1px solid transparent;
+              background-color: #f1f1f1;
+              padding: 10px;
+              font-size: 16px;
+            }
+            input[type=text] {
+              background-color: #f1f1f1;
+              width: 100%;
+            }
+
+            .autocomplete-items div {
+                position: absolute;
+              padding: 10px;
+              cursor: pointer;
+              background-color: #ffffff;
+              border-bottom: 1px solid #d4d4d4;
+                : 1;
+            }
+            .autocomplete-items div:hover {
+              /*when hovering an item:*/
+              background-color: #e9e9e9;
+            }
+            .autocomplete-items div:hover {
+              /*when hovering an item:*/
+              background-color: #e9e9e9;
+            }
+            .autocomplete-active {
+                /*when navigating through the items using the arrow keys:*/
+                background-color: DodgerBlue !important;
+                color: #ffffff;
+            }
+            </style>
+    </head>
+    <body>
+        <script src="./scripts/Nav.js"></script>
+        <form action="">
+            <div class="autocomplete" style="width:300px;">
+                Index<br>
+                <input id="myInput" type="text" name="myIndex" placeholder="Index..">
+            </div>
+            <div class="autocomplete" style="width:300px;">
+                Weighting<br>
+                <input type="text" name="myIndex" placeholder="% Weighting">
+            </div>
+            <p>
+            <div class="autocomplete" style="width:300px;">
+                Index<br>
+                <input id="myInput2" type="text" name="myIndex" placeholder="Index.."><!--id="myInput2"-->
+            </div>
+            <div class="autocomplete" style="width:300px;">
+                Weighting<br>
+                <input type="text" name="myIndex" placeholder="% Weighting">
+            </div>
+            </p>
+            <input type="submit" value="Submit" style="">
+        </form>
+        <script>
+            autocomplete(document.getElementById("myInput"), Indices);
+            autocomplete(document.getElementById("myInput2"), Indices);
+        </script>
+    </body>
+</html>
