@@ -5,14 +5,8 @@ import pandas as pd
 import pandas_datareader.data as web
 
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from regime_switch_model.rshmm import *
-from scipy.stats import norm
-from scipy.stats.mstats import gmean
 
-from bl import bl
-from optimize import optimize
-from cost import costs
 
 ## *********************************************************************************************************************
 #  helper functions
@@ -137,44 +131,4 @@ def covariance(R, F, transmat, loadings, covariances, regime):
             - transmat.values[regime][0] * transmat.values[regime][1] * (np.outer(m0, m1) + np.outer(m1, m0))
 
     return cov
-
-# cost = costs(cov_one, prices.iloc[-1, :], (datetime.strptime(end_date, "%Y-%m-%d") - relativedelta(years=1)).strftime("%Y-%m-%d"), end_date, 5)
-#
-# # optimization
-#
-# alpha = 0.05
-#
-# risk_tolerance = [((1, 10), (0, 0.10)),
-#                   ((5, 5), (0, 0.20)),
-#                   ((10, 1), (-0.05, 0.25))]
-# soln = optimize(mu = (mu_one.values.ravel(), np.multiply(mu_one.values.ravel(), 1 + np.random.uniform(-0.05,0.1,len(mu_one)))),
-#                 sigma = (cov_one.values, cov_one.values),
-#                 alpha = (alpha, 0.10),
-#                 return_target = (0.1, 0.1),
-#                 costs = cost,
-#                 prices = prices.iloc[-1].values,
-#                 gamma = risk_tolerance[0])
-# x1, x2 = pd.DataFrame(soln.x[:int(len(mu_one))], index=mu_one.index, columns=['weight']), pd.DataFrame(soln.x[int(len(mu_one)):], index=mu_one.index, columns=['weight'])
-# print(x1)
-# print("")
-# print(x2)
-#
-# print('\n\n**********************************')
-# print('portfolio statistics')
-# print('**********************************\n')
-#
-# print("portfolio weightings")
-# print(x)
-#
-# exp_ret = float(mu_one.T.dot(x).values)
-# print("\nportfolio return: %f" % (exp_ret * 100))
-#
-# exp_vol = float(np.sqrt(x.T.dot(cov_one).dot(x)).values)
-# print("\nportfolio volatility: %f" % (exp_vol * 100))
-#
-# exp_var = float(-mu_one.T.dot(x).values - norm.ppf(alpha) * np.sqrt(x.T.dot(cov_one).dot(x)).values)
-# print("\nportfolio var%f: %f" % (1-alpha, exp_var))
-#
-# exp_cvar = float(-mu_one.T.dot(x).values - norm.pdf(norm.ppf(alpha)) / alpha * np.sqrt(x.T.dot(cov_one).dot(x)).values)
-# print("\nportfolio cvar%f: %f" % (1-alpha, exp_cvar))
 
