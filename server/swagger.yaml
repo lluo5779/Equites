@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
   title: Swagger Rest Article
 
-basePath: "/server"
+basePath: "/server/"
 
 # Paths supported by the server application
 paths:
