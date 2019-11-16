@@ -1,0 +1,31 @@
+{% extends "Option3Parent.jinja2" %}
+
+{% block content %}
+    <form action="" method="post">
+        <div>
+            When do you need the money?
+        </div>
+        <div>
+             <input type="range" min="1" max="100" value="50" id="myRange">
+         </div>
+        <div>
+            How much do you need?
+        </div>
+        <input type="text">
+        <div>
+            How much risk are you willing to have?
+        </div>
+        <div>
+            <select>
+                <option>
+                    High
+                </option>
+                <option>
+                    Low
+                </option>
+            </select>
+        </div>
+        <input type="submit" value="Submit" style="">
+    </form>
+
+{% endblock %}
