@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+     <form action="">
+        <table>
+            <tr>
+                <td>
+                    SPY
+                </td>
+                <td>
+                    <input type="text" name="myIndex" placeholder="% Weighting">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    TLT
+                </td>
+                <td>
+                    <input type="text" name="myIndex2" placeholder="% Weighting">
+                </td>
+            </tr>
+
+        </table>
+         <div>
+             <input type="range" min="1" max="100" value="50" id="myRange">
+         </div>
+             <input type="submit" value="Submit" style="">
+     </form>
+{% endblock %}

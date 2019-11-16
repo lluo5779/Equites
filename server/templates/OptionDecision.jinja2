@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>
+        Select one of the portfolio options below:
+    </h1>
+    <a href="{% url 'portfolios:Option1' %}">
+        <button type="button">Option1</button>
+    </a>
+    <a href="{% url 'portfolios:Option2' %}">
+        <button type="button">Option2</button>
+    </a>
+    <a href="{% url 'portfolios:Option3Parent' %}">
+        <button type="button">Option3</button>
+    </a>
+{%  endblock %}
