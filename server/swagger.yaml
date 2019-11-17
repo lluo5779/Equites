@@ -31,3 +31,34 @@ paths:
         responses:
           200:
             description: A list of users
+
+
+  /sender:
+    get:
+      operationId: "server.routing.sender"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+
+  /receive:
+    get:
+      operationId: "server.routing.receiver"
+      parameters:
+        - name: fname
+          description: fname
+          in: query
+          type: string
+          required: true
+        - name: lname
+          description: lname
+          in: query
+          type: string
+          required: true
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users

@@ -25,3 +25,12 @@ def login():
             next_page = url_for('index')
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
+
+
+def sender():
+    return render_template('sender.jinja2', title='Sign In')
+
+
+def receiver(fname, lname):
+    listA = ['a', 'b','c','d','ewrqrewafr']
+    return render_template('receiver.jinja2', title='Sign In', fname=fname, lname=lname, listA=listA)

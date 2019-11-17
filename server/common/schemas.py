@@ -1,6 +1,6 @@
 from server.common.database import Database
 from server import db
-from server.models.auth.user import User
+#from server.models.auth.user import User
 
 class FactorModel(db.DATABASE.Model):
     date = db.DATABASE.Column(db.DATABASE.String(80), primary_key=True)
