@@ -38,7 +38,7 @@ print('\n\n********************************************************************'
 print('\tretrieving asset prices')
 print('********************************************************************')
 
-prices = get_data(tickers, 'adjClose', start_date, end_date, save=True)
+prices = get_data(tickers, 'adjClose', start_date, end_date, save=True) #Stored
 print(prices.tail(10))
 
 print('\n\n********************************************************************')
@@ -53,8 +53,8 @@ print('\n\n********************************************************************'
 print('risk adjusted returns')
 print('********************************************************************')
 
-returns = (prices / prices.shift(1) - 1).dropna()[:len(factors)]
-R = (returns.values - factors['RF'].values[:, None])
+returns = (prices / prices.shift(1) - 1).dropna()[:len(factors)] #Stored
+R = (returns.values - factors['RF'].values[:, None])  #Stored
 print(pd.DataFrame(R, index=factors.index, columns=prices.columns).tail(10))
 
 
@@ -69,7 +69,11 @@ print('\n\n********************************************************************'
 print('\tfitting the factor model')
 print('********************************************************************')
 
-transmat, loadings, covarainces = regime_switch(R, F, tickers)
+transmat, loadings, covarainces = regime_switch(R, F, tickers) #Stored
+
+#transmat - dataframe?
+#loadings - np array
+#cov
 
 print('\n\ntransition matrix')
 print(transmat)
@@ -115,17 +119,19 @@ print('\nexpected covariance from the factor model')
 print(cov_rsfm)
 
 
+
+
 ## *********************************************************************************************************************
 #  black litterman for period one returns
 ## *********************************************************************************************************************
 
-mktcap = get_mkt_cap(tickers, save=True)
+mktcap = get_mkt_cap(tickers, save=True) #Stored Daily
 
 print("\nmarket cap data")
 print(mktcap)
 
 # calculate the market coefficient
-l = (gmean(factors.iloc[-days:,:]['MKT'] + 1,axis=0) - 1)/factors.iloc[-days:,:]['MKT'].var()
+l = (gmean(factors.iloc[-days:,:]['MKT'] + 1,axis=0) - 1)/factors.iloc[-days:,:]['MKT'].var() #Stored
 
 mu_bl1, cov_bl1 = bl(tickers=tickers,
                      l=l, tau=1,
@@ -134,7 +140,7 @@ mu_bl1, cov_bl1 = bl(tickers=tickers,
                      P=np.identity(len(tickers)),
                      Omega=np.diag(np.diag(cov_rsfm)),
                      q=mu_rsfm.values,
-                     adjust=False)
+                     adjust=False) #Stored
 
 print('\nperiod one returns')
 print(mu_bl1)
@@ -152,7 +158,7 @@ print('\tcalculating period two estimates')
 print('********************************************************************')
 
 # temp mu_ml
-mu_ml = mu_bl1.mul(pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=mu_bl1.index, columns=mu_bl1.columns))
+mu_ml = mu_bl1.mul(pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=mu_bl1.index, columns=mu_bl1.columns)) #Stored
 
 
 ## *********************************************************************************************************************
@@ -166,7 +172,7 @@ mu_bl2, cov_bl2 = bl(tickers=tickers,
                      P=np.identity(len(tickers)),
                      Omega=np.diag(np.diag(cov_rsfm)),
                      q=mu_ml.values,
-                     adjust=True)
+                     adjust=True) #Stored inputs to optimization
 
 print('\nperiod two returns')
 print(mu_bl2)
@@ -188,7 +194,7 @@ cost = costs(tickers=tickers,
              prices=prices.iloc[-2, :] if prices.iloc[-1, :].isnull().values.any() else prices.iloc[-1, :],
              start_date=(datetime.strptime(end_date, "%Y-%m-%d") - relativedelta(years=1)).strftime("%Y-%m-%d"),
              end_date=end_date,
-             alpha=5)
+             alpha=5) #Stored
 
 print('\ncost coefficients')
 print(cost)

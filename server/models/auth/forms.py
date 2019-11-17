@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 import server.common.schemas as schemas
 
-User = schemas.User
+# User = schemas.User
 
 
 class LoginForm(FlaskForm):
