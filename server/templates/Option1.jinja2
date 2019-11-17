@@ -1,0 +1,20 @@
+{% extends "base1.html" %}
+
+{% block content %}
+     <form action="/portfolioview" method="get">
+        <table>
+            {% for ticker in stock.tickers %}
+                <tr>
+                    <td>
+                        {{  ticker }}
+                    </td>
+                    <td>
+                        <input type="text" name="{{ ticker }}" value="0%">
+                        {{ ticker }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}

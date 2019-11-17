@@ -31,3 +31,151 @@ paths:
         responses:
           200:
             description: A list of users
+
+  /sender:
+    get:
+      operationId: "server.routing.sender"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+
+  /receive:
+    get:
+      operationId: "server.routing.receiver"
+      parameters:
+        - name: fname
+          description: fname
+          in: query
+          type: string
+          required: true
+        - name: lname
+          description: lname
+          in: query
+          type: string
+          required: true
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /optiondecision:
+    get:
+      operationId: "server.routing.optiondecision"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option1:
+    get:
+      operationId: "server.routing.option1"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option2:
+    get:
+      operationId: "server.routing.option2"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3parent:
+    get:
+      operationId: "server.routing.option3parent"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3childa:
+    get:
+      operationId: "server.routing.option3childa"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3childb:
+    get:
+      operationId: "server.routing.option3childb"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3childc:
+    get:
+      operationId: "server.routing.option3childc"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /contact:
+    get:
+      operationId: "server.routing.contact"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /aboutus:
+    get:
+      operationId: "server.routing.aboutus"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /sendcontact:
+    get:
+      operationId: "server.routing.sendcontact"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /portfolioview:
+    get:
+      operationId: "server.routing.portfolioview"
+      parameters:
+        - name: weightings
+          description: weightings
+          in: query
+          type: array
+          items:
+            type: number
+        - name: expectedReturn
+          description: expectedReturn
+          in: query
+          type: number
+        - name: expectedVol
+          description: expectedVol
+          in: query
+          type: number
+        - name: risk
+          description: risk
+          in: query
+          type: string
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users

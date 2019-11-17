@@ -1,16 +1,16 @@
-{% extends "base.html" %}
+{% extends "base1.html" %}
 
 {% block content %}
     <h1>
         Select one of the portfolio options below:
     </h1>
-    <a href="{% url 'portfolios:Option1' %}">
+    <a href="{{ url_for('/.server_routing_option1') }}">
         <button type="button">Option1</button>
     </a>
-    <a href="{% url 'portfolios:Option2' %}">
+    <a href="{{ url_for('/.server_routing_option2') }}">
         <button type="button">Option2</button>
     </a>
-    <a href="{% url 'portfolios:Option3Parent' %}">
+    <a href="{{ url_for('/.server_routing_option3childa') }}">
         <button type="button">Option3</button>
     </a>
 {%  endblock %}

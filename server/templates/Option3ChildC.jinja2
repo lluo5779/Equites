@@ -1,22 +1,22 @@
 {% extends "Option3Parent.jinja2" %}
 
-{% block content %}
-    <form action="" method="post">
+{% block choice %}
+    <form action="" method="get">
         <div>
             When do you need the money?
         </div>
         <div>
-             <input type="range" min="1" max="100" value="50" id="myRange">
+             <input type="range" min="1" max="100" value="50" id="myRange" name="timeHorizon">
          </div>
         <div>
             How much do you need?
         </div>
-        <input type="text">
+        <input type="text" name="investmentGoal">
         <div>
-            How much risk are you willing to have?
+            How much risk are you willing to take?
         </div>
         <div>
-            <select>
+            <select name="riskAppetite">
                 <option>
                     High
                 </option>

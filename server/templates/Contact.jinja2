@@ -1,16 +1,16 @@
-{% extends "base.html" %}
+{% extends "base1.html" %}
 
 {% block content %}
-     <form action="">
+     <form action="/sendcontact" method="get">
          <h1>Contact</h1>
          <div>Name</div>
-         <input type="text">
+         <input type="text" name="name">
          <div>Email</div>
-         <input type="text">
+         <input type="text" name="email">
          <div>Subject</div>
-         <input type="text">
+         <input type="text" name="subject">
          <div>Message</div>
-         <input type="text">
+         <input type="text" name="message">
          <div>
              <input type="submit" value="Send" style="">
          </div>

@@ -1,0 +1,22 @@
+{% extends "base1.html" %}
+
+{% block content %}
+     <form action="" method="get">
+        <table>
+            {% for ticker in stock.tickers %}
+                <tr>
+                    <td>
+                        {{  ticker }}
+                    </td>
+                    <td>
+                        <input type="text" name="{{ ticker }}" value="0%">
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+         <div>
+             <input type="range" min="1" max="100" value="50" id="myRange">
+         </div>
+             <input type="submit" value="Submit" style="">
+     </form>
+{% endblock %}

@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>PLEASE WORK</title>
-</head>
-<body>
-I really hope this works
-</body>
-</html>
+{% extends "base1.html" %}
+
+{% block content %}
+    <h1>
+        Welcome! Click below to get started.
+    </h1>
+    <a href="{{ url_for('/.server_routing_optiondecision') }}">
+        <button type="button" value="Get Started"></button>
+    </a>
+
+{%  endblock %}
