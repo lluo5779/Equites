@@ -17,7 +17,7 @@ def login():
     print('current_user: ', current_user)
     print('current_user.is_authenticated: ', current_user.is_authenticated)
     if current_user.is_authenticated:
-        return redirect('/home')
+        return redirect('/')
     form = LoginForm()
     print('>>>form: ', form)
     print('form.validate_on_submit(): ', form.validate_on_submit())

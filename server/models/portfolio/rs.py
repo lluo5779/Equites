@@ -65,7 +65,7 @@ def current_regime(R, F, loadings, baseline):
     rss = [None] * 2
 
     for i in range(2):
-        rss[i] = np.sum((R[:-baseline] - F[:-baseline].dot(loadings[i].values.T))**2)
+        rss[i] = np.sum((R[:-baseline] - F[:-baseline].dot(loadings[i].values.T)) ** 2)
 
     return rss.index(min(rss))
 
@@ -95,8 +95,7 @@ def covariance(R, F, transmat, loadings, covariances, regime):
     m1 = f.dot(loadings[1].values.T)
 
     cov = transmat.values[regime][0] * (V0 + D0 + (1 - transmat.values[regime][0]) * np.outer(m0, m0)) \
-            + transmat.values[regime][1] * (V1 + D1 + (1 - transmat.values[regime][1]) * np.outer(m1, m1)) \
-            - transmat.values[regime][0] * transmat.values[regime][1] * (np.outer(m0, m1) + np.outer(m1, m0))
+          + transmat.values[regime][1] * (V1 + D1 + (1 - transmat.values[regime][1]) * np.outer(m1, m1)) \
+          - transmat.values[regime][0] * transmat.values[regime][1] * (np.outer(m0, m1) + np.outer(m1, m0))
 
     return cov
-

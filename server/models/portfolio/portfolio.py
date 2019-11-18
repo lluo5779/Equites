@@ -25,8 +25,11 @@ class Portfolio(object):
         self.cov_bl2 = None
         self.cost = None
         self.prices = None
+        self.fetch_parameters()
 
-        self.x1 = None
+        p = self.get_past_portfolios()
+        self.x1 = p[0]
+        self.x2 = p[1]
 
     def __repr__(self):
         return "<Portfolio for auth {}>".format(self.username)
@@ -40,12 +43,14 @@ class Portfolio(object):
                 Database.DATABASE.engine)
 
             p1 = p1.iloc[-1]  # Get the most recent entry
+            print("period 1: ", p1)
 
             p2 = pd.read_sql(
                 """select {} from "{}" where "username" like '{}';""".format(
                     query, "p2_returns", self.username),
                 Database.DATABASE.engine)
             p2 = p2.iloc[-1]
+            print("period 2: ", p2)
         except:
             p1, p2 = None, None
         return [p1, p2]
@@ -87,8 +92,6 @@ class Portfolio(object):
         risk_tolerance = [((1, 10), (0, 0.10)),
                           ((5, 5), (0, 0.20)),
                           ((10, 1), (-0.05, 0.30))]
-
-        self.fetch_parameters()
 
         soln = optimize(mu=(self.mu_bl1.values.ravel(), self.mu_bl2.values.ravel()),
                         sigma=(self.cov_bl1.values, self.cov_bl2.values),

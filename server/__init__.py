@@ -15,6 +15,8 @@ def create_app():
     app = connex_app.app
 
     login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+
     db.initialize(app)
 
     app.config['SECRET_KEY'] = SECRET_KEY
