@@ -103,6 +103,8 @@ class Portfolio(object):
         self.x1 = pd.DataFrame(soln.x[:int(len(self.mu_bl1))], index=self.mu_bl1.index, columns=['weight'])
         self.x2 = pd.DataFrame(soln.x[int(len(self.mu_bl2)):], index=self.mu_bl2.index, columns=['weight'])
 
+        return [self.x1, self.x2]
+
     def get_portfolio_return(self, x1=None, mu_bl2=None):
         if x1 is None:
             x1 = self.x1

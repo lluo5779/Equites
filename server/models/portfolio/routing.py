@@ -1,4 +1,5 @@
 from flask import Blueprint, request, session, redirect, url_for, render_template
+from flask_login import login_required
 
 from server.models.auth.schema import User
 # import server.models.users.errors as UserErrors
@@ -51,32 +52,48 @@ def create_portfolio():  # Views form to create portfolio associated with active
     return render_template('/portfolios/new_portfolio.jinja2')
 
 
+@login_required
 def optiondecision():
     return render_template('OptionDecision.jinja2', title='optiondecision')
 
-
+@login_required
 def option1():
     return render_template('Option1.jinja2', tickers=s.tickers)
 
-
+@login_required
 def option2():
     return render_template('Option2.jinja2', tickers=s.tickers)
 
-
+@login_required
 def option3parent():
     return render_template('Option3Parent.jinja2', title='optiondecision')
 
-
+@login_required
 def option3childa():
     return render_template('Option3ChildA.jinja2', title='optiondecision')
 
-
+@login_required
 def option3childb():
     return render_template('Option3ChildB.jinja2', title='optiondecision')
 
-
+@login_required
 def option3childc():
-    return render_template('Option3ChildC.jinja2')
+    print("request.query_string: ", len(request.query_string))
+    if len(request.query_string) == 0:
+        return render_template('Option3ChildC.jinja2')
+    else:
+        p = Portfolio('test1')
+        if request.args.get('riskAppetite') == "High":
+            weights = p.run_optimization([((1, 10), (0, 0.50)),
+                                          ((5, 5), (0, 0.50)),
+                                          ((10, 1), (-0.05, 0.50))])
+        else:
+            weights = p.run_optimization([((1, 10), (0, 0.10)),
+                                          ((5, 5), (0, 0.20)),
+                                          ((10, 1), (-0.05, 0.30))])
+
+        return render_template('portfolio.jinja2', title='Sign In', weightings=weights, risk=p.get_portfolio_cvar(),
+                               expectedReturn=p.get_portfolio_return(), expectedVol=p.get_portfolio_volatility())
 
 
 '''
@@ -91,7 +108,7 @@ def portfoliio():
     return render_template('portfolio.jinja2', title='Sign In', weightings=weightings, risk=risk,histPortValue=histPortValue,histVOL=histVol, expectedReturn=expectedReturn,expectedVol=expectedVol)
 '''
 
-
+@login_required
 def portfolioview():
     # initial user input
     # try:
