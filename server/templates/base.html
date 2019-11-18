@@ -21,10 +21,10 @@
                 <ul class="nav">
                     <li class="slide1"></li>
                     <li class="slide2"></li>
-                    <li><a class="active" href="/">Home</a></li>
-                    <li><a href="/#">Login</a></li>
-                    <li><a href="/#">About</a></li>
-                    <li><a href="/#">Contact</a></li>
+                    <li><a class="active" href="{{ url_for('/.server_routing_home') }}">Home</a></li>
+                    <li><a href="{{ '/auth/login' }}">Login</a></li>
+                    <li><a href="{{ url_for('/.server_routing_aboutus') }}">About</a></li>
+                    <li><a href="{{ url_for('/.server_routing_contact') }}">Contact</a></li>
                 </ul>
             </div>
                 {% block banner %}
