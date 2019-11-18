@@ -33,7 +33,7 @@ def login():
         print('>>>user is not none. Attempting login user')
         login_user(user, remember=form.remember_me.data)
         print('>>>somehow logined user')
-        return redirect('../home')
+        return redirect('../')
     else:
         print('>>> redirecting ot login page')
         return render_template('login.jinja2', title='Sign In', form=form)
