@@ -9,6 +9,7 @@ import numpy as np
 from bs4 import BeautifulSoup
 
 YAHOO = 'https://finance.yahoo.com/quote/%s?p=%s'
+BASEPATH = "/server/models/portfolio/"
 
 
 def get_mkt_cap(tickers, save):
@@ -20,7 +21,7 @@ def get_mkt_cap(tickers, save):
 
         print("\n\nSUCCESS: retrieved new market cap values ...")
     except:
-        data = pd.read_csv(os.getcwd() + r'/data/mkt_cap.csv', index_col=0)
+        data = pd.read_csv(os.getcwd() + BASEPATH + r'/data/mkt_cap.csv', index_col=0)
 
         print("\n\nERROR: failed to get new market cap values ... using old values")
 
@@ -29,7 +30,7 @@ def get_mkt_cap(tickers, save):
     mktcap = pd.DataFrame(data.values(), index=data.keys(), columns=['MKT'])
 
     if save:
-        mktcap.to_csv(os.getcwd() + r'/data/mkt_cap.csv')
+        mktcap.to_csv(os.getcwd() + BASEPATH + r'/data/mkt_cap.csv')
 
     return mktcap
 

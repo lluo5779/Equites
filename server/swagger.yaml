@@ -64,7 +64,7 @@ paths:
 
   /optiondecision:
     get:
-      operationId: "server.routing.optiondecision"
+      operationId: "server.models.portfolio.routing.optiondecision"
       produces:
         - text/html
       responses:
@@ -73,7 +73,7 @@ paths:
 
   /option1:
     get:
-      operationId: "server.routing.option1"
+      operationId: "server.models.portfolio.routing.option1"
       produces:
         - text/html
       responses:
@@ -82,7 +82,7 @@ paths:
 
   /option2:
     get:
-      operationId: "server.routing.option2"
+      operationId: "server.models.portfolio.routing.option2"
       produces:
         - text/html
       responses:
@@ -91,7 +91,7 @@ paths:
 
   /option3parent:
     get:
-      operationId: "server.routing.option3parent"
+      operationId: "server.models.portfolio.routing.option3parent"
       produces:
         - text/html
       responses:
@@ -100,7 +100,7 @@ paths:
 
   /option3childa:
     get:
-      operationId: "server.routing.option3childa"
+      operationId: "server.models.portfolio.routing.option3childa"
       produces:
         - text/html
       responses:
@@ -109,7 +109,7 @@ paths:
 
   /option3childb:
     get:
-      operationId: "server.routing.option3childb"
+      operationId: "server.models.portfolio.routing.option3childb"
       produces:
         - text/html
       responses:
@@ -118,7 +118,7 @@ paths:
 
   /option3childc:
     get:
-      operationId: "server.routing.option3childc"
+      operationId: "server.models.portfolio.routing.option3childc"
       produces:
         - text/html
       responses:
@@ -154,7 +154,7 @@ paths:
 
   /portfolioview:
     get:
-      operationId: "server.routing.portfolioview"
+      operationId: "server.models.portfolio.routing.portfolioview"
       parameters:
         - name: weightings
           description: weightings

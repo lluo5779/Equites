@@ -6,19 +6,21 @@ from datetime import datetime
 from scipy.stats.mstats import gmean
 from dateutil.relativedelta import relativedelta
 
-from stats import *
-from cost import costs
-from tiingo import get_data
-from optimize import optimize
-from bl import bl, get_mkt_cap
-from rs import fama_french, regime_switch, current_regime, business_days, expected_returns, covariance
+from server.models.portfolio.stats import *
+from server.models.portfolio.cost import costs
+from server.models.portfolio.tiingo import get_data
+from server.models.portfolio.optimize import optimize
+from server.models.portfolio.bl import bl, get_mkt_cap
+from server.models.portfolio.rs import fama_french, regime_switch, current_regime, business_days, expected_returns, covariance
 
+from server.models.portfolio.config import SYMBOLS
 
+BASEPATH = "/server/models/portfolio/"
 ## *********************************************************************************************************************
 # parameters
 ## *********************************************************************************************************************
 
-tickers = list(pd.read_csv(os.getcwd() + r'/data/tickers.csv')['Tickers'])
+tickers = SYMBOLS
 
 end_date = datetime.now().strftime("%Y-%m-%d")
 start_date = (datetime.strptime(end_date, "%Y-%m-%d") - relativedelta(years=6)).strftime("%Y-%m-%d")
@@ -109,8 +111,8 @@ mu_rsfm = pd.DataFrame(days * expected_returns(F, transmat, loadings, regime), i
 cov_rsfm = pd.DataFrame(days * covariance(R, F, transmat, loadings, covarainces, regime), index=tickers, columns=tickers)
 
 # write estimates to a csv file
-mu_rsfm.to_csv(os.getcwd() + r'/data/mu_rsfm.csv')
-cov_rsfm.to_csv(os.getcwd() + r'/data/cov_rsfm.csv')
+mu_rsfm.to_csv(os.getcwd() + BASEPATH + r'/data/mu_rsfm.csv')
+cov_rsfm.to_csv(os.getcwd() +BASEPATH +  r'/data/cov_rsfm.csv')
 
 print('\nexpected returns from the factor model')
 print(mu_rsfm)

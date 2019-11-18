@@ -7,6 +7,8 @@ import pandas_datareader.data as web
 from datetime import datetime
 from regime_switch_model.rshmm import *
 
+BASEPATH = "/server/models/portfolio/"
+
 
 ## *********************************************************************************************************************
 #  helper functions
@@ -16,7 +18,7 @@ def fama_french(start_date, end_date, save):
     start = time.time()
 
     if datetime.strptime(start_date, "%Y-%m-%d") <=  datetime.strptime('2014-11-05', "%Y-%m-%d"):
-        factors = pd.read_csv(os.getcwd() + r'/data/ff_factors.csv', index_col=0)
+        factors = pd.read_csv(os.getcwd() + BASEPATH + r'/data/ff_factors.csv', index_col=0)
 
         print("\n\nWARNING: start date is beyond what's stored in the online database ... retrieved old data")
     else:
@@ -25,7 +27,7 @@ def fama_french(start_date, end_date, save):
 
             print("\n\nSUCCESS: captured new fama french data ...")
         except:
-            factors = pd.read_csv(os.getcwd() + r'/data/ff_factors.csv', index_col=0)
+            factors = pd.read_csv(os.getcwd() + BASEPATH + r'/data/ff_factors.csv', index_col=0)
 
             print("\n\nERROR: failed to retrieve new fama french data ... retrieved old data")
 
@@ -41,7 +43,7 @@ def fama_french(start_date, end_date, save):
     factors.index = pd.to_datetime(factors.index)
 
     if save:
-        factors.to_csv(os.getcwd() + r'/data/factors.csv')
+        factors.to_csv(os.getcwd() + BASEPATH + r'/data/factors.csv')
 
     return factors
 
@@ -73,18 +75,18 @@ def regime_switch(R, F, tickers, save=True):
         print("\n\nSUCCESS: fitted the regime switching factor model")
 
         if save:
-            transmat.to_csv(os.getcwd() + r'/data/transition_matrix.csv')
-            loading_one.to_csv(os.getcwd() + r'/data/loadings_one.csv')
-            loading_two.to_csv(os.getcwd() + r'/data/loadings_two.csv')
-            cov_one.to_csv(os.getcwd() + r'/data/cov_one.csv')
-            cov_two.to_csv(os.getcwd() + r'/data/cov_two.csv')
+            transmat.to_csv(os.getcwd() + BASEPATH + r'/data/transition_matrix.csv')
+            loading_one.to_csv(os.getcwd() + BASEPATH + r'/data/loadings_one.csv')
+            loading_two.to_csv(os.getcwd() + BASEPATH + r'/data/loadings_two.csv')
+            cov_one.to_csv(os.getcwd() + BASEPATH + r'/data/cov_one.csv')
+            cov_two.to_csv(os.getcwd() + BASEPATH + r'/data/cov_two.csv')
 
     except:
-        transmat = pd.read_csv(os.getcwd() + r'/data/transition_matrix.csv', index_col=0)
-        loading_one = pd.read_csv(os.getcwd() + r'/data/loadings_one.csv', index_col=0)
-        loading_two = pd.read_csv(os.getcwd() + r'/data/loadings_two.csv', index_col=0)
-        cov_one = pd.read_csv(os.getcwd() + r'/data/cov_one.csv', index_col=0)
-        cov_two = pd.read_csv(os.getcwd() + r'/data/cov_two.csv', index_col=0)
+        transmat = pd.read_csv(os.getcwd() + BASEPATH + r'/data/transition_matrix.csv', index_col=0)
+        loading_one = pd.read_csv(os.getcwd() + BASEPATH + r'/data/loadings_one.csv', index_col=0)
+        loading_two = pd.read_csv(os.getcwd() + BASEPATH + r'/data/loadings_two.csv', index_col=0)
+        cov_one = pd.read_csv(os.getcwd() + BASEPATH + r'/data/cov_one.csv', index_col=0)
+        cov_two = pd.read_csv(os.getcwd() + BASEPATH + r'/data/cov_two.csv', index_col=0)
 
         print("\n\nERROR: failed to fit the regime switching factor model ... retrieving prior calibration")
 
