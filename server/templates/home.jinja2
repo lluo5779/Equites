@@ -1,11 +1,43 @@
-{% extends "base1.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-    <h1>
-        Welcome! Click below to get started.
-    </h1>
-    <a href="{{ url_for('/.server_models_portfolio_routing_optiondecision') }}">
-        <button type="button" value="Get Started"></button>
-    </a>
+    <div id="main">
+        <div class="inner">
 
-{%  endblock %}
+        <!-- Boxes -->
+            <div class="thumbnails">
+
+                <div class="box">
+                    <a class="image fit" style="cursor: pointer; outline: 0px;"><img src="./Home_files/pic01.jpg" alt=""></a>
+                    <div class="inner">
+                        <h3>Option 1</h3>
+                        <p>Derive Risk Profile of Given Portfolio<br><br></p>
+                        <a class="button fit" data-poptrox="youtube,800x400" style="cursor: pointer; outline: 0px;">Start</a>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <a class="image fit" style="cursor: pointer; outline: 0px;"><img src="./Home_files/pic02.jpg" alt=""></a>
+                    <div class="inner">
+                        <h3>Option 2</h3>
+                        <p>Derive Optimal Position Weightings and Risk Profile of Desired Position</p>
+                        <a class="button style2 fit" data-poptrox="youtube,800x400" style="cursor: pointer; outline: 0px;">Start</a>
+                    </div>
+                </div>
+
+
+
+                <div class="box">
+                    <a class="image fit" style="cursor: pointer; outline: 0px;"><img src="./Home_files/pic03.jpg" alt=""></a>
+                    <div class="inner">
+                        <h3>Option 3</h3>
+                        <p>Have a Custom Portfolio Created for You Based on Your Needs </p>
+                        <a class="button fit" data-poptrox="youtube,800x400" style="cursor: pointer; outline: 0px;">Start</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
