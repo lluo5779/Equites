@@ -1167,7 +1167,7 @@
 		justify-content: center;
 		padding: 8em 4em 6em 4em;
 		min-height: 70vh;
-		background-image: url("./logo.png");
+		background-image: url("./logo1.jpg");
 		background-position: center;
 		background-size: cover;
 		background-repeat: no-repeat;
@@ -1187,6 +1187,30 @@
 			color: #fff;
 			font-size: 5em;
 			font-weight: 400;
+			font-family: 'Passion One', cursive;
+			margin: 0;
+		}
+
+			@media screen and (max-width: 980px) {
+
+				#banner h1 {
+					font-size: 5em;
+				}
+
+			}
+
+			@media screen and (max-width: 736px) {
+
+				#banner h1 {
+					font-size: 3em;
+				}
+
+			}
+
+		#banner h2 {
+			color: #fff;
+			font-size: 5em;
+			font-weight: 100;
 			font-family: 'Passion One', cursive;
 			margin: 0;
 		}

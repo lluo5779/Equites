@@ -6,7 +6,7 @@
   border-radius: 10em;
   display: flex;
   list-style: none;
-  background: #f5f5dd;
+  background: #3B4F66;
   box-shadow: 10px 40px 50px #00000044;
   padding: 5px;
 }
@@ -17,8 +17,9 @@
   position: relative;
   padding: 0.6em 2em;
   font-size: 15px;
+  font-weight: bolder;
   border: none;
-  color: #333;
+  color: black;
   display: inline-block;
   text-decoration: none;
   z-index: 3;
@@ -32,13 +33,13 @@
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1.05);
 }
 #nav-1 .nav .slide1 {
-  background-color: gray;
+  background-color: #A7e66e;
   z-index: 2;
 }
 #nav-1 .nav .slide2 {
   opacity: 0;
   background: #fff;
-  border: 1px solid #8ab9ff;
+  border: 2px solid #8ab9ff;
   z-index: 1;
 }
 

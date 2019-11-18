@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 
+{% block banner %}
+            <header>
+                <h1>EQUITES</h1>
+                <h2>ASSET MANAGEMENT</h2>
+                <wbr>
+
+                <p>Equites is an asset management company focused on providing portfolios that best suit you.<p>
+                <p>To get started, select one of the three options below</p>
+            </header>
+            <a href="#main" class="more scrolly">Learn More</a>
+{% endblock %}
+
 {% block content %}
     <div id="main">
         <div class="inner">
@@ -8,7 +20,7 @@
             <div class="thumbnails">
 
                 <div class="box">
-                    <a class="image fit" style="cursor: pointer; outline: 0px;"><img src="./Home_files/pic01.jpg" alt=""></a>
+                    <a class="image fit" style="cursor: pointer; outline: 0px;"><img src="static/Home_files/pic01.jpg" alt=""></a>
                     <div class="inner">
                         <h3>Option 1</h3>
                         <p>Derive Risk Profile of Given Portfolio<br><br></p>
@@ -17,7 +29,7 @@
                 </div>
 
                 <div class="box">
-                    <a class="image fit" style="cursor: pointer; outline: 0px;"><img src="./Home_files/pic02.jpg" alt=""></a>
+                    <a class="image fit" style="cursor: pointer; outline: 0px;"><img src="static/Home_files/pic02.jpg" alt=""></a>
                     <div class="inner">
                         <h3>Option 2</h3>
                         <p>Derive Optimal Position Weightings and Risk Profile of Desired Position</p>
@@ -28,7 +40,7 @@
 
 
                 <div class="box">
-                    <a class="image fit" style="cursor: pointer; outline: 0px;"><img src="./Home_files/pic03.jpg" alt=""></a>
+                    <a class="image fit" style="cursor: pointer; outline: 0px;"><img src="static/Home_files/pic03.jpg" alt=""></a>
                     <div class="inner">
                         <h3>Option 3</h3>
                         <p>Have a Custom Portfolio Created for You Based on Your Needs </p>
