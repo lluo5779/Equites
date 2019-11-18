@@ -1,5 +1,4 @@
 import os
-import numpy as np
 import pandas as pd
 
 from datetime import datetime
@@ -8,10 +7,11 @@ from dateutil.relativedelta import relativedelta
 
 from server.models.portfolio.stats import *
 from server.models.portfolio.cost import costs
-from server.models.portfolio.tiingo import get_data
+from server.models.stock.tiingo import get_data
+from server.models.factors.fama import fama_french
 from server.models.portfolio.optimize import optimize
 from server.models.portfolio.bl import bl, get_mkt_cap
-from server.models.portfolio.rs import fama_french, regime_switch, current_regime, business_days, expected_returns, covariance
+from server.models.portfolio.rs import regime_switch, current_regime, business_days, expected_returns, covariance
 
 from server.models.portfolio.config import SYMBOLS
 

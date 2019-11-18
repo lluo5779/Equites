@@ -4,7 +4,7 @@ import pandas as pd
 from server.common.database import Database
 from server.models.stock.config import SYMBOLS, COLLECTION, START_DATE, END_DATE
 from server.models.stock.utils import TiingoDailyReader
-
+from server.models.stock.tiingo import get_data
 
 class Stocks(object):
     # Stocks class creates portfolio instances for auth stock using stocks in Stock class
@@ -15,7 +15,7 @@ class Stocks(object):
         self.tiingo_reader.initialize()
 
     def update_database(self):
-        eod_prices = self.tiingo_reader.getEndOfDayPrices()
+        eod_prices = get_data(SYMBOLS, 'adjClose', start_date, end_date, save=True)
         print(Database)
         print(Database.DATABASE)
         eod_prices.to_sql(COLLECTION, con=Database.DATABASE.engine, if_exists="replace", index=True)

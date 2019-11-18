@@ -6,6 +6,7 @@ from server.models.auth.schema import User
 from server.common.database import Database
 from server.models.portfolio.portfolio import Portfolio
 from server.models.stock.stock import Stocks
+from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
 
 from io import BytesIO
 import urllib
@@ -92,10 +93,17 @@ def portfoliio():
 
 
 def portfolioview():
-    weightings = [0.6, 0.4]
     # initial user input
+    # try:
+    weightings = []
+
+    for sym in SYMBOLS:
+        weightings.append(request.args.get(sym).strip('%'))
+    print(weightings)
     expectedReturn = 0.1
     expectedVol = 0.1
     risk = 'High'
     return render_template('portfolio.jinja2', title='Sign In', weightings=weightings, risk=risk,
                            expectedReturn=expectedReturn, expectedVol=expectedVol)
+    # except:
+    #     return render_template('OptionDecision.jinja2')

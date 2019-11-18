@@ -1,11 +1,8 @@
 from datetime import date, timedelta
 
 COLLECTION = 'eod_prices'                                       # MongoDB collection
-SYMBOLS = ['IVV', 'SPDW', 'SPEM', # Market-cap Equity
-           'SPYD', 'SPFF', 'VTEB', 'SPXB', # Income Solutions
-           'XLC','XLY','XLE','XLF','XLV','XLI','XLB','XLRE','XLK','XLU', # Sector Solutions
-           'SNPE','SPYX','ICLN','CGW','GRNB'# Thematic
-           ]
+SYMBOLS = ['ITOT', 'DIA', 'SPY', 'XLG', 'AIA', 'GXC', 'XLY', 'XLE', 'XLF', 'XLV', 'XLI', 'XLB', 'XLK', 'XLU', 'ICLN', 'CGW', 'WOOD', 'IYR']
+
 SAMPLE_FREQUENCY = 'monthly'
 START_DATE = (date.today() - timedelta(days=6*365)).isoformat()
 END_DATE = date.today().isoformat()

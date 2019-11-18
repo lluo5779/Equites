@@ -36,7 +36,7 @@ def login():
         return redirect('../home')
     else:
         print('>>> redirecting ot login page')
-        return render_template('login.html', title='Sign In', form=form)
+        return render_template('login.jinja2', title='Sign In', form=form)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -62,7 +62,7 @@ def register():
         db.DATABASE.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('auth.login'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.jinja2', title='Register', form=form)
 
 @login_required
 def exampleUser():

@@ -21,6 +21,8 @@ def optimize(mu, sigma, alpha, return_target, costs, prices, gamma):
     x0 = np.ones(2*N) / (2*N)
 
     # augment prices to forecast stock value leading up to the next rebalancing
+    print(prices)
+    print(mu[0])
     prices = np.multiply(prices, 1 + mu[0])
 
     # exposure constraints
@@ -106,7 +108,10 @@ def objective(x, mu, sigma, gamma, alpha, costs, prices):
     p2 = 2 * mu[1].T.dot(x2) - gamma[0] * psi * np.sqrt(x2.T.dot(sigma[1]).dot(x2))
 
     # transaction costs
-    t = costs.dot(np.multiply((x2 - x1), np.multiply(x1, prices)))
+    print(x1)
+    print(x2)
+    print(costs)
+    t = costs.transpose().dot(np.multiply((x2 - x1), np.multiply(x1, prices)))
 
     return -1 * (p1 + p2 - gamma[1] * t) / 1000
 

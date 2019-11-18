@@ -14,15 +14,15 @@ db.initialize(app)
 
 # from server.common.schemas import FactorModel, EodPrices, UserPortfolio, User
 from server.models.auth.schema import User
-from server.models.stock.schema import EodPrices
-from server.models.factors.schema import FactorModel
-from server.models.portfolio.schema import UserPortfolio
+# from server.models.stock.schema import EodPrices
+# from server.models.factors.schema import FactorModel
+# from server.models.portfolio.schema import UserPortfolio
 db.DATABASE.create_all()
 
-# from server.models.portfolio.portfolio import Portfolio
 
-# p = Portfolio('test1')
+from server.models.portfolio.populate_tables import get_params_for_optimization
 
-s = Stocks()
-# TO-DO: Remove update as update should be triggered by third party software
-s.update_database()
+params = get_params_for_optimization()
+
+for name, df in params.items():
+    df.to_sql(name, con=db.DATABASE.engine, if_exists="replace", index=True)
