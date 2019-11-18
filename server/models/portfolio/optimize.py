@@ -108,9 +108,9 @@ def objective(x, mu, sigma, gamma, alpha, costs, prices):
     p2 = 2 * mu[1].T.dot(x2) - gamma[0] * psi * np.sqrt(x2.T.dot(sigma[1]).dot(x2))
 
     # transaction costs
-    print(x1)
-    print(x2)
-    print(costs)
+    # print(x1)
+    # print(x2)
+    # print(costs)
     t = costs.transpose().dot(np.multiply((x2 - x1), np.multiply(x1, prices)))
 
     return -1 * (p1 + p2 - gamma[1] * t) / 1000
