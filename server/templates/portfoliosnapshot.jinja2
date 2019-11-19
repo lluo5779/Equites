@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for i in range(returnSinceInception| length) %}
+        <div>
+            <!--Curr Value-->
+            {{ histValues[i][-1] }}
+        </div>
+        <div>
+            {{ returnSinceInception[i] }}
+        </div>
+        <div>
+            {{ histValues[i][:] }}
+        </div>
+    {%  endfor %}
+{% endblock %}

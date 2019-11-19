@@ -146,3 +146,41 @@ def portfolioview():
 
     # except:
     #     return render_template('OptionDecision.jinja2')
+
+def portfoliosnapshot():
+    #list of lists, portfolio values for past year or since inception for each portfolio
+    histValues = [[100,110,120,115,118],[50,60]]
+    #initial portfolio value (wont be in list above if port is > 1yr old)
+    portfolioInitialValue = [100,50]
+    returnSinceInception = []
+    for i in range(len(histValues)):
+        temp = round(((histValues[i][-1] / portfolioInitialValue[i])-1)*100, 2)
+        returnSinceInception.append(temp)
+    return render_template('portfoliosnapshot.jinja2', title='optiondecision', returnSinceInception=returnSinceInception, histValues=histValues)
+
+
+def portfoliodashboard():
+    #list of portfolio values for past year or since inception of specific portfolio
+    histValues = [100,110,120,115,118]
+
+    #initial portfolio value (wont be in list above if port is > 1yr old)
+    portfolioInitialValue = 100
+    returnSinceInception = round((histValues[-1] / portfolioInitialValue-1)*100, 2)
+
+    #portfolio composition
+    weightings = [.1, -.1, .1, .1]
+    short = []
+    long = []
+    for i in range(len(weightings)):
+        if weightings[i] < 0:
+            short.append(weightings[i])
+        if weightings[i] > 0:
+            long.append(weightings[i])
+
+    expectedReturn = .1
+    expectedVol = .12
+    risk = 'high'
+
+    #regime? bull/bear
+
+    return render_template('portfoliodashboard.jinja2', title='optiondecision', returnSinceInception=returnSinceInception, histValues=histValues,weightings=weightings, short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk)

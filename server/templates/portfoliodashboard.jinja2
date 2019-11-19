@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+        {{ histValues[-1] }}
+    </div>
+    <div>
+        {{ returnSinceInception }}
+    </div>
+    <div>
+        {{ histValues }}
+    </div>
+    <div>
+        {{ expectedReturn }}
+    </div>
+    <div>
+        {{ expectedVol }}
+    </div>
+    <div>
+        {{ risk }}
+    </div>
+    <div>
+        {{ weightings }}
+    </div>
+    <div>
+        {{ long }}
+    </div>
+    <div>
+        {{ short }}
+    </div>
+{% endblock %}
