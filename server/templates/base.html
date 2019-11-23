@@ -11,6 +11,8 @@
 
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.theme.default.min.css') }}">
 
 
 <!--	&lt;!&ndash; Navigation Bar &ndash;&gt;-->
@@ -53,15 +55,14 @@
 		</div>
 	</nav>
 
-	<!-- Banner -->
-	<section id="banner" data-video="images/banner">
-		<div class="inner">
-			{% block banner %}
-			{% endblock %}
-		</div>
-	</section>
-
 	<br>
+
+<!--	            &lt;!&ndash; Banner &ndash;&gt;-->
+<!--            <section id="banner" data-video="images/banner">-->
+<!--                <div class="inner">-->
+<!--                    <a href="#main" class="more scrolly">Learn More</a>-->
+<!--                </div>-->
+<!--            </section>-->
 
 	<!-- Main -->
 		{% block content %}
