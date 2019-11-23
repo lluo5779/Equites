@@ -1,67 +1,98 @@
 <!DOCTYPE html>
-<html class="gr__freemuban_com"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Home</title>
+<html class="gr__freemuban_com">
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="{{ url_for('static', filename='Home_files/main.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Equites Asset Management</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700,800,900" rel="stylesheet">
+
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+
+<!--	&lt;!&ndash; Navigation Bar &ndash;&gt;-->
+<!--	<div id="nav-1">-->
+<!--		<ul class="nav">-->
+<!--			<li class="slide1"></li>-->
+<!--			<li class="slide2"></li>-->
+<!--			<li><a class="active" href="{{ url_for('/.server_routing_home') }}">Home</a></li>-->
+<!--			<li><a href="{{ '/auth/login' }}">Login</a></li>-->
+<!--			<li><a href="{{ url_for('/.server_routing_aboutus') }}">About</a></li>-->
+<!--			<li><a href="{{ url_for('/.server_routing_contact') }}">Contact</a></li>-->
+<!--		</ul>-->
+<!--	</div>-->
+
+
+
+
+
 
 </head>
-<br>
+
 <body id="top" data-gr-c-s-loaded="true" class="">
 
+	<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light site-navbar-target" id="ftco-navbar">
+		<div class="container">
+			<a class="navbar-brand" href="{{ url_for('/.server_routing_home') }}">EQUITES</a>
 
-<div>
-<!-- Banner -->
+			<button class="navbar-toggler js-fh5co-nav-toggle fh5co-nav-toggle" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="oi oi-menu"></span> Menu
+			</button>
+
+			<div class="collapse navbar-collapse" id="ftco-nav">
+				<ul class="navbar-nav nav ml-auto">
+					<li class="nav-item"><a href="{{ url_for('/.server_routing_aboutus') }}" class="nav-link"><span>Who We Are</span></a></li>
+					<li class="nav-item"><a href="" class="nav-link"><span>Strategies</span></a></li>
+					<li class="nav-item"><a href="{{ '/auth/login' }}" class="nav-link"><span>Login</span></a></li>
+					<li class="nav-item"><a href="" class="nav-link"><span>Register</span></a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Banner -->
 	<section id="banner" data-video="images/banner">
-
 		<div class="inner">
-                <!-- Navigation Bar -->
-            <div id="nav-1">
-                <ul class="nav">
-                    <li class="slide1"></li>
-                    <li class="slide2"></li>
-                    <li><a class="active" href="{{ url_for('/.server_routing_home') }}">Home</a></li>
-                    <li><a href="{{ '/auth/login' }}">Login</a></li>
-                    <li><a href="{{ url_for('/.server_routing_aboutus') }}">About</a></li>
-                    <li><a href="{{ url_for('/.server_routing_contact') }}">Contact</a></li>
-                </ul>
-            </div>
-                {% block banner %}
-				{% endblock %}
+			{% block banner %}
+			{% endblock %}
 		</div>
 	</section>
 
-<!-- Main -->
-    {% block content %}
-    {% endblock %}
+	<br>
 
+	<!-- Main -->
+		{% block content %}
+		{% endblock %}
+</body>
 
 <!-- Footer -->
-	<footer id="footer">
-		<div class="inner">
-			<h2>Say something</h2>
-			<p>Here </p>
+<footer id="footer">
+	<div class="inner">
+		<h2>Say something</h2>
+		<p>Here </p>
 
-			<ul class="icons">
-				<li><a href="/#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-				<li><a href="/#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-				<li><a href="/#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-				<li><a href="/#" class="icon fa-envelope"><span class="label">Email</span></a></li>
-			</ul>
+		<ul class="icons">
+			<li><a href="/#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+			<li><a href="/#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+			<li><a href="/#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+			<li><a href="/#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+		</ul>
 
-			<p class="copyright">Copyright © 2019.Equites All rights reserved.</p>
-		</div>
-	</footer>
+		<p class="copyright">Copyright © 2019.Equites All rights reserved.</p>
+	</div>
+</footer>
 
 <!-- Scripts -->
 <script src="https://use.fontawesome.com/c076fb318b.js"></script>
-<script src="{{ url_for('static', filename='Home_files/jquery.min.js') }}"</script>
-<script src="{{ url_for('static', filename='Home_files/jquery.scrolly.min.js') }}"</script>
-<script src="{{ url_for('static', filename='Home_files/jquery.poptrox.min.js') }}"></script>
-<script src="{{ url_for('static', filename='Home_files/skel.min.js') }}"></script>
-<script src="{{ url_for('static', filename='Home_files/util.js') }}"></script>
-<script src="{{ url_for('static', filename='Home_files/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"</script>
+<script src="{{ url_for('static', filename='js/jquery.scrolly.min.js') }}"</script>
+<script src="{{ url_for('static', filename='js/jquery.poptrox.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/skel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/util.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </div>
