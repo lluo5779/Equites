@@ -40,7 +40,7 @@ print('\n\n********************************************************************'
 print('\tretrieving asset prices')
 print('********************************************************************')
 
-prices = get_data(tickers, 'adjClose', start_date, end_date, save=True) #Stored
+prices = get_data(tickers, 'adjClose', start_date, end_date, save=True, fail_safe=True) #Stored
 print(prices.tail(10))
 
 print('\n\n********************************************************************')
