@@ -21,6 +21,7 @@ BASEPATH = "/server/models/portfolio/"
 ## *********************************************************************************************************************
 
 tickers = SYMBOLS
+N = len(tickers)
 
 end_date = datetime.now().strftime("%Y-%m-%d")
 start_date = (datetime.strptime(end_date, "%Y-%m-%d") - relativedelta(years=6)).strftime("%Y-%m-%d")
@@ -210,17 +211,21 @@ print('\n\n********************************************************************'
 print('\toptimization')
 print('********************************************************************')
 
-risk_tolerance = [((1, 10), (0, 0.10)),
-                  ((5, 5), (0, 0.20)),
-                  ((10, 1), (-0.05, 0.30))]
+# full cardinality, include all assets
+cardinality = [1] * N
+cardinality = [1] * 5 + [0] * (N-5)
 
-soln = optimize(mu = (mu_bl1.values.ravel(), mu_bl2.values.ravel()),
-                sigma = (cov_bl1.values, cov_bl2.values),
-                alpha = (0.05, 0.10),
-                return_target = (0.05, 0.05),
-                costs = cost,
-                prices = prices.iloc[-2, :].values if prices.iloc[-1, :].isnull().values.any() else prices.iloc[-1, :].values,
-                gamma = risk_tolerance[2])
+risk_tolerance = [((1, 10), (0, 0.10), cardinality, 'MCVAR'),
+                  ((5, 5), (0, 0.20), cardinality, 'MCVAR'),
+                  ((10, 1), (-0.05, 0.50), cardinality, 'MCVAR')]
+
+soln, agg_soln = optimize(mu = (mu_bl1.values.ravel(), mu_bl2.values.ravel()),
+                          sigma = (cov_bl1.values, cov_bl2.values),
+                          alpha = (0.05, 0.10),
+                          return_target = (0.06, 0.06),
+                          costs = cost,
+                          prices = prices.iloc[-2, :].values if prices.iloc[-1, :].isnull().values.any() else prices.iloc[-1, :].values,
+                          gamma = risk_tolerance[2])
 
 x1 = pd.DataFrame(soln.x[:int(len(mu_bl1))], index=mu_bl1.index, columns=['weight'])
 x2 = pd.DataFrame(soln.x[int(len(mu_bl2)):], index=mu_bl2.index, columns=['weight'])

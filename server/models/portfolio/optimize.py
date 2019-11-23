@@ -10,6 +10,10 @@ def portfolio_value(weights, prices):
     return float(weights.values.T.dot(prices.values))
 
 
+def make_constraint(type, func, args):
+    return {'type': type, 'fun': func, 'args': args}
+
+
 def optimize(mu, sigma, alpha, return_target, costs, prices, gamma):
 
     start = time.time()
@@ -21,99 +25,94 @@ def optimize(mu, sigma, alpha, return_target, costs, prices, gamma):
     x0 = np.ones(2*N) / (2*N)
 
     # augment prices to forecast stock value leading up to the next rebalancing
-    print(prices)
-    print(mu[0])
     prices = np.multiply(prices, 1 + mu[0])
 
     # exposure constraints
-    bounds = [gamma[1]] * 2 *  N
+    bounds = []
 
-    # budget constraints
-    budget_1p = {'type': 'ineq',
-                 'fun': budget_p1,
-                 'args': (1, )}
+    for cardinal in gamma[2]:
+        bounds += [tuple(cardinal * x for x in gamma[1])]
 
-    budget_1n = {'type': 'ineq',
-                 'fun': budget_p1,
-                 'args': (-1, )}
+    bounds *= 2
 
-    # budget constraints
-    budget_2p = {'type': 'ineq',
-                 'fun': budget_p2,
-                 'args': (1, )}
+    # period one constraints
+    budget1 = make_constraint('eq', budget_p1, (1, ))
+    target1 = make_constraint('ineq', return_p1, (mu[0], return_target[0], ))
 
-    budget_2n = {'type': 'ineq',
-                 'fun': budget_p2,
-                 'args': (-1, )}
-
-    # return constraints
-    ret_1 = {'type': 'ineq',
-           'fun': return_p1,
-           'args': (mu[0], return_target[0], )}
-
-    ret_2 = {'type': 'ineq',
-            'fun': return_p2,
-            'args': (mu[1], return_target[1],)}
+    # period two contraints
+    budget2 = make_constraint('eq', budget_p2, (1, ))
+    target2 = make_constraint('ineq', return_p2, (mu[1], return_target[1], ))
 
     soln = minimize(objective, x0,
-                    args=(mu, sigma, gamma[0], alpha, costs, prices),
-                    #jac=jaco,
+                    args=(mu, sigma, gamma[0], alpha, costs, prices, gamma[3]),
                     method='SLSQP',
                     bounds=bounds,
-                    constraints=[budget_1p, budget_1n, budget_2p, budget_2n, ret_1, ret_2])
+                    constraints=[budget1, budget2, target1, target2])
 
     if soln.success:
-        print("SUCCESS: optimized the Mean-CVaR Tradeoff and met the return goals")
+        print("SUCCESS: optimization completed with the return goals met!")
+        print('finished optimization in %f seconds.\n\n' % (time.time() - start))
+
+        return soln, None
     else:
-        print("WARNING: the return targets are too aggressive for the risk tolerance level ... \n")
+        print("\n\nWARNING: the return targets are too aggressive for the risk tolerance level ...")
 
-        # return constraints
-        ret_1 = {'type': 'ineq',
-                 'fun': return_p1,
-                 'args': (mu[0], 0,)}
+        # SAFE SOLUTION ... just try to get a positive return
+        target1 = make_constraint('ineq', return_p1, (mu[0], 0,))
+        target2 = make_constraint('ineq', return_p2, (mu[1], 0,))
 
-        ret_2 = {'type': 'ineq',
-                 'fun': return_p2,
-                 'args': (mu[1], 0,)}
+        safe_soln = minimize(objective, x0,
+                             args=(mu, sigma, gamma[0], alpha, costs, prices, gamma[3]),
+                             method='SLSQP',
+                             bounds=bounds,
+                             constraints=[budget1, budget2, target1, target2])
 
-        soln = minimize(objective, x0,
-                        args=(mu, sigma, gamma[0], alpha, costs, prices),
-                        # jac=jaco,
-                        method='SLSQP',
-                        bounds=bounds,
-                        constraints=[budget_1, budget_2, ret_1, ret_2])
+        # TARGET SOLUTION ... meet the target goals! Loosen those exposure tolerances!
+        bounds = []
 
-        print("The portfolio is the closest to the target returns ...")
+        for cardinal in gamma[2]:
+            bounds += [tuple(cardinal * x for x in (-np.inf, np.inf))]
 
-    print('finished optimization in %f seconds.\n\n' % (time.time() - start))
+        bounds *= 2
 
-    return soln
+        # target constraints
+        target1 = make_constraint('ineq', return_p1, (mu[0], return_target[0],))
+        target2 = make_constraint('ineq', return_p2, (mu[1], return_target[1],))
+
+        target_soln = minimize(objective, x0,
+                               args=(mu, sigma, gamma[0], alpha, costs, prices, gamma[3]),
+                               method='SLSQP',
+                               bounds=bounds,
+                               constraints=[budget1, budget2, target1, target2])
+
+        print("The safe portfolio is the closest to the target returns while respecting the risk exposure tolerance... \n")
+        print("The target portfolio releases any risk exposure tolerances ... it's likely unreasonable so be careful! \n")
+
+        print('finished optimization in %f seconds.\n\n' % (time.time() - start))
+
+        return safe_soln, target_soln
 
 
-def jaco(x, mu, sigma, gamma, alpha, costs, prices):
-    psi = norm.pdf(norm.ppf(alpha)) / alpha
-
-    return -1 * (2 * mu - gamma[0] * psi / (np.sqrt(x.T.dot(sigma).dot(x))) * sigma.dot(x))
-
-
-def objective(x, mu, sigma, gamma, alpha, costs, prices):
+def objective(x, mu, sigma, gamma, alpha, costs, prices, risk_func):
     # period one and period two weights
     x1 = x[:int(len(x)/2)]
     x2 = x[int(len(x)/2):]
 
-    psi = norm.pdf(norm.ppf(alpha[0])) / alpha[0]
-    p1 = 2 * mu[0].T.dot(x1) - gamma[0] * psi * np.sqrt(x1.T.dot(sigma[0]).dot(x1))
+    if risk_func == "MCVAR":
+        psi = norm.pdf(norm.ppf(alpha[0])) / alpha[0]
+        p1 = 2 * mu[0].T.dot(x1) - gamma[0] * psi * np.sqrt(x1.T.dot(sigma[0]).dot(x1))
 
-    psi = norm.pdf(norm.ppf(alpha[1])) / alpha[1]
-    p2 = 2 * mu[1].T.dot(x2) - gamma[0] * psi * np.sqrt(x2.T.dot(sigma[1]).dot(x2))
+        psi = norm.pdf(norm.ppf(alpha[1])) / alpha[1]
+        p2 = 2 * mu[1].T.dot(x2) - gamma[0] * psi * np.sqrt(x2.T.dot(sigma[1]).dot(x2))
+
+    elif risk_func == "SHARPE":
+        p1 = mu[0].T.dot(x1) / np.sqrt(x1.T.dot(sigma[0]).dot(x1))
+        p2 = mu[1].T.dot(x2) / np.sqrt(x2.T.dot(sigma[1]).dot(x2))
 
     # transaction costs
-    # print(x1)
-    # print(x2)
-    # print(costs)
-    t = costs.transpose().dot(np.multiply((x2 - x1), np.multiply(x1, prices)))
+    t = costs.dot(np.multiply((x2 - x1), np.multiply(x1, prices)))
 
-    return -1 * (p1 + p2 - gamma[1] * t) / 1000
+    return -1 * (p1 + p2 - gamma[1] * t)
 
 
 def budget_p1(x, lev):
