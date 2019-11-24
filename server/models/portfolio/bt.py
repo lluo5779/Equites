@@ -2,7 +2,7 @@ import time
 
 import pandas as pd
 
-from tiingo import get_data
+from server.models.portfolio.tiingo import get_data
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 

@@ -1,6 +1,5 @@
 from flask import Blueprint, request, session, redirect, url_for, render_template
 from flask_login import login_required, current_user
-
 from server.models.auth.schema import User
 # import server.models.users.errors as UserErrors
 # import server.models.users.decorators as user_decorators
@@ -162,6 +161,8 @@ def portfoliosnapshot():
 def portfoliodashboard():
     #list of portfolio values for past year or since inception of specific portfolio
     histValues = [100,110,120,115,118]
+
+    print(">>> current_user: ", current_user.is_authenticated)
 
     #initial portfolio value (wont be in list above if port is > 1yr old)
     portfolioInitialValue = 100

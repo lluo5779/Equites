@@ -5,16 +5,18 @@ from datetime import datetime
 from scipy.stats.mstats import gmean
 from dateutil.relativedelta import relativedelta
 
-from stats import *
-from cost import costs
-from tiingo import get_data
-from bl import bl, get_mkt_cap
-from rs import fama_french, regime_switch, current_regime, business_days, expected_returns, covariance
+from server.models.portfolio.stats import *
+from server.models.portfolio.cost import costs
+from server.models.portfolio.tiingo import get_data
+from server.models.portfolio.bl import bl, get_mkt_cap
+from server.models.portfolio.rs import fama_french, regime_switch, current_regime, business_days, expected_returns, \
+    covariance
+from server.models.stock.config import SYMBOLS, COLLECTION, START_DATE, END_DATE
+
 
 def prepare():
-
-    tickers = list(pd.read_csv(os.getcwd() + r'/data/tickers.csv')['Tickers'])
-
+    #tickers = list(pd.read_csv(os.getcwd() + r'/data/tickers.csv')['Tickers'])
+    tickers = SYMBOLS
     end_date = datetime.now().strftime("%Y-%m-%d")
     start_date = (datetime.strptime(end_date, "%Y-%m-%d") - relativedelta(years=6)).strftime("%Y-%m-%d")
 
@@ -24,7 +26,6 @@ def prepare():
 
     np.set_printoptions(precision=4)
 
-
     ## *********************************************************************************************************************
     #  pull the factors and asset prices
     ## *********************************************************************************************************************
@@ -33,7 +34,7 @@ def prepare():
     print('\tretrieving asset prices')
     print('********************************************************************')
 
-    prices = get_data(tickers, 'adjClose', start_date, end_date, save=True, fail_safe=True)
+    prices = get_data(tickers, 'adjClose', start_date, end_date, save=False, fail_safe=True)
     print(prices.tail(10))
 
     print('\n\n********************************************************************')
@@ -43,7 +44,6 @@ def prepare():
     factors = fama_french(start_date, end_date, save=True)
     print(factors.tail(10))
 
-
     print('\n\n********************************************************************')
     print('risk adjusted returns')
     print('********************************************************************')
@@ -51,7 +51,6 @@ def prepare():
     returns = (prices / prices.shift(1) - 1).dropna()[:len(factors)]
     R = (returns.values - factors['RF'].values[:, None])
     print(pd.DataFrame(R, index=factors.index, columns=prices.columns).tail(10))
-
 
     ## *********************************************************************************************************************
     #  factor model
@@ -83,7 +82,6 @@ def prepare():
     regime = current_regime(R, F, loadings, baseline)
     print('\nbased on the last %d trading days, the best fitted regime is %d' % (baseline, regime))
 
-
     ## *********************************************************************************************************************
     #  expeceted mean and variances from the factor model
     ## *********************************************************************************************************************
@@ -93,22 +91,23 @@ def prepare():
     print('********************************************************************')
 
     # get the number of days until the next scheduled rebalance
-    days = business_days((datetime.strptime(end_date, "%Y-%m-%d") + relativedelta(days=1)).strftime("%Y-%m-%d"), rebalance_date)
+    days = business_days((datetime.strptime(end_date, "%Y-%m-%d") + relativedelta(days=1)).strftime("%Y-%m-%d"),
+                         rebalance_date)
 
     # get the estimate returns and covariances from the factor model
     mu_rsfm = pd.DataFrame(days * expected_returns(F, transmat, loadings, regime), index=tickers, columns=['returns'])
-    cov_rsfm = pd.DataFrame(days * covariance(R, F, transmat, loadings, covarainces, regime), index=tickers, columns=tickers)
+    cov_rsfm = pd.DataFrame(days * covariance(R, F, transmat, loadings, covarainces, regime), index=tickers,
+                            columns=tickers)
 
     # write estimates to a csv file
-    mu_rsfm.to_csv(os.getcwd() + r'/data/mu_rsfm.csv')
-    cov_rsfm.to_csv(os.getcwd() + r'/data/cov_rsfm.csv')
+    #mu_rsfm.to_csv(os.getcwd() + r'/data/mu_rsfm.csv')
+    #cov_rsfm.to_csv(os.getcwd() + r'/data/cov_rsfm.csv')
 
     print('\nexpected returns from the factor model')
     print(mu_rsfm)
 
     print('\nexpected covariance from the factor model')
     print(cov_rsfm)
-
 
     ## *********************************************************************************************************************
     #  black litterman for period one returns
@@ -120,12 +119,12 @@ def prepare():
     print(mktcap)
 
     # calculate the market coefficient
-    l = (gmean(factors.iloc[-days:,:]['MKT'] + 1,axis=0) - 1)/factors.iloc[-days:,:]['MKT'].var()
+    l = (gmean(factors.iloc[-days:, :]['MKT'] + 1, axis=0) - 1) / factors.iloc[-days:, :]['MKT'].var()
 
     mu_bl1, cov_bl1 = bl(tickers=tickers,
                          l=l, tau=1,
                          mktcap=mktcap,
-                         Sigma=returns.iloc[-days:,:].cov().values * days,
+                         Sigma=returns.iloc[-days:, :].cov().values * days,
                          P=np.identity(len(tickers)),
                          Omega=np.diag(np.diag(cov_rsfm)),
                          q=mu_rsfm.values,
@@ -137,7 +136,6 @@ def prepare():
     print('\nperiod one covariances')
     print(cov_bl1)
 
-
     ## *********************************************************************************************************************
     #  AIDAN ML ... pass along a new returns dataframe, mu_ml, with the same format as mu_rsfm
     ## *********************************************************************************************************************
@@ -147,7 +145,8 @@ def prepare():
     print('********************************************************************')
 
     # temp mu_ml
-    mu_ml = mu_bl1.mul(pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=mu_bl1.index, columns=mu_bl1.columns))
+    mu_ml = mu_bl1.mul(
+        pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=mu_bl1.index, columns=mu_bl1.columns))
 
     ## *********************************************************************************************************************
     #  black litterman for period two returns
@@ -156,7 +155,7 @@ def prepare():
     mu_bl2, cov_bl2 = bl(tickers=tickers,
                          l=l, tau=1,
                          mktcap=mktcap,
-                         Sigma=returns.iloc[-days:,:].cov().values * days,
+                         Sigma=returns.iloc[-days:, :].cov().values * days,
                          P=np.identity(len(tickers)),
                          Omega=np.diag(np.diag(cov_rsfm)),
                          q=mu_ml.values,
@@ -167,7 +166,6 @@ def prepare():
 
     print('\nperiod two covariances')
     print(cov_bl2)
-
 
     ## *********************************************************************************************************************
     #  calculate transaction cost coefficients

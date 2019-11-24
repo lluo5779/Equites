@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 
-from server.models.stock.tiingo import get_data
+from server.models.portfolio.tiingo import get_data
 
 TIINGO_ENDPOINTS = {'eod': 'https://api.tiingo.com/tiingo/daily/%s/prices?startDate=%s&endDate=%s',
                     'spreads': 'https://api.tiingo.com/iex/%s'}
@@ -11,7 +11,7 @@ def costs(tickers, cov, prices, start_date, end_date, alpha):
 
     start = time.time()
 
-    volumes = get_data(tickers, 'volume', start_date, end_date, save=True).mean()
+    volumes = get_data(tickers, 'volume', start_date, end_date, save=False).mean()
 
     print('finished calculating cost coefficients in %f seconds.\n\n' % (time.time() - start))
 
