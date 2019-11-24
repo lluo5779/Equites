@@ -65,9 +65,9 @@ body {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #212529;
+  color: #323232;
   text-align: left;
-  background-color: #fff; }
+  background-color: #323232; }
 
 [tabindex="-1"]:focus {
   outline: 0 !important; }
@@ -143,7 +143,7 @@ sup {
   top: -.5em; }
 
 a {
-  color: #007bff;
+  color: #A7E66E;
   text-decoration: none;
   background-color: transparent; }
   a:hover {
@@ -8624,7 +8624,7 @@ h1, h2, h3, h4, h5,
   .btn:hover, .btn:active, .btn:focus {
     outline: none; }
   .btn.btn-primary {
-    background: #3B4F66;
+    background: #A7E66E;
     border: 1px solid #3B4F66 !important;
     color: #fff !important; }
     .btn.btn-primary:hover {
