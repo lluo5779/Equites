@@ -2,23 +2,20 @@
 <html>
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Equites Asset Management</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Equites Asset Management</title>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700,800,900" rel="stylesheet">
 
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.theme.default.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" >
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> {% block css %} {% endblock %}
 
-    {% block css %}
-	{% endblock %}
-
-<!-- favicons -->
+    <!-- favicons -->
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/favicons/apple-touch-icon.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicons/apple-touch-icon.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicons/favicon-32x32.png') }}">
@@ -26,70 +23,59 @@
 </head>
 
 <body style="background-color:#222226">
-	<nav class="navbar ftco_navbar site-navbar-target ftco-navbar-custom navbar-expand-lg" id="ftco-navbar">
-		<div class="container">
-			<a class="navbar-brand" href="{{ url_for('/.server_routing_home') }}"> EQUITES </a>
+    <nav class="navbar ftco_navbar site-navbar-target ftco-navbar-custom navbar-expand-lg" id="ftco-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('/.server_routing_home') }}"> EQUITES </a>
 
-			<button class="navbar-toggler js-fh5co-nav-toggle fh5co-nav-toggle" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="oi oi-menu"></span> Menu
-			</button>
+            <button class="navbar-toggler js-fh5co-nav-toggle fh5co-nav-toggle" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="oi oi-menu"></span> Menu
+            </button>
 
-			<div class="collapse navbar-collapse" id="ftco-nav">
-				<ul class="navbar-nav nav ml-auto">
-					<li class="nav-item"><a href="{{ url_for('/.server_routing_aboutus') }}" class="nav-link"><span>Who We Are</span></a></li>
-					<li class="nav-item"><a href="" class="nav-link"><span>Strategies</span></a></li>
+            <div class="collapse navbar-collapse" id="ftco-nav">
+                <ul class="navbar-nav nav ml-auto">
+                    <li class="nav-item"><a href="{{ url_for('/.server_routing_aboutus') }}" class="nav-link"><span>Who We Are</span></a></li>
+                    <li class="nav-item"><a href="" class="nav-link"><span>Strategies</span></a></li>
 
-					{% if current_user.is_authenticated %}
-						<li class="nav-item dropdown">
-							<a class="nav-link align-items-center dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link align-items-center dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								{{ current_user.username }}
 							</a>
 
-							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-								<a class="dropdown-item" href="#">My Settings</a>
-								<a class="dropdown-item" href="#">My Goals</a>
-								<a class="dropdown-item" href="#">My Portfolios</a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">My Settings</a>
+                            <a class="dropdown-item" href="#">My Goals</a>
+                            <a class="dropdown-item" href="#">My Portfolios</a>
 
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="{{ '/auth/logout' }}">Logout</a>
-							</div>
-						</li>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ '/auth/logout' }}">Logout</a>
+                        </div>
+                    </li>
 
-					{% else %}
-						<li class="nav-item"><a href="{{ '/auth/login' }}" class="nav-link"><span>Login</span></a></li>
-						<li class="nav-item"><a href="{{ '/auth/register' }}" class="nav-link"><span>Register</span></a></li>
-					{% endif %}
-				</ul>
-			</div>
-		</div>
-	</nav>
+                    {% else %}
+                    <li class="nav-item"><a href="{{ '/auth/login' }}" class="nav-link"><span>Login</span></a></li>
+                    <li class="nav-item"><a href="{{ '/auth/register' }}" class="nav-link"><span>Register</span></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-		<!-- Banner -->
-	<section id="banner" data-video="images/banner">
-		<div class="inner">
-			<a href="#main" class="more scrolly">Learn More</a>
-		</div>
-	</section>
-
-
-	<!-- Main -->
-		{% block content %}
-		{% endblock %}
-		{% block content_test %}
-    	{% endblock %}
+    <!-- Main -->
+    {% block content %} {% endblock %} {% block content_test %} {% endblock %}
 </body>
 <!-- Footer -->
 <footer id="footer">
-	<div class="inner">
-		<ul class="icons">
-			<li><a href="/#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-			<li><a href="/#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-			<li><a href="/#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-			<li><a href="/#" class="icon fa-envelope"><span class="label">Email</span></a></li>
-		</ul>
+    <div class="inner">
+        <ul class="icons">
+            <li><a href="/#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+            <li><a href="/#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+            <li><a href="/#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+            <li><a href="/#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+        </ul>
 
-		<p class="copyright">Equites © 2019. All rights reserved.</p>
-	</div>
+        <p class="copyright">Equites © 2019. All rights reserved.</p>
+    </div>
 </footer>
 
 <!-- Scripts -->
@@ -102,8 +88,7 @@
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-{% block script %}
-{% endblock %}
+{% block script %} {% endblock %}
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slim/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slim/jquery-migrate-3.0.1.min.js') }}"></script>
@@ -123,4 +108,164 @@
 <script src="{{ url_for('static', filename='js/slim/main.js') }}"></script>
 </div>
 
-<audio controls="controls" style="display: none;"></audio><div class="poptrox-overlay" style="position: fixed; left: 0px; top: 0px; z-index: 10001; width: 100%; height: 100%; text-align: center; cursor: pointer; display: none;"><div style="display:inline-block;height:100%;vertical-align:middle;"></div><div style="position:absolute;left:0;top:0;width:100%;height:100%;background:#222226;opacity:0.75;filter:alpha(opacity=75);"></div><div class="poptrox-popup" style="display: none; vertical-align: middle; position: relative; z-index: 1; cursor: pointer; min-width: 200px; min-height: 100px;"><div class="loader" style="display: none;"></div><div class="pic" style="display: none;"></div><span class="closer" style="cursor: pointer; display: none;">×</span></div></div></body><style type="text/css">#yddContainer{display:block;font-family:Microsoft YaHei;position:relative;width:100%;height:100%;top:-4px;left:-4px;font-size:12px;border:1px solid}#yddTop{display:block;height:22px}#yddTopBorderlr{display:block;position:static;height:17px;padding:2px 28px;line-height:17px;font-size:12px;color:#5079bb;font-weight:bold;border-style:none solid;border-width:1px}#yddTopBorderlr .ydd-sp{position:absolute;top:2px;height:0;overflow:hidden}.ydd-icon{left:5px;width:17px;padding:0px 0px 0px 0px;padding-top:17px;background-position:-16px -44px}.ydd-close{right:5px;width:16px;padding-top:16px;background-position:left -44px}#yddKeyTitle{float:left;text-decoration:none}#yddMiddle{display:block;margin-bottom:10px}.ydd-tabs{display:block;margin:5px 0;padding:0 5px;height:18px;border-bottom:1px solid}.ydd-tab{display:block;float:left;height:18px;margin:0 5px -1px 0;padding:0 4px;line-height:18px;border:1px solid;border-bottom:none}.ydd-trans-container{display:block;line-height:160%}.ydd-trans-container a{text-decoration:none;}#yddBottom{position:absolute;bottom:0;left:0;width:100%;height:22px;line-height:22px;overflow:hidden;background-position:left -22px}.ydd-padding010{padding:0 10px}#yddWrapper{color:#252525;z-index:10001;background:url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ab20.png);}#yddContainer{background:#fff;border-color:#4b7598}#yddTopBorderlr{border-color:#f0f8fc}#yddWrapper .ydd-sp{background-image:url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ydd-sprite.png)}#yddWrapper a,#yddWrapper a:hover,#yddWrapper a:visited{color:#50799b}#yddWrapper .ydd-tabs{color:#959595}.ydd-tabs,.ydd-tab{background:#fff;border-color:#d5e7f3}#yddBottom{color:#363636}#yddWrapper{min-width:250px;max-width:400px;}</style></html>
+<audio controls="controls" style="display: none;"></audio>
+<div class="poptrox-overlay" style="position: fixed; left: 0px; top: 0px; z-index: 10001; width: 100%; height: 100%; text-align: center; cursor: pointer; display: none;">
+    <div style="display:inline-block;height:100%;vertical-align:middle;"></div>
+    <div style="position:absolute;left:0;top:0;width:100%;height:100%;background:#222226;opacity:0.75;filter:alpha(opacity=75);"></div>
+    <div class="poptrox-popup" style="display: none; vertical-align: middle; position: relative; z-index: 1; cursor: pointer; min-width: 200px; min-height: 100px;">
+        <div class="loader" style="display: none;"></div>
+        <div class="pic" style="display: none;"></div><span class="closer" style="cursor: pointer; display: none;">×</span></div>
+</div>
+</body>
+<style type="text/css">
+    #yddContainer {
+        display: block;
+        font-family: Microsoft YaHei;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        top: -4px;
+        left: -4px;
+        font-size: 12px;
+        border: 1px solid
+    }
+    
+    #yddTop {
+        display: block;
+        height: 22px
+    }
+    
+    #yddTopBorderlr {
+        display: block;
+        position: static;
+        height: 17px;
+        padding: 2px 28px;
+        line-height: 17px;
+        font-size: 12px;
+        color: #5079bb;
+        font-weight: bold;
+        border-style: none solid;
+        border-width: 1px
+    }
+    
+    #yddTopBorderlr .ydd-sp {
+        position: absolute;
+        top: 2px;
+        height: 0;
+        overflow: hidden
+    }
+    
+    .ydd-icon {
+        left: 5px;
+        width: 17px;
+        padding: 0px 0px 0px 0px;
+        padding-top: 17px;
+        background-position: -16px -44px
+    }
+    
+    .ydd-close {
+        right: 5px;
+        width: 16px;
+        padding-top: 16px;
+        background-position: left -44px
+    }
+    
+    #yddKeyTitle {
+        float: left;
+        text-decoration: none
+    }
+    
+    #yddMiddle {
+        display: block;
+        margin-bottom: 10px
+    }
+    
+    .ydd-tabs {
+        display: block;
+        margin: 5px 0;
+        padding: 0 5px;
+        height: 18px;
+        border-bottom: 1px solid
+    }
+    
+    .ydd-tab {
+        display: block;
+        float: left;
+        height: 18px;
+        margin: 0 5px -1px 0;
+        padding: 0 4px;
+        line-height: 18px;
+        border: 1px solid;
+        border-bottom: none
+    }
+    
+    .ydd-trans-container {
+        display: block;
+        line-height: 160%
+    }
+    
+    .ydd-trans-container a {
+        text-decoration: none;
+    }
+    
+    #yddBottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 22px;
+        line-height: 22px;
+        overflow: hidden;
+        background-position: left -22px
+    }
+    
+    .ydd-padding010 {
+        padding: 0 10px
+    }
+    
+    #yddWrapper {
+        color: #252525;
+        z-index: 10001;
+        background: url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ab20.png);
+    }
+    
+    #yddContainer {
+        background: #fff;
+        border-color: #4b7598
+    }
+    
+    #yddTopBorderlr {
+        border-color: #f0f8fc
+    }
+    
+    #yddWrapper .ydd-sp {
+        background-image: url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ydd-sprite.png)
+    }
+    
+    #yddWrapper a,
+    #yddWrapper a:hover,
+    #yddWrapper a:visited {
+        color: #50799b
+    }
+    
+    #yddWrapper .ydd-tabs {
+        color: #959595
+    }
+    
+    .ydd-tabs,
+    .ydd-tab {
+        background: #fff;
+        border-color: #d5e7f3
+    }
+    
+    #yddBottom {
+        color: #363636
+    }
+    
+    #yddWrapper {
+        min-width: 250px;
+        max-width: 400px;
+    }
+</style>
+
+</html>
