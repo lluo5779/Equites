@@ -4,7 +4,7 @@ from flask_marshmallow import Marshmallow
 class Database(object):
     username = "postgres"
     password = "louisluo"
-    URI = "postgresql://{}:{}@localhost/".format(username, password)
+    URI = "postgresql://{}:{}@localhost:5555/".format(username, password)
     DATABASE = None
 
 

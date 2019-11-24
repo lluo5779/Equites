@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 
+{% block css %}
+<style>
+    .marginCenter{ border:2px solid; border-radius:25px;color:white; width:400px; height: 1800px;left:0; top:0; right:0; bottom: 0; margin: auto; background: auto;}
+</style>
+{% endblock %}
+
 {% block content %}
+<section>
+    <div class="marginCenter">
      <form action="/portfolioview" method="get">
         <table>
             {% for ticker in tickers %}
@@ -15,6 +23,8 @@
                 </tr>
             {% endfor %}
         </table>
-        <input type="submit" value="Submit">
+        <center><input type="submit" value="Submit"></center>
     </form>
+    </div>
+</section>
 {% endblock %}

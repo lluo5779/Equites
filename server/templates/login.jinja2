@@ -1,26 +1,55 @@
 {% extends "base.html" %}
 
+{% block css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+  <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" >
+{% endblock %}
+
 {% block content %}
-    <h1>Sign In</h1>
-    <form method="post" novalidate>
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}<br>
-            {% for error in form.username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}<br>
-            {% for error in form.password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit() }}</p>
-    </form>
-    <p>New User? <a href="{{ '/auth/register' }}">Click to Register!</a></p>
+{% endblock %}
+
+{% block content_test %}
+    <div class="container-fluid">
+      <div class="row no-gutter">
+        <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+        <div class="col-md-8 col-lg-6">
+          <div class="login d-flex align-items-center py-5">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-9 col-lg-8 mx-auto">
+                  <h3 class="login-heading mb-4"><font color="white">Welcome back!</font></h3>
+                  <form action="" method="post" novalidate>
+                      {{ form.hidden_tag() }}
+                      {{ form.csrf_token }}
+                    <div class="form-label-group">
+                      <input name="username" type="text" id="inputEmail" class="form-control" placeholder="Username" required size="32" required autofocus>
+                      <label for="inputEmail">Username</label>
+                    </div>
+
+                    <div class="form-label-group">
+                      <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required size="32" required>
+                      <label for="inputPassword">Password</label>
+                    </div>
+
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input type="checkbox" class="custom-control-input" id="customCheck1">
+                      <label class="custom-control-label" for="customCheck1">Remember password</label>
+                    </div>
+                    <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" type="submit">Sign in</button>
+                    <div class="text-center">
+                    <p><font color="white">New User? </font><a href="{{ '/auth/register' }}">Click to Register!</a></p>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 
+{% block css %}
+<style>
+    .marginCenter{ border:2px solid; border-radius:25px;color:white; width:400px; height: 1400px;left:0; top:0; right:0; bottom: 0; margin: auto; background: auto;}
+</style>
+{% endblock %}
+
 {% block content %}
+<section>
+    <div class="marginCenter">
      <form action="" method="get">
         <table>
             {% for ticker in tickers %}
@@ -15,8 +23,10 @@
             {% endfor %}
         </table>
          <div>
-             <input type="range" min="1" max="100" value="50" id="myRange">
+             <center><input type="range" min="1" max="100" value="50" id="myRange"></center>
          </div>
-             <input type="submit" value="Submit" style="">
+             <center><input type="submit" value="Submit" style=""></center>
      </form>
+         </div>
+</section>
 {% endblock %}
