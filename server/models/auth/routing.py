@@ -1,7 +1,7 @@
 from server.models.auth.schema import User
 from server.models.auth.forms import LoginForm, RegistrationForm
 from flask_login import login_user, logout_user, login_required, current_user
-from flask import redirect, url_for, flash, render_template
+from flask import redirect, url_for, flash, render_template, request
 from flask import Blueprint
 from server import login_manager, db
 
@@ -17,7 +17,8 @@ def login():
     print('current_user: ', current_user)
     print('current_user.is_authenticated: ', current_user.is_authenticated)
     if current_user.is_authenticated:
-        return redirect('/')
+        print('>>> request.args.get("next"): ', request.args.get("next"))
+        return redirect(request.args.get("next") or "../")
     form = LoginForm()
     print('>>>form: ', form)
     print('form.validate_on_submit(): ', form.validate_on_submit())
@@ -33,7 +34,7 @@ def login():
         print('>>>user is not none. Attempting login user')
         login_user(user, remember=form.remember_me.data)
         print('>>>somehow logined user')
-        return redirect('../')
+        return redirect(request.args.get("next") or "../")
     else:
         print('>>> redirecting ot login page')
         return render_template('login.jinja2', title='Sign In', form=form)
