@@ -1,26 +1,60 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Sign In</h1>
-    <form method="post" novalidate>
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}<br>
-            {% for error in form.username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}<br>
-            {% for error in form.password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit() }}</p>
-    </form>
-    <p>New User? <a href="{{ '/auth/register' }}">Click to Register!</a></p>
+
+    <div class="container">
+
+        <section>
+            <div class="section-heading">
+
+                <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                    <div class="card card-signin my-5">
+                        <div class="card-body">
+                            <h3 class="card-title text-center">Sign In</h3>
+
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger">
+                                    <strong>{{form.non_field_errors}}</strong>
+                                </div>
+                            {% endif%}
+
+                                <form method="post" novalidate>
+                                    {{ form.hidden_tag() }}
+                                    {{ form.csrf_token }}
+
+                                    <div>
+                                        {{ form.username.label }}<br>
+                                        {{ form.username(size=32) }}<br>
+
+                                        {% for error in form.username.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div>
+                                        {{ form.password.label }}<br>
+                                        {{ form.password(size=32) }}<br>
+
+                                        {% for error in form.password.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </div>
+
+
+                                    <div>
+                                        {{ form.remember_me() }} {{ form.remember_me.label }}
+
+                                    </div>
+
+                                    {{ form.submit() }}
+                                </form>
+                            <p>New User? <a href="{{ '/auth/register' }}">Click to Register!</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
 {% endblock %}
