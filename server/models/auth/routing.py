@@ -25,6 +25,9 @@ def login():
 
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
+        print(form.username.data)
+        print(form.password.data)
+
         print('>>>user: ', user)
         print(">>>?>: form.password.data", form.password.data)
         if user is None or not user.check_password(form.password.data):
@@ -44,10 +47,12 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 @login_required
+@auth_mold.route('/logout')
 def logout():
     logout_user()
     print('>>> log out user')
-    return redirect(url_for('index'))
+    # return render_template('home.jinja2')
+    return redirect(request.args.get("next") or "../")
 
 
 @auth_mold.route('/register', methods=['GET', 'POST'])
@@ -55,6 +60,7 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('../home'))
     form = RegistrationForm()
+
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
@@ -62,7 +68,10 @@ def register():
         db.DATABASE.session.add(user)
         db.DATABASE.session.commit()
         flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('auth.login'))
+
+        login_user(user)
+        return redirect(request.args.get("next") or "../")
+
     return render_template('register.jinja2', title='Register', form=form)
 
 @login_required

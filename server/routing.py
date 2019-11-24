@@ -25,7 +25,11 @@ def login():
             next_page = url_for('index')
         return redirect(next_page)
     return render_template('login.jinja2', title='Sign In', form=form)
-    
+
+def logout():
+    logout_user()
+    return redirect(url_for('/'))
+
 def sender():
     return render_template('sender.jinja2', title='Sign In')
 
