@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-COLLECTION = 'eod_prices'                                       # MongoDB collection
+COLLECTION = 'prices'                                       # MongoDB collection
 SYMBOLS = ['ITOT', 'DIA', 'SPY', 'XLG', 'AIA', 'GXC', 'XLY', 'XLE', 'XLF', 'XLV', 'XLI', 'XLB', 'XLK', 'XLU', 'ICLN', 'CGW', 'WOOD', 'IYR']
 
 SAMPLE_FREQUENCY = 'monthly'

@@ -155,25 +155,6 @@ paths:
   /portfolioview:
     get:
       operationId: "server.models.portfolio.routing.portfolioview"
-      parameters:
-        - name: weightings
-          description: weightings
-          in: query
-          type: array
-          items:
-            type: number
-        - name: expectedReturn
-          description: expectedReturn
-          in: query
-          type: number
-        - name: expectedVol
-          description: expectedVol
-          in: query
-          type: number
-        - name: risk
-          description: risk
-          in: query
-          type: string
       produces:
         - text/html
       responses:
@@ -207,51 +188,6 @@ paths:
   /portfoliodashboard:
     get:
       operationId: "server.models.portfolio.routing.portfoliodashboard"
-      parameters:
-        - name: histValues
-          description: histValues
-          in: query
-          type: array
-          items:
-            type: number
-        - name: weightings
-          description: weightings
-          in: query
-          type: array
-          items:
-            type: number
-        - name: long
-          description: long
-          in: query
-          type: array
-          items:
-            type: number
-        - name: short
-          description: short
-          in: query
-          type: array
-          items:
-            type: number
-        - name: portfolioInitialValue
-          description: portfolioInitialValue
-          in: query
-          type: number
-        - name: returnSinceInception
-          description: returnSinceInception
-          in: query
-          type: number
-        - name: expectedReturn
-          description: expectedReturn
-          in: query
-          type: number
-        - name: expectedVol
-          description: expectedVol
-          in: query
-          type: number
-        - name: risk
-          description: risk
-          in: query
-          type: string
       produces:
         - text/html
       responses:

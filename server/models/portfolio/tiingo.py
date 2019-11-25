@@ -3,18 +3,23 @@ import time
 import requests
 
 import pandas as pd
+from server.models.stock.stock import Stocks
 
-TIINGO_KEY = '2e64578d69892c20fab750efe3ae9ed176f7c1af' #'6d2d79e31c7c1b6bae9be7e8986b4a5fe3ce5111'
+TIINGO_KEY = '2e64578d69892c20fab750efe3ae9ed176f7c1af'  # '6d2d79e31c7c1b6bae9be7e8986b4a5fe3ce5111'
 TIINGO_EOD = 'https://api.tiingo.com/tiingo/daily/%s/prices?startDate=%s&endDate=%s'
+
+s = Stocks()
+
 
 def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=True):
     data = pd.DataFrame()
     start = time.time()
 
     try:
-        for ticker in tickers:
-            data[ticker] = tiingo(ticker, start_date, end_date)[data_point]
-
+        # for ticker in tickers:
+        #    data[ticker] = tiingo(ticker, start_date, end_date)[data_point]
+        data = s.get_all()
+        print(data)
         print("\n\nSUCCESS: retrieved new %s data ..." % data_point)
         print('finished retrieving %s data in %f seconds.\n\n' % (data_point, time.time() - start))
 
@@ -31,8 +36,7 @@ def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=Tru
 
             return None
 
-
-    data.index = pd.to_datetime(data.index)
+    data.set_index("date", drop=True, inplace=True)
 
     if save:
         data.to_csv(os.getcwd() + r'/data/%s.csv' % data_point)

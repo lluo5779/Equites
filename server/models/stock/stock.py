@@ -22,7 +22,7 @@ class Stocks(object):
 
     @classmethod
     def get_all(self):  # Retrieves all stock records
-        return pd.read_sql('select "symbol","date", "adjClose","adjVolume" from "{}" ;'.format(COLLECTION),
+        return pd.read_sql('select * from "{}" ;'.format(COLLECTION),
                            Database.DATABASE.engine)
 
     @classmethod

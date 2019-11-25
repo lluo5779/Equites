@@ -12,7 +12,8 @@ from server.models.portfolio.rs import business_days
 from server.models.portfolio.optimize import optimize
 from server.models.portfolio.config import SYMBOLS
 
-def dominate(mu, cov, cost, prices, risk_tolerance, single_period=False):
+
+def dominate(portfolio, mu, cov, cost, prices, risk_tolerance, single_period=False):
     """By Default, always multi-period"""
 
     # start date for the based portfolio to be determined ... always assign to past 6 months (ie rebalance the period)
@@ -74,7 +75,7 @@ if __name__ == "__main__":
     # user chooses if they want to do 2 period optimization or not ... choosing whether they want the portfolio to just be buy and hold
     single_period = False
 
-    soln, agg_soln = dominate(mu, cov, cost, prices, risk_tolerance, single_period)
+    soln, agg_soln = dominate(portfolio, mu, cov, cost, prices, risk_tolerance, single_period)
 
     x1 = pd.DataFrame(soln.x[:N])
     x2 = pd.DataFrame(soln.x[N:])
