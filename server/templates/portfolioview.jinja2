@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <input type="text" name="{{ portfolioName }}" placeholder="Portfolio Name...">
+        <div>
+            {{ histValues[-1] }}
+        </div>
+        <div>
+            {{ histValues }}
+        </div>
+        <div>
+            {{ expectedReturn }}
+        </div>
+        <div>
+            {{ expectedVol }}
+        </div>
+        <div>
+            {{ risk }}
+        </div>
+        <div>
+            {{ weightings }}
+        </div>
+        <div>
+            {{ long }}
+        </div>
+        <div>
+            {{ short }}
+        </div>
+        <input type="submit" value="Save">
+        <input type="submit" formaction="/editportfolio" value="Edit">
+    </form>
+{% endblock %}

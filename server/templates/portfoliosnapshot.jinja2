@@ -1,16 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% for i in range(returnSinceInception| length) %}
-        <div>
-            <!--Curr Value-->
-            {{ histValues[i][-1] }}
-        </div>
-        <div>
-            {{ returnSinceInception[i] }}
-        </div>
-        <div>
-            {{ histValues[i][:] }}
-        </div>
+    {% for i in range(portfolioNames| length) %}
+        <form action="/portfoliodashboard" method="get">
+            <div>
+                {% portfolioName = portfolioNames[i] %}
+                {{portfolioName }}
+            </div>
+            <div>
+                <!--Curr Value-->
+                {{ histValues[i][-1] }}
+            </div>
+            <div>
+                {{ returnSinceInception[i] }}
+            </div>
+            <div>
+                {{ histValues[i][:] }}
+            </div>
+         </form>
+
     {%  endfor %}
 {% endblock %}

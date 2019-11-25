@@ -54,37 +54,40 @@ def create_portfolio():  # Views form to create portfolio associated with active
     return render_template('/portfolios/new_portfolio.jinja2')
 
 
-@login_required
+#@login_required
 def optiondecision():
     return render_template('OptionDecision.jinja2', title='optiondecision')
 
 
-@login_required
+#@login_required
 def option1():
-    return render_template('Option1.jinja2', tickers=s.tickers)
+    weightings =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    return render_template('Option1.jinja2', tickers=s.tickers, weightings=weightings)
 
 
-@login_required
+#@login_required
 def option2():
-    return render_template('Option2.jinja2', tickers=s.tickers)
+    weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    timeHorizon = 50
+    return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings, timeHorizon=timeHorizon)
 
 
-@login_required
+#@login_required
 def option3parent():
     return render_template('Option3Parent.jinja2', title='optiondecision')
 
 
-@login_required
+#@login_required
 def option3childa():
     return render_template('Option3ChildA.jinja2', title='optiondecision')
 
 
-@login_required
+#@login_required
 def option3childb():
     return render_template('Option3ChildB.jinja2', title='optiondecision')
 
 
-@login_required
+#@login_required
 def option3childc():
     print("request.query_string: ", len(request.query_string))
     if len(request.query_string) == 0:
@@ -119,7 +122,6 @@ def portfoliio():
     risk = 'High'
     return render_template('portfolio.jinja2', title='Sign In', weightings=weightings, risk=risk,histPortValue=histPortValue,histVOL=histVol, expectedReturn=expectedReturn,expectedVol=expectedVol)
 '''
-
 
 @login_required
 def portfolioview():
@@ -227,3 +229,17 @@ def portfoliodashboard():
     return render_template('portfoliodashboard.jinja2', title='optiondecision',
                            returnSinceInception=returnSinceInception, histValues=histValues, weightings=weightings,
                            short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk)
+
+
+
+#@login_required
+def editPortfolio():
+    #pull most recent questionaire data
+
+    #if portfolio is option 1
+    return render_template('Option1.jinja2', title='Sign In', weightings=weightings)
+
+    #if portfolio is option 2
+    return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
+
+

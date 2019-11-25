@@ -11,14 +11,14 @@
     <div class="marginCenter">
      <form action="/portfolioview" method="get">
         <table>
-            {% for ticker in tickers %}
+            {% for i in range(tickers| length) %}
                 <tr>
                     <td>
-                        {{  ticker }}
+                        {{  tickers[i] }}
                     </td>
                     <td>
-                        <input type="text" name="{{ ticker }}" value="0%">
-                        {{ ticker }}
+                        <input type="text" name="{{ tickers[i] }}" value="{{ weightings[i] }}">
+                        {{ tickers[i] }}
                     </td>
                 </tr>
             {% endfor %}

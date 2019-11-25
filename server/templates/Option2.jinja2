@@ -9,21 +9,21 @@
 {% block content %}
 <section>
     <div class="marginCenter">
-     <form action="" method="get">
+     <form action="/portfolioview" method="get">
         <table>
-            {% for ticker in tickers %}
+            {% for i in range(tickers| length) %}
                 <tr>
                     <td>
-                        {{  ticker }}
+                        {{  tickers[i] }}
                     </td>
                     <td>
-                        <input type="text" name="{{ ticker }}" value="0%">
+                        <input type="text" name="{{ tickers[i] }}" value={{ weightings[i] }}>
                     </td>
                 </tr>
             {% endfor %}
         </table>
          <div>
-             <center><input type="range" min="1" max="100" value="50" id="myRange"></center>
+             <center><input type="range" min="1" max="100" value={{ timeHorizon }} id="myRange"></center>
          </div>
              <center><input type="submit" value="Submit" style=""></center>
      </form>
