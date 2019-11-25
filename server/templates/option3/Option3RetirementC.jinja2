@@ -1,13 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="" method="get">
+    <form action="/portfolioview" method="get">
         <div>
-            How much do you want to invest?
-        </div>
-        <input type="text" name="initialInvestment">
-        <div>
-            How much risk are you willing to have?
+            Amount of risk you would like in your portfolio?
         </div>
         <div>
             <select name="riskAppetite">
@@ -19,6 +15,6 @@
                 </option>
             </select>
         </div>
-        <input type="submit" value="Submit" style="">
+        <input type="submit" value="Submit">
     </form>
 {% endblock %}

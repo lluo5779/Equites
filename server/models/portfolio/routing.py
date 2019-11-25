@@ -242,5 +242,7 @@ def editportfolio():
     #if portfolio is option 2
     return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
 
+def saveportfolio():
+    return render_template("home.jinja2")
 
 

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="" method="get">
+        <div>
+            Step 1: Expected year of retirement
+        </div>
+        <div>
+             <input type="range" min="2019" max="3000" value="2050" id="myRange" name="timeHorizon">
+         </div>
+        <input type="submit" value="Submit" style="">
+    </form>
+{% endblock %}
