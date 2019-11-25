@@ -1157,7 +1157,7 @@ body {
 		justify-content: center;
 		padding: 8em 4em 6em 4em;
 		min-height: 70vh;
-		background-image: url("../images/logo1.jpg");
+		background-image: url("../images/equites.jpg");
 		background-position: center;
 		background-size: cover;
 		background-repeat: no-repeat;
@@ -1175,9 +1175,9 @@ body {
 
 		#banner h1 {
 			color: #fff;
-			font-size: 5em;
-			font-weight: 400;
-			font-family: 'Passion One', cursive;
+			font-size: 4em;
+			font-weight: 100;
+			text-transform: uppercase !important;
 			margin: 0;
 		}
 
@@ -1192,16 +1192,15 @@ body {
 			@media screen and (max-width: 736px) {
 
 				#banner h1 {
-					font-size: 3em;
+					font-size: 4em;
 				}
 
 			}
 
 		#banner h2 {
 			color: #fff;
-			font-size: 5em;
+			font-size: 3em;
 			font-weight: 100;
-			font-family: 'Passion One', cursive;
 			margin: 0;
 		}
 
@@ -1256,24 +1255,24 @@ body {
 
 		#banner .more {
 			background-image: url("../images/arrow.svg");
-			background-position: center 1.35em;
+			background-position: center 0.95em;
 			background-repeat: no-repeat;
 			background-size: auto;
 			border: 1px solid #fff;
 			border-radius: 100%;
 			color: rgba(255, 255, 255, 0.75);
 			display: block;
-			height: 4em;
+			height: 3em;
 			text-indent: 4em;
 			overflow: hidden;
 			white-space: nowrap;
-			width: 4em;
+			width: 3em;
 			z-index: 2;
 			margin: 0 auto 2em auto;
 		}
 
 			#banner .more:hover {
-				background-color: rgba(255, 255, 255, 0.05);
+				background-color: rgba(255, 255, 255, 0.10);
 				border: 1px solid #fff;
 				color: #FFF;
 			}
@@ -1294,20 +1293,16 @@ body {
 		}
 
 		#banner:before {
-			-moz-transition: opacity 3s ease;
-			-webkit-transition: opacity 3s ease;
-			-ms-transition: opacity 3s ease;
-			transition: opacity 3s ease;
-			-moz-transition-delay: 1s;
-			-webkit-transition-delay: 1s;
-			-ms-transition-delay: 1s;
-			transition-delay: 1s;
+			-moz-transition: opacity 1s ease;
+			-webkit-transition: opacity 1s ease;
+			-ms-transition: opacity 1s ease;
+			transition: opacity 1s ease;
 			content: '';
-			background-color: #42424f;
+			background-color: #3B4F66;
 			display: block;
 			height: 100%;
 			left: 0;
-			opacity: 0.45;
+			opacity: 0.10;
 			position: absolute;
 			top: 0;
 			width: 100%;
