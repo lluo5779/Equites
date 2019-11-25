@@ -233,13 +233,14 @@ def portfoliodashboard():
 
 
 #@login_required
-def editPortfolio():
-    #pull most recent questionaire data
+def editportfolio():
+    #pull most recent questionaire data if portfolioName==""
 
     #if portfolio is option 1
     return render_template('Option1.jinja2', title='Sign In', weightings=weightings)
 
     #if portfolio is option 2
     return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
+
 
 

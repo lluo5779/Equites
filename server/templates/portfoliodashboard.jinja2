@@ -1,35 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div>
-        {{ portfolioName }}
-    </div>
-    <div>
-        {{ histValues[-1] }}
-    </div>
-    <div>
-        {{ returnSinceInception }}
-    </div>
-    <div>
-        {{ histValues }}
-    </div>
-    <div>
-        {{ expectedReturn }}
-    </div>
-    <div>
-        {{ expectedVol }}
-    </div>
-    <div>
-        {{ risk }}
-    </div>
-    <div>
-        {{ weightings }}
-    </div>
-    <div>
-        {{ long }}
-    </div>
-    <div>
-        {{ short }}
-    </div>
-    <input type="submit" value="Edit">
+    <form action="/editportfolio" method="get">
+        <div>
+            {{ portfolioName }}
+        </div>
+        <div>
+            {{ histValues[-1] }}
+        </div>
+        <div>
+            {{ returnSinceInception }}
+        </div>
+        <div>
+            {{ histValues }}
+        </div>
+        <div>
+            {{ expectedReturn }}
+        </div>
+        <div>
+            {{ expectedVol }}
+        </div>
+        <div>
+            {{ risk }}
+        </div>
+        <div>
+            {{ weightings }}
+        </div>
+        <div>
+            {{ long }}
+        </div>
+        <div>
+            {{ short }}
+        </div>
+        <input type="submit" value="Edit">
+    </form>
 {% endblock %}

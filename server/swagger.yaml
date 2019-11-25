@@ -193,3 +193,39 @@ paths:
       responses:
         200:
           description: A list of users
+
+  /saveportfolio:
+    get:
+      operationId: "server.models.portfolio.routing.saveportfolio"
+      parameters:
+        - name: portofolioName
+          description: portfolioName
+          in: query
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /editportfolio:
+    get:
+      operationId: "server.models.portfolio.routing.editportfolio"
+      parameters:
+        - name: portofolioName
+          description: portfolioName
+          in: query
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users

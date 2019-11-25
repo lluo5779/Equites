@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <form action="/saveportofolio" method="get">
+        {% portolioName ="" %}
         <input type="text" name="{{ portfolioName }}" placeholder="Portfolio Name...">
         <div>
             {{ histValues[-1] }}
@@ -27,6 +29,6 @@
             {{ short }}
         </div>
         <input type="submit" value="Save">
-        <input type="submit" formaction="/editportfolio" value="Edit">
+        <input type="submit" action="/editportfolio" value="Edit"></input>
     </form>
 {% endblock %}
