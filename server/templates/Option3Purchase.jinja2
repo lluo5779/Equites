@@ -22,9 +22,10 @@
               }
             });
 
-            xhr.open("GET", "https://api.tiingo.com/tiingo/news?");
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.setRequestHeader("cache-control", "no-cache");
+            xhr.open("GET", "{{ url_for('/.server_models_portfolio_routing_editportfolio')}}");
+            xhr.setRequestHeader("investmentGoal", "application/json");
+            xhr.setRequestHeader("timeHorizon", "no-cache");
+            xhr.setRequestHeader("riskAppetite", "no-cache");
 
             xhr.send(data);
         }

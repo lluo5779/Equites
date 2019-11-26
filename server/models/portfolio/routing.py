@@ -155,11 +155,10 @@ def portfoliio():
 '''
 
 
-@login_required
+#@login_required
 def portfolioview():
     # initial user input
     # try:
-
     username = current_user.username
     print('username: ', username)
     p = Portfolio(username)
@@ -184,7 +183,6 @@ def portfolioview():
 
     return render_template('portfolio.jinja2', title='Sign In', weightings=weightings, risk=risk,
                            expectedReturn=expectedReturn, expectedVol=expectedVol)
-
     # except:
     #     return render_template('OptionDecision.jinja2')
 
@@ -286,7 +284,7 @@ def option3Parent():
 def option3Purchase():
     timeHorizon = 2019
     investmentGoal = 0
-    riskAppetite = 2
+    riskAppetite = "Medium"
     return render_template('Option3Purchase.jinja2', title='optiondecision', timeHorizon=timeHorizon, investmentGoal=investmentGoal, riskAppetite=riskAppetite)
 
 def option3PurchaseA():
@@ -301,7 +299,7 @@ def option3PurchaseC():
 def option3Retirement():
     timeHorizon = 2019
     investmentGoal = 0
-    riskAppetite = 2
+    riskAppetite = "Medium"
     return render_template('Option3Retirement.jinja2', title='optiondecision', timeHorizon=timeHorizon, investmentGoal=investmentGoal, riskAppetite=riskAppetite)
 
 def option3RetirementA():
@@ -315,7 +313,7 @@ def option3RetirementC():
 
 def option3Wealth():
     initialInvestment = 0
-    riskAppetite = 2
+    riskAppetite = "Medium"
     return render_template('Option3Wealth.jinja2', title='optiondecision', initialInvestment=initialInvestment, riskAppetite=riskAppetite)
 
 def option3WealthA():
