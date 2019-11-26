@@ -2,16 +2,27 @@
 
 {% block content %}
     <script>
-        function storeParameters(){
+        function sendStoredValues(){
+            var data = JSON.stringify(false);
+
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+
+            xhr.addEventListener("readystatechange", function () {
+              if (this.readyState === 4) {
+                console.log(this.responseText);
+              }
+            });
+
             window.localStorage.setItem('riskAppetite', document.getElementById("riskAppetite").value);
-        };
-        function getParameters(){
-          let input = document.getElementById("riskAppetite");
-          input.value = window.localStorage.getItem('riskAppetite');
-        };
-        window.addEventListener("DOMContentLoaded", function() {
-            getParameters()
-        }, false);
+
+            xhr.open("GET", "{{ url_for('/.server_models_portfolio_routing_portfolioview')}}");
+            xhr.setRequestHeader("initialInvestment", window.localStorage.getItem('initialInvestment'));
+            xhr.setRequestHeader("riskAppetite", window.localStorage.getItem('riskAppetite'));
+            xhr.setRequestHeader("optionType", window.localStorage.getItem('Wealth'));
+
+            xhr.send(data);
+        }
     </script>
     <div>
         Amount of risk you would like in your portfolio?
@@ -51,9 +62,7 @@
             {% endif %}
         </select>
     </div>
-    <a href="{{ url_for('/.server_models_portfolio_routing_portfolioview')}}">
-        <button type="submit" onclick="storeParameters()">Next</button>
-    </a>
+    <button type="submit" onclick="sendStoredValues()">Next</button>
     <a href="{{url_for('/.server_models_portfolio_routing_option3WealthA')}}">
         <button type="submit">Back</button>
     </a>

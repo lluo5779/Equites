@@ -129,6 +129,37 @@ paths:
   /portfolioview:
     get:
       operationId: "server.models.portfolio.routing.portfolioview"
+      parameters:
+        - name: timeHorizon
+          description: timeHorizon
+          in: query
+          type: array
+          items:
+            type: number
+        - name: investmentGoal
+          description: investmentGoal
+          in: query
+          type: array
+          items:
+            type: number
+        - name: riskAppetite
+          description: riskAppetite
+          in: query
+          type: array
+          items:
+            type: string
+        - name: initialInvestment
+          description: initialInvestment
+          in: query
+          type: array
+          items:
+            type: number
+        - name: optionType
+          description: optionType
+          in: query
+          type: array
+          items:
+            type: string
       produces:
         - text/html
       responses:
