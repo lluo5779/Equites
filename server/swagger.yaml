@@ -80,6 +80,24 @@ paths:
         200:
           description: A list of users
 
+  /option1Results:
+    get:
+      operationId: "server.models.portfolio.routing.option1Results"
+      parameters:
+        - name: weightings
+          description: weightingss
+          in: query
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
   /option2:
     get:
       operationId: "server.models.portfolio.routing.option2"
@@ -98,32 +116,6 @@ paths:
         200:
           description: A list of users
 
-  /option3childa:
-    get:
-      operationId: "server.models.portfolio.routing.option3childa"
-      produces:
-        - text/html
-      responses:
-        200:
-          description: A list of users
-
-  /option3childb:
-    get:
-      operationId: "server.models.portfolio.routing.option3childb"
-      produces:
-        - text/html
-      responses:
-        200:
-          description: A list of users
-
-  /option3childc:
-    get:
-      operationId: "server.models.portfolio.routing.option3childc"
-      produces:
-        - text/html
-      responses:
-        200:
-          description: A list of users
 
   /contact:
     get:
@@ -219,11 +211,118 @@ paths:
         - name: portofolioName
           description: portfolioName
           in: query
-          type: array
-          items:
-            type: array
-            items:
-              type: string
+          type: string
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3Parent:
+    get:
+      operationId: "server.models.portfolio.routing.option3Parent"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3Purchase:
+    get:
+      operationId: "server.models.portfolio.routing.option3Purchase"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3PurchaseA:
+    get:
+      operationId: "server.models.portfolio.routing.option3PurchaseA"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+
+  /option3PurchaseB:
+    get:
+      operationId: "server.models.portfolio.routing.option3PurchaseB"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3PurchaseC:
+    get:
+      operationId: "server.models.portfolio.routing.option3PurchaseC"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+
+
+  /option3Retirement:
+    get:
+      operationId: "server.models.portfolio.routing.option3Retirement"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3RetirementA:
+    get:
+      operationId: "server.models.portfolio.routing.option3RetirementA"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3RetirementB:
+    get:
+      operationId: "server.models.portfolio.routing.option3RetirementB"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3RetirementC:
+    get:
+      operationId: "server.models.portfolio.routing.option3RetirementC"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3Wealth:
+    get:
+      operationId: "server.models.portfolio.routing.option3Wealth"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3WealthA:
+    get:
+      operationId: "server.models.portfolio.routing.option3WealthA"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /option3WealthB:
+    get:
+      operationId: "server.models.portfolio.routing.option3WealthB"
       produces:
         - text/html
       responses:

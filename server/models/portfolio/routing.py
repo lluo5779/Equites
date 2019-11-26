@@ -5,15 +5,21 @@ from server.models.auth.schema import User
 # import server.models.users.decorators as user_decorators
 from server.common.database import Database
 from server.models.portfolio.portfolio import Portfolio
+from server.models.portfolio.bt import back_test
 from server.models.stock.stock import Stocks
 from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
 from server.models.portfolio.bt import back_test
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import pandas as pd
 
+import flask
+from plotly.graph_objs import Scatter, Pie, Layout
+from datetime import datetime
 from io import BytesIO
 import urllib
 import base64
+import plotly.offline
 
 s = Stocks()
 
@@ -54,40 +60,65 @@ def create_portfolio():  # Views form to create portfolio associated with active
     return render_template('/portfolios/new_portfolio.jinja2')
 
 
-#@login_required
+# @login_required
 def optiondecision():
     return render_template('OptionDecision.jinja2', title='optiondecision')
 
 
-#@login_required
-def option1():
-    weightings =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    return render_template('Option1.jinja2', tickers=s.tickers, weightings=weightings)
+# @login_required
+def track():
+    if len(request.query_string) == 0:
+        weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        return render_template('Option1.jinja2', tickers=s.tickers, weightings=weightings)
+    else:
+        # do this after you extract the starting and ending dates ...
+        args = list(request.args.values())
+
+        tickers = args[::2]
+        values = [float(x) for x in args[1::2]]
+        weights = [x / sum(values) for x in values]
+        portfolio = dict(zip(tickers, weights))
+
+        start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
+
+        values, success, msg = back_test(portfolio, start_date, dollars=sum(values))
+        port_values = values.sum(axis=1)
+
+        plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines')
+
+        plot = plotly.offline.plot({"data": plot_data},
+                                   output_type='div',
+                                   include_plotlyjs=False,
+                                   show_link=False,
+                                   config={"displayModeBar": False})
+
+        return render_template('Option1.jinja2', tickers=tickers, weightings=values, plot=plot)
 
 
-#@login_required
+# @login_required
 def option2():
     weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     timeHorizon = 50
     return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings, timeHorizon=timeHorizon)
 
 
-#@login_required
+# @login_required
 def option3parent():
     return render_template('Option3Parent.jinja2', title='optiondecision')
 
 
-#@login_required
+# @login_required
 def option3childa():
     return render_template('Option3ChildA.jinja2', title='optiondecision')
 
 
-#@login_required
+# @login_required
 def option3childb():
     return render_template('Option3ChildB.jinja2', title='optiondecision')
 
 
-#@login_required
+# @login_required
 def option3childc():
     print("request.query_string: ", len(request.query_string))
     if len(request.query_string) == 0:
@@ -123,6 +154,7 @@ def portfoliio():
     return render_template('portfolio.jinja2', title='Sign In', weightings=weightings, risk=risk,histPortValue=histPortValue,histVOL=histVol, expectedReturn=expectedReturn,expectedVol=expectedVol)
 '''
 
+
 @login_required
 def portfolioview():
     # initial user input
@@ -137,6 +169,7 @@ def portfolioview():
 
         for sym in SYMBOLS:
             weightings.append(request.args.get(sym).strip('%'))
+
         print(weightings)
         expectedReturn = 0.1
         expectedVol = 0.1
@@ -231,18 +264,64 @@ def portfoliodashboard():
                            short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk)
 
 
-
 #@login_required
 def editportfolio():
     #pull most recent questionaire data if portfolioName==""
-
     #if portfolio is option 1
+    weightings = [0]
     return render_template('Option1.jinja2', title='Sign In', weightings=weightings)
 
     #if portfolio is option 2
-    return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
+    #return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
 
 def saveportfolio():
     return render_template("home.jinja2")
+
+
+'''Option 3'''
+#@login_required
+def option3Parent():
+    return render_template('Option3Parent.jinja2', title='optiondecision')
+
+def option3Purchase():
+    timeHorizon = 2019
+    investmentGoal = 0
+    riskAppetite = 2
+    return render_template('Option3Purchase.jinja2', title='optiondecision', timeHorizon=timeHorizon, investmentGoal=investmentGoal, riskAppetite=riskAppetite)
+
+def option3PurchaseA():
+    return render_template('Option3PurchaseA.jinja2')
+
+def option3PurchaseB():
+    return render_template('Option3PurchaseB.jinja2')
+
+def option3PurchaseC():
+    return render_template('Option3PurchaseC.jinja2')
+
+def option3Retirement():
+    timeHorizon = 2019
+    investmentGoal = 0
+    riskAppetite = 2
+    return render_template('Option3Retirement.jinja2', title='optiondecision', timeHorizon=timeHorizon, investmentGoal=investmentGoal, riskAppetite=riskAppetite)
+
+def option3RetirementA():
+    return render_template('Option3RetirementA.jinja2', title='optiondecision')
+
+def option3RetirementB():
+    return render_template('Option3RetirementB.jinja2', title='optiondecision')
+
+def option3RetirementC():
+    return render_template('Option3RetirementC.jinja2', title='optiondecision')
+
+def option3Wealth():
+    initialInvestment = 0
+    riskAppetite = 2
+    return render_template('Option3Wealth.jinja2', title='optiondecision', initialInvestment=initialInvestment, riskAppetite=riskAppetite)
+
+def option3WealthA():
+    return render_template('Option3WealthA.jinja2', title='optiondecision')
+
+def option3WealthB():
+    return render_template('Option3WealthB.jinja2', title='optiondecision')
 
 

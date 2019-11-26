@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        function storeParameters(){
+            window.localStorage.setItem('investmentGoal', {{ investmentGoal }})
+            window.localStorage.setItem('timeHorizon', {{ timeHorizon }})
+            window.localStorage.setItem('riskAppetite', {{ riskAppetite }})
+        }
+
+        document.onload(storeParameters())
+
+        function sendStoredValues(){
+            var data = JSON.stringify(false);
+
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+
+            xhr.addEventListener("readystatechange", function () {
+              if (this.readyState === 4) {
+                console.log(this.responseText);
+              }
+            });
+
+            xhr.open("GET", "https://api.tiingo.com/tiingo/news?");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("cache-control", "no-cache");
+
+            xhr.send(data);
+        }
+    </script>
+    <div>
+        Step 1: Expected year of purchase
+    </div>
+    <div>
+        Step 2: Amount you'll need for purchase
+    </div>
+    <div>
+        Step 3: Amount of risk you would like in your portfolio
+    </div>
+    <div>
+        Step 4: View created portfolio, name and save
+    </div>
+    <a href="{{ url_for('/.server_models_portfolio_routing_option3PurchaseA')}}">
+        <button type="submit">Next</button>
+    </a>
+
+{% endblock %}

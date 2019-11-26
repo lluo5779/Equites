@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        function storeParameters(){
+            window.localStorage.setItem('initialInvestment', document.getElementById("initialInvestment").value);
+        };
+        function getParameters(){
+          let input = document.getElementById("initialInvestment");
+          input.value = window.localStorage.getItem('initialInvestment');
+        };
+        window.addEventListener("DOMContentLoaded", function() {
+            getParameters()
+        }, false);
+    </script>
+    <div>
+        How much would you like to invest?
+    </div>
+    <input type="text" name="initialInvestment" id="initialInvestment">
+    <a href="{{ url_for('/.server_models_portfolio_routing_option3WealthB') }}">
+        <button type="submit" onclick="storeParameters()">Next</button>
+    </a>
+{% endblock %}
