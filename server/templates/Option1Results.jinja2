@@ -1,0 +1,24 @@
+{% extends "Option1.jinja2" %}
+
+{% block results %}
+
+    <div class="container" id="plot">
+            <div class="col-md-12">
+                {{ plot }}
+            </div>
+        </div>
+        <div id="plot">
+            High:
+            {{ stats[0] }}
+        </div>
+        <div>
+            Low:
+            {{ stats[1] }}
+        </div>
+        <div>
+            Volatility:
+            {{ stats[2] }}%
+        </div>
+    </section>
+
+{% endblock %}

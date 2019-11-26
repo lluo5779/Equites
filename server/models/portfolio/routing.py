@@ -12,6 +12,7 @@ from server.models.portfolio.bt import back_test
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import pandas as pd
+import numpy as np
 
 import flask
 from plotly.graph_objs import Scatter, Pie, Layout
@@ -71,7 +72,6 @@ def optiondecision():
 def track():
     if len(request.query_string) == 0:
         weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
         return render_template('Option1.jinja2', tickers=s.tickers, weightings=weightings)
     else:
         # do this after you extract the starting and ending dates ...
@@ -81,11 +81,16 @@ def track():
         values = [float(x) for x in args[1::2]]
         weights = [x / sum(values) for x in values]
         portfolio = dict(zip(tickers, weights))
-
-        start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
+        #start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
+        start_date = args[-1]
 
         values, success, msg = back_test(portfolio, start_date, dollars=sum(values))
         port_values = values.sum(axis=1)
+
+        minValue = round(min(port_values), 2)
+        maxValue = round(max(port_values), 2)
+        vol = round((np.std(port_values.pct_change()) * 252 ** 0.5)*100, 1)
+        stats = [maxValue, minValue, vol]
 
         plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines')
 
@@ -95,14 +100,14 @@ def track():
                                    show_link=False,
                                    config={"displayModeBar": False})
 
-        return render_template('Option1.jinja2', tickers=tickers, weightings=values, plot=plot)
+        return render_template('Option1Results.jinja2', tickers=tickers, weightings=values, plot=plot, stats=stats)
 
 @trackSpecialCase.route('/track2', methods=["GET", "POST"])
 def track2():
     if len(request.query_string) == 0:
         weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-        return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings)
+        return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings, stats=stats)
     else:
         #save option type 2 to database
         tickers = ["AAPL", "SPY", "TLT"]

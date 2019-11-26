@@ -193,19 +193,16 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+               <label for="start">Start Date:</label>
+                <input type="date" id="start" name="start" min="2010-01-01" max="2019-11-01" value="2015">
 
-            <label for="start">Start Date:</label>
-            <input type="date" id="start" name="start" min="2010-01-01" max="2019-11-01" value="2015">
+           </div>
+
 
             <center><input type="submit" id="next" value="Submit"></center>
         </form>
-
-        <div class="container" id="plot">
-            <div class="col-md-12">
-                {{ plot }}
-            </div>
-        </div>
     </section>
+
+    {% block results %}{% endblock %}
 
 {% endblock %}
