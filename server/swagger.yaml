@@ -80,24 +80,6 @@ paths:
         200:
           description: A list of users
 
-  /option1Results:
-    get:
-      operationId: "server.models.portfolio.routing.option1Results"
-      parameters:
-        - name: weightings
-          description: weightingss
-          in: query
-          type: array
-          items:
-            type: array
-            items:
-              type: number
-      produces:
-        - text/html
-      responses:
-        200:
-          description: A list of users
-
   /option2:
     get:
       operationId: "server.models.portfolio.routing.option2"
