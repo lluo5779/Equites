@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.theme.default.min.css') }}">
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> 
-    
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/slim/open-iconic-bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/slim/animate.css') }}">  
@@ -28,6 +27,40 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/slim/icomoon.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/slim/style.css') }}">
 
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.scrolly.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.poptrox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/skel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/util.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/main.js') }}"></script>
+ <!--   <script src="{{ url_for('static', filename='js/slim/jquery-migrate-3.0.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/jquery.easing.1.3.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/jquery.waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/jquery.stellar.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/aos.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/jquery.animateNumber.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/scrollax.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slim/main.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/slim/google-map.js') }}"></script>--!>
+
+    <!-- Scripts -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+    <script src="https://use.fontawesome.com/c076fb318b.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    {% block script %} 
+    {% endblock %}
+
     {% block css %} 
     {% endblock %}
 
@@ -38,7 +71,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicons/favicon-16x16.png') }}">
 </head>
 
-<body style="background-color:#3B4F66">
+<!-- <body style="background-color:#3B4F66"> --!>
+<body>
     <nav class="navbar ftco_navbar site-navbar-target ftco-navbar-custom navbar-expand-lg" id="ftco-navbar">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('/.server_routing_home') }}"> EQUITES </a>
@@ -98,56 +132,5 @@
         <p class="copyright">Equites © 2019. All rights reserved.</p>
     </div>
 </footer>
-
-<!-- Scripts -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
-<script src="https://use.fontawesome.com/c076fb318b.js"></script>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
-<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/jquery.scrolly.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/jquery.poptrox.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/skel.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/util.js') }}"></script>
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
-<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/jquery.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/jquery-migrate-3.0.1.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/popper.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/bootstrap.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/jquery.easing.1.3.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/jquery.waypoints.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/jquery.stellar.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/owl.carousel.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/jquery.magnific-popup.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/aos.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/jquery.animateNumber.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/scrollax.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slim/main.js') }}"></script>
-
-<script src="{{ url_for('static', filename='js/slim/google-map.js') }}"></script>
-
-{% block script %} 
-{% endblock %}
-
-
-
-
-</div>
-
-  <!-- loader -->
-  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
-
-  <audio controls="controls" style="display: none;"></audio>
-  <div class="poptrox-overlay" style="position: fixed; left: 0px; top: 0px; z-index: 10001; width: 100%; height: 100%; text-align: center; cursor: pointer; display: none;">
-    <div style="display:inline-block;height:100%;vertical-align:middle;"></div>
-    <div style="position:absolute;left:0;top:0;width:100%;height:100%;background:#222226;opacity:0.75;filter:alpha(opacity=75);"></div>
-    <div class="poptrox-popup" style="display: none; vertical-align: middle; position: relative; z-index: 1; cursor: pointer; min-width: 200px; min-height: 100px;">
-        <div class="loader" style="display: none;"></div>
-        <div class="pic" style="display: none;"></div><span class="closer" style="cursor: pointer; display: none;">×</span></div>
-    </div>
-
 
 </html>

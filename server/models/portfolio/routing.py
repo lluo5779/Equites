@@ -13,10 +13,14 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 
+import flask
+from plotly.graph_objs import Scatter, Pie, Layout
 from datetime import datetime
 from io import BytesIO
 import urllib
 import base64
+import plotly.offline
+
 
 s = Stocks()
 
@@ -64,29 +68,33 @@ def optiondecision():
 
 #@login_required
 def track():
-
     if len(request.query_string) == 0:
         weightings =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        
         return render_template('Option1.jinja2', tickers=s.tickers, weightings=weightings)
     else:
-        print(request.args.to_dict())
-        args = request.args.to_dict()
+        # do this after you extract the starting and ending dates ...
+        args = list(request.args.values())
+
+        tickers = args[::2]
+        values = [float(x) for x in args[1::2]]
+        weights = [x / sum(values) for x in values]
+        portfolio = dict(zip(tickers, weights))
 
         start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
 
-        d = {}
+        values, success, msg = back_test(portfolio, start_date, dollars=sum(values))
+        port_values = values.sum(axis=1)
 
-        for i in range(len(list(args.keys()))//2):
-            d[args['ticker_'+ str(i*2)]] = float(args['weight_'+ str(i*2)])
-        print(d)
+        plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode = 'lines')
+        
+        plot = plotly.offline.plot({"data": plot_data},
+                                    output_type='div',
+                                    include_plotlyjs=False,
+                                    show_link=False,
+                                    config={"displayModeBar": False})
 
-        port_vals, success, msg = back_test(d, start_date)
-        port_vals = port_vals.sum(axis=1)
-
-        return render_template('Option1.jinja2', tickers=list(args.keys()), weightings=list(args.values()), port_vals = port_vals)
-
-
-
+        return render_template('Option1.jinja2', tickers=tickers, weightings=values, plot=plot)
 
 #@login_required
 def option2():

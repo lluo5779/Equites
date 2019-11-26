@@ -2,6 +2,9 @@
 
 {% block css %}
 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
     <style type="text/css">
         .table-wrapper {
             width: 700px;
@@ -35,7 +38,7 @@
             table-layout: fixed;
         }
         table.table tr th, table.table tr td {
-            border-color: #e9e9e9;
+            border-color: #3B4F66;
         }
         table.table th i {
             font-size: 13px;
@@ -85,12 +88,27 @@
         table.table td .add {
             display: none;
         }
+        .centre-align {
+            padding: 10px;
+            border: 1px dashed gray;
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+        }
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
+        // $(document).ready( function() {
+        //     $().click(function() {
+        //         $.ajax("{{ url_for('/.server_models_portfolio_routing_track') }}").done(function (reply) {
+        //             $('#plot').html(reply);
+        //         });
+        //     });
+        // });
+
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
             var actions = $("table td:last-child").html();
@@ -100,7 +118,7 @@
                 var counter = index + 1;
                 var row = '<tr>' +
                     '<td><input id="ticker_'+counter+'" type="text" class="form-control" name="ticker_'+counter+'"></td>' +
-                    '<td><input id="weight_'+counter+'" type="text" class="form-control" name="weight_'+counter+'"></td>' +
+                    '<td><input id="value_'+counter+'" type="text" class="form-control" name="value_'+counter+'"></td>' +
                     '<td>' + actions + '</td>' +
                 '</tr>';
                 $("table").append(row);     
@@ -149,9 +167,10 @@
 
 {% block content %}
     <section>
-        <form action="/track" method="get">
-            <div class="container">
-                <div class="table-wrapper">
+        <form action="/track" method="get"> 
+        <!-- <form method="get"> -->
+           <div class="container">
+                <div class="table-wrapper col-md-12">
                     <div class="table-title">
                         <div class="row">
                             <div class="col-sm-8"></div>
@@ -164,29 +183,29 @@
                         <thead>
                             <tr>
                                 <th>Ticker</th>
-                                <th>Weight</th>
-                                <th>Actions</th>
+                                <th>Dollar Amount</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         
                         <tbody> 
                             <tr>
-                                <td><input id="ticker_0" type="text" class="form-control" name="ticker_0"></td>
-                                <td><input id="weight_0" type="text" class="form-control" name="weight_0"></td>
-                                <td><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
+                                <td><input id="ticker_0" type="text" placeholder="AAPL" class="form-control" name="ticker_0"></td>
+                                <td><input id="value_0" type="text" placeholder="1000" class="form-control" name="value_0"></td>
+                                <td><a style="centre-align" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
                             </tr>    
                         </tbody>
                     </table>
                 </div>
             </div>
-            <center><input type="submit" value="Submit"></center>
+            <center><input type="submit" id="next" value="Submit"></center>
         </form>
-    </section>
 
-    <section>
-        {{port_vals}}
-
+        <div class="container" id="plot">
+            <div class="col-md-12">
+                {{ plot }}
+            </div>
+        </div>
     </section>
-        }
 
 {% endblock %}
