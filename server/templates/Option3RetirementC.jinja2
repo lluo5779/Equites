@@ -20,7 +20,7 @@
             xhr.setRequestHeader("investmentGoal", window.localStorage.getItem('investmentGoal'));
             xhr.setRequestHeader("timeHorizon", window.localStorage.getItem('timeHorizon'));
             xhr.setRequestHeader("riskAppetite", window.localStorage.getItem('riskAppetite'));
-            xhr.setRequestHeader("optionType", window.localStorage.getItem('Retirement'));
+            xhr.setRequestHeader("optionType", 'retirement');
 
             xhr.send(data);
         }

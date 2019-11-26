@@ -39,6 +39,7 @@ from dateutil.relativedelta import relativedelta
 
 def back_test(portfolio, start_date, end_date=None, dollars=None):
 
+    print('portfolio, ', portfolio)
     cash = 0
     if end_date is None: end_date = datetime.now().strftime("%Y-%m-%d")
     if dollars is None: dollars = 1

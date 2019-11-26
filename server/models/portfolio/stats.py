@@ -4,11 +4,16 @@ from scipy.stats import norm
 
 
 def ret(mu, x):
+    print(mu)
+    print(x)
+
     return float(mu.T.dot(x).values)
 
 
+
 def vol(cov, x):
-    print("np.sqrt(x.T.dot(cov).dot(x)): ", np.sqrt(x.T.dot(cov).dot(x)))
+    print(cov)
+    print(x)
     try:
         return float(np.sqrt(x.T.dot(cov).dot(x)).values)
     except:
@@ -16,6 +21,9 @@ def vol(cov, x):
 
 
 def var(mu, cov, alpha, x):
+    print(mu)
+    print(cov)
+    print(x)
     try:
         return float(-mu.T.dot(x).values - norm.ppf(alpha) * np.sqrt(x.T.dot(cov).dot(x)).values)
     except:
