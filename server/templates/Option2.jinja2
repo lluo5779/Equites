@@ -1,32 +1,207 @@
 {% extends "base.html" %}
 
 {% block css %}
-<style>
-    .marginCenter{ border:2px solid; border-radius:25px;color:white; width:400px; height: 1400px;left:0; top:0; right:0; bottom: 0; margin: auto; background: auto;}
-</style>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+    <style type="text/css">
+        .table-wrapper {
+            width: 700px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        }
+        .table-title {
+            padding-bottom: 10px;
+            margin: 0 0 10px;
+        }
+        .table-title h2 {
+            margin: 6px 0 0;
+            font-size: 22px;
+        }
+        .table-title .add-new {
+            float: right;
+            height: 30px;
+            font-weight: bold;
+            font-size: 12px;
+            text-shadow: none;
+            min-width: 100px;
+            border-radius: 50px;
+            line-height: 13px;
+        }
+        .table-title .add-new i {
+            margin-right: 4px;
+        }
+        table.table {
+            table-layout: fixed;
+        }
+        table.table tr th, table.table tr td {
+            border-color: #3B4F66;
+        }
+        table.table th i {
+            font-size: 13px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        table.table th:last-child {
+            width: 100px;
+        }
+        table.table td a {
+            cursor: pointer;
+            display: inline-block;
+            margin: 0 5px;
+            min-width: 24px;
+        }
+        table.table td a.add {
+            color: #27C46B;
+        }
+        table.table td a.edit {
+            color: #FFC107;
+        }
+        table.table td a.delete {
+            color: #E34724;
+        }
+        table.table td i {
+            font-size: 19px;
+        }
+        table.table td a.add i {
+            font-size: 24px;
+            margin-right: -1px;
+            position: relative;
+            top: 3px;
+            align:center
+        }
+        table.table .form-control {
+            height: 32px;
+            line-height: 32px;
+            box-shadow: none;
+            border-radius: 2px;
+        }
+        table.table .form-control.error {
+            border-color: #f50000;
+        }
+        table.table td .add {
+            display: none;
+        }
+        .centre-align {
+            padding: 10px;
+            border: 1px dashed gray;
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        // $(document).ready( function() {
+        //     $().click(function() {
+        //         $.ajax("{{ url_for('/.server_models_portfolio_routing_track') }}").done(function (reply) {
+        //             $('#plot').html(reply);
+        //         });
+        //     });
+        // });
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+            var actions = $("table td:last-child").html();
+            // Append table with add row form on add new button click
+            $(".add-new").click(function(){
+                var index = $("table tbody tr:last-child").index();
+                var counter = index + 1;
+                var row = '<tr>' +
+                    '<td><input id="ticker_'+counter+'" type="text" class="form-control" name="ticker_'+counter+'" ></td>' +
+                    '<td><input id="value_'+counter+'" type="text" class="form-control" name="value_'+counter+'"></td>' +
+                    '<td>' + actions + '</td>' +
+                '</tr>';
+                $("table").append(row);
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+
+            // Add row on add button click
+            $(document).on("click", ".add", function(){
+                var empty = false;
+                var input = $(this).parents("tr").find('input[type="text"]');
+                input.each(function(){
+                    if(!$(this).val()){
+                        $(this).addClass("error");
+                        empty = true;
+                    } else{
+                        $(this).removeClass("error");
+                    }
+                });
+                $(this).parents("tr").find(".error").first().focus();
+                if(!empty){
+                    input.each(function(){
+                        $(this).parent("td").html($(this).val());
+                    });
+                }
+            });
+
+            // Edit row on edit button click
+            $(document).on("click", ".edit", function(){
+                $(this).parents("tr").find("td:not(:last-child)").each(function(){
+                    $(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
+                });
+                $(this).parents("tr").find(".add, .edit").toggle();
+                $(".add-new").attr("disabled", "disabled");
+            });
+            // Delete row on delete button click
+            $(document).on("click", ".delete", function(){
+                if($("table tbody tr:last-child").index() > 0) {
+                    $(this).parents("tr").remove();
+                    $(".add-new").removeAttr("disabled");
+                };
+            });
+        });
+    </script>
+
 {% endblock %}
 
 {% block content %}
-<section>
-    <div class="marginCenter">
-     <form action="/portfolioview" method="get">
-        <table>
-            {% for i in range(tickers| length) %}
-                <tr>
-                    <td>
-                        {{  tickers[i] }}
-                    </td>
-                    <td>
-                        <input type="text" name="{{ tickers[i] }}" value={{ weightings[i] }}>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-         <div>
-             <center><input type="range" min="1" max="100" value={{ timeHorizon }} id="myRange"></center>
-         </div>
-             <center><input type="submit" value="Submit" style=""></center>
-     </form>
-         </div>
-</section>
+    <section>
+        <form action="/track2" method="get">
+        <!-- <form method="get"> -->
+           <div class="container">
+                <div class="table-wrapper col-md-12">
+                    <div class="table-title">
+                        <div class="row">
+                            <div class="col-sm-8"></div>
+                            <div class="col-sm-4">
+                                <button type="button" class="button add-new"><i class="fa fa-plus"></i> Add New </button>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Dollar Amount</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td><input id="ticker_0" type="text" placeholder="AAPL" class="form-control" name="ticker_0"></td>
+                                <td><input id="value_0" type="text" placeholder="1000" class="form-control" name="value_0"></td>
+                                <td><a style="centre-align" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <center><input type="submit" id="next" value="Submit"></center>
+        </form>
+
+        <div class="container" id="plot">
+            <div class="col-md-12">
+                {{ plot }}
+            </div>
+        </div>
+    </section>
+
 {% endblock %}

@@ -80,6 +80,15 @@ paths:
         200:
           description: A list of users
 
+#  /track2:
+#    get:
+#      operationId: "server.models.portfolio.routing.track2"
+#      produces:
+#        - text/html
+#      responses:
+#        200:
+#          description: A list of users
+
   /option2:
     get:
       operationId: "server.models.portfolio.routing.option2"

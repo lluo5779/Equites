@@ -17,10 +17,12 @@ import flask
 from plotly.graph_objs import Scatter, Pie, Layout
 from datetime import datetime
 from io import BytesIO
+from flask import Blueprint
 import urllib
 import base64
 import plotly.offline
 
+trackSpecialCase = Blueprint("", __name__)
 s = Stocks()
 
 
@@ -95,6 +97,25 @@ def track():
 
         return render_template('Option1.jinja2', tickers=tickers, weightings=values, plot=plot)
 
+@trackSpecialCase.route('/track2', methods=["GET", "POST"])
+def track2():
+    if len(request.query_string) == 0:
+        weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings)
+    else:
+        #save option type 2 to database
+        tickers = ["AAPL", "SPY", "TLT"]
+        weightings = [.1,.1,.1]
+        fig = plotly.graph_objs.Figure(data=[plotly.graph_objs.Pie(labels=tickers, values=weightings, hole=.3)])
+
+        plot = plotly.offline.plot({"data": fig},
+                                   output_type='div',
+                                   include_plotlyjs=False,
+                                   show_link=False,
+                                   config={"displayModeBar": False})
+
+        return render_template('Option2.jinja2', tickers=tickers, weightings=weightings, plot=plot)
 
 # @login_required
 def option2():
