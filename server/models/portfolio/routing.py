@@ -5,12 +5,15 @@ from server.models.auth.schema import User
 # import server.models.users.decorators as user_decorators
 from server.common.database import Database
 from server.models.portfolio.portfolio import Portfolio
+from server.models.portfolio.bt import back_test
 from server.models.stock.stock import Stocks
 from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
 from server.models.portfolio.bt import back_test
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import pandas as pd
 
+from datetime import datetime
 from io import BytesIO
 import urllib
 import base64
@@ -60,9 +63,29 @@ def optiondecision():
 
 
 #@login_required
-def option1():
-    weightings =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    return render_template('Option1.jinja2', tickers=s.tickers, weightings=weightings)
+def track():
+
+    if len(request.query_string) == 0:
+        weightings =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        return render_template('Option1.jinja2', tickers=s.tickers, weightings=weightings)
+    else:
+        print(request.args.to_dict())
+        args = request.args.to_dict()
+
+        start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
+
+        d = {}
+
+        for i in range(len(list(args.keys()))//2):
+            d[args['ticker_'+ str(i*2)]] = float(args['weight_'+ str(i*2)])
+        print(d)
+
+        port_vals, success, msg = back_test(d, start_date)
+        port_vals = port_vals.sum(axis=1)
+
+        return render_template('Option1.jinja2', tickers=list(args.keys()), weightings=list(args.values()), port_vals = port_vals)
+
+
 
 
 #@login_required
@@ -137,6 +160,7 @@ def portfolioview():
 
         for sym in SYMBOLS:
             weightings.append(request.args.get(sym).strip('%'))
+
         print(weightings)
         expectedReturn = 0.1
         expectedVol = 0.1

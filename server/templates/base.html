@@ -7,6 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700,800,900" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
@@ -99,7 +100,10 @@
 </footer>
 
 <!-- Scripts -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
 <script src="https://use.fontawesome.com/c076fb318b.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery.scrolly.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery.poptrox.min.js') }}"></script>
@@ -108,7 +112,6 @@
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-{% block script %} {% endblock %}
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slim/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slim/jquery-migrate-3.0.1.min.js') }}"></script>
@@ -122,173 +125,29 @@
 <script src="{{ url_for('static', filename='js/slim/aos.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slim/jquery.animateNumber.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slim/scrollax.min.js') }}"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+<script src="{{ url_for('static', filename='js/slim/main.js') }}"></script>
+
 <script src="{{ url_for('static', filename='js/slim/google-map.js') }}"></script>
 
-<script src="{{ url_for('static', filename='js/slim/main.js') }}"></script>
+{% block script %} 
+{% endblock %}
+
+
+
+
 </div>
 
   <!-- loader -->
   <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
 
-<audio controls="controls" style="display: none;"></audio>
-<div class="poptrox-overlay" style="position: fixed; left: 0px; top: 0px; z-index: 10001; width: 100%; height: 100%; text-align: center; cursor: pointer; display: none;">
+  <audio controls="controls" style="display: none;"></audio>
+  <div class="poptrox-overlay" style="position: fixed; left: 0px; top: 0px; z-index: 10001; width: 100%; height: 100%; text-align: center; cursor: pointer; display: none;">
     <div style="display:inline-block;height:100%;vertical-align:middle;"></div>
     <div style="position:absolute;left:0;top:0;width:100%;height:100%;background:#222226;opacity:0.75;filter:alpha(opacity=75);"></div>
     <div class="poptrox-popup" style="display: none; vertical-align: middle; position: relative; z-index: 1; cursor: pointer; min-width: 200px; min-height: 100px;">
         <div class="loader" style="display: none;"></div>
         <div class="pic" style="display: none;"></div><span class="closer" style="cursor: pointer; display: none;">×</span></div>
-</div>
-</body>
-<style type="text/css">
-    #yddContainer {
-        display: block;
-        font-family: Microsoft YaHei;
-        position: relative;
-        width: 100%;
-        height: 100%;
-        top: -4px;
-        left: -4px;
-        font-size: 12px;
-        border: 1px solid
-    }
-    
-    #yddTop {
-        display: block;
-        height: 22px
-    }
-    
-    #yddTopBorderlr {
-        display: block;
-        position: static;
-        height: 17px;
-        padding: 2px 28px;
-        line-height: 17px;
-        font-size: 12px;
-        color: #5079bb;
-        font-weight: bold;
-        border-style: none solid;
-        border-width: 1px
-    }
-    
-    #yddTopBorderlr .ydd-sp {
-        position: absolute;
-        top: 2px;
-        height: 0;
-        overflow: hidden
-    }
-    
-    .ydd-icon {
-        left: 5px;
-        width: 17px;
-        padding: 0px 0px 0px 0px;
-        padding-top: 17px;
-        background-position: -16px -44px
-    }
-    
-    .ydd-close {
-        right: 5px;
-        width: 16px;
-        padding-top: 16px;
-        background-position: left -44px
-    }
-    
-    #yddKeyTitle {
-        float: left;
-        text-decoration: none
-    }
-    
-    #yddMiddle {
-        display: block;
-        margin-bottom: 10px
-    }
-    
-    .ydd-tabs {
-        display: block;
-        margin: 5px 0;
-        padding: 0 5px;
-        height: 18px;
-        border-bottom: 1px solid
-    }
-    
-    .ydd-tab {
-        display: block;
-        float: left;
-        height: 18px;
-        margin: 0 5px -1px 0;
-        padding: 0 4px;
-        line-height: 18px;
-        border: 1px solid;
-        border-bottom: none
-    }
-    
-    .ydd-trans-container {
-        display: block;
-        line-height: 160%
-    }
-    
-    .ydd-trans-container a {
-        text-decoration: none;
-    }
-    
-    #yddBottom {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 22px;
-        line-height: 22px;
-        overflow: hidden;
-        background-position: left -22px
-    }
-    
-    .ydd-padding010 {
-        padding: 0 10px
-    }
-    
-    #yddWrapper {
-        color: #252525;
-        z-index: 10001;
-        background: url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ab20.png);
-    }
-    
-    #yddContainer {
-        background: #fff;
-        border-color: #4b7598
-    }
-    
-    #yddTopBorderlr {
-        border-color: #f0f8fc
-    }
-    
-    #yddWrapper .ydd-sp {
-        background-image: url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ydd-sprite.png)
-    }
-    
-    #yddWrapper a,
-    #yddWrapper a:hover,
-    #yddWrapper a:visited {
-        color: #50799b
-    }
-    
-    #yddWrapper .ydd-tabs {
-        color: #959595
-    }
-    
-    .ydd-tabs,
-    .ydd-tab {
-        background: #fff;
-        border-color: #d5e7f3
-    }
-    
-    #yddBottom {
-        color: #363636
-    }
-    
-    #yddWrapper {
-        min-width: 250px;
-        max-width: 400px;
-    }
-</style>
+    </div>
+
 
 </html>

@@ -4,8 +4,7 @@
     {% for i in range(portfolioNames| length) %}
         <form action="/portfoliodashboard" method="get">
             <div>
-                {% portfolioName = portfolioNames[i] %}
-                {{portfolioName }}
+                {{ portfolioName = portfolioNames[i] }}
             </div>
             <div>
                 <!--Curr Value-->
@@ -20,5 +19,5 @@
             <input type="submit" value="See Portofolio">
          </form>
 
-    {%  endfor %}
+    {% endfor %}
 {% endblock %}

@@ -1337,7 +1337,7 @@ pre {
 .table {
   width: 100%;
   margin-bottom: 1rem;
-  background-color: transparent; }
+  background-color: #fff; }
   .table th,
   .table td {
     padding: 0.75rem;
@@ -1371,7 +1371,7 @@ pre {
   border: 0; }
 
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgba(0, 0, 0, 0.05); }
+  background-color: rgba(0, 0, 0, 0.5); }
 
 .table-hover tbody tr:hover {
   background-color: rgba(0, 0, 0, 0.075); }
@@ -1524,7 +1524,7 @@ pre {
     background-color: rgba(0, 0, 0, 0.075); }
 
 .table .thead-dark th {
-  color: #fff;
+  color: #000;
   background-color: #212529;
   border-color: #32383e; }
 
@@ -3479,7 +3479,7 @@ input[type="button"].btn-block {
   padding-top: 0.3125rem;
   padding-bottom: 0.3125rem;
   margin-right: 1rem;
-  font-size: 1.25rem;
+  font-size: 2.5rem;
   line-height: inherit;
   white-space: nowrap; }
   .navbar-brand:hover, .navbar-brand:focus {
@@ -8067,6 +8067,7 @@ h1, h2, h3, h4, h5,
     margin: 0 auto;
     padding: 0; }
   .ftco-navbar-custom .navbar-brand {
+    font-size: 2.5rem;
     color: #fff;
     padding-top: .7rem;
     padding-bottom: .7rem; }
@@ -8240,7 +8241,7 @@ h1, h2, h3, h4, h5,
       color: #000000;
       padding-top: 1rem;
       padding-bottom: 1rem;
-      font-size: 24px; }
+      font-size: 2.5rem; }
       .ftco-navbar-custom.scrolled .navbar-brand span {
         color: #3B4F66; }
 
@@ -8249,7 +8250,7 @@ h1, h2, h3, h4, h5,
 
 .navbar-brand {
   font-weight: 900;
-  font-size: 24px;
+  font-size: 2.5rem;
   text-transform: uppercase; }
   .navbar-brand span {
     font-weight: 900; }

@@ -71,9 +71,9 @@ paths:
         200:
           description: A list of users
 
-  /option1:
+  /track:
     get:
-      operationId: "server.models.portfolio.routing.option1"
+      operationId: "server.models.portfolio.routing.track"
       produces:
         - text/html
       responses:
