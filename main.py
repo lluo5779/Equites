@@ -193,6 +193,7 @@ cost = costs(tickers=tickers,
 print('\ncost coefficients')
 print(cost)
 
+print("HEY", mu_rsfm)
 
 ## *********************************************************************************************************************
 #  optimization
@@ -222,7 +223,7 @@ print('\n\n********************************************************************'
 print('\tperiod one results')
 print('********************************************************************\n')
 
-print(x1)
+#print(x1)
 
 print("\nportfolio return: %f" % (ret(mu_bl1, x1) * 100))
 print("portfolio volatility: %f" % (vol(cov_bl1, x1) * 100))
@@ -234,7 +235,7 @@ print('\n\n********************************************************************'
 print('\tperiod two results')
 print('********************************************************************\n')
 
-print(x2)
+#print(x2)
 
 print("\nportfolio return: %f" % (ret(mu_bl2, x1) * 100))
 print("portfolio volatility: %f" % (vol(cov_bl2, x1) * 100))

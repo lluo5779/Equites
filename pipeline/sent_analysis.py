@@ -86,7 +86,7 @@ class SentimentAnalysis(object):
 		print(model)
 
 		optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr = self.lr, weight_decay = self.wd)
-		criterion = 'SOMETHING AIDAN YOU SILLY'
+		criterion = 'SOMETHING AIDAN YOU SILLY' #BCE LOSS, SET target = 1 if greater than median returns, look at prices/prices.shift(1) returns stuff
 
 		print(optimizer)
 		print(criterion)

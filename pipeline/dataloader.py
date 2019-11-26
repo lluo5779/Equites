@@ -6,14 +6,15 @@ import util as ut
 
 class TextClassDataLoader(object):
 
-	def __init__(self, path_file, word_to_index, batch_size = 32):
+	def __init__(self, data, word_to_index = None, batch_size = 32):
 
 		self.batch_size = batch_size
-		self.word_to_index = word_to_index
+		#self.word_to_index = word_to_index
 
-		df = pd.read_csv(path_file)
-		df['body'] = df['body'].apply(ut._tokenize)
-		df['body'] = df['body'].apply(self.generate_indexifyer())
+		#df = pd.read_csv(path_file)
+		df = data
+		#df['body'] = df['body'].apply(ut._tokenize)
+		#df['body'] = df['body'].apply(self.generate_indexifyer())
 		self.samples = df.values.tolist()
 
 		self.n_samples = len(self.samples)
@@ -27,6 +28,12 @@ class TextClassDataLoader(object):
 		self.indices = np.random.permutations(self.n_samples)
 		self.index = 0
 		self.batch_index = 0
+
+	def convert_targets(self, label):
+		if label < self.mean_returns:
+			label = 0
+		else:
+			label = 1
 
 	def generate_indexifer(self):
 
@@ -61,6 +68,7 @@ class TextClassDataLoader(object):
 		self.batch_index += 1
 
 		label, string = tuple(zip(*batch))
+		label = map(self.convert_targets(label))
 
 		seq_lengths = torch.LongTensor(map(len, string))
 
