@@ -34,9 +34,8 @@ from dateutil.relativedelta import relativedelta
 
 ## *********************************************************************************************************************
 
-portfolio = {'AAPL': 0.25, 'MSFT': 0.10, 'JPM': 0.25, 'NTIOF': 0.40}
-start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
-
+# portfolio = {'AAPL': 0.25, 'MSFT': 0.10, 'JPM': 0.25, 'NTIOF': 0.40}
+# start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
 
 def back_test(portfolio, start_date, end_date=None, dollars=None):
 
