@@ -173,7 +173,7 @@ body {
                     <button onclick="currentSlide(4)" type="button" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Retirement</button>
                 </div>
                 <div style="padding: 8px 0px;">
-                    <button onclick="currentSlide(7)" type="button" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Large Purchase</button>
+                    <button onclick="currentSlide(8)" type="button" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Large Purchase</button>
                 </div>
             </div>
         </div>
@@ -196,6 +196,7 @@ body {
                     </div>
                 </div>
                 <a class="prev" style="text-align:center" onclick="currentSlide(1)">&#10094;</a>
+                <div style="display: none"><input type="text" name="option" value="Wealth"></div>
             </div>
 
 
@@ -205,13 +206,13 @@ body {
                         How much risk are you willing to have in your portfolio?
                     </div>
                     <div style="padding: 8px 0px;">
-                        <input name="highWealth" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="High Risk">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="High Risk">
                     </div>
                     <div style="padding: 8px 0px;">
-                        <input name="mediumWealth" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Medium Risk">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Medium Risk">
                     </div>
                     <div style="padding: 8px 0px;">
-                        <input name="lowWealth" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Low Risk">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Low Risk">
                     </div>
                 </div>
                 <a class="prev" style="text-align:center" onclick="currentSlide(2)">&#10094;</a>
@@ -224,12 +225,12 @@ body {
             <div class="mySlides">
                 <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
                     <div>
-                        When are you planning to retire?
+                        How much would you like to invest?
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="retirementDate" type="text" id="retirementDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus>
-                            <label for="retirementDate">MM/YYYY</label>
+                            <input name="initialInvestment" type="text" id="initialInvestmentID" class="form-control" placeholder="$ Amount" size="32" autofocus>
+                            <label for="initialInvestmentID">$ Amount</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
@@ -237,6 +238,26 @@ body {
                     </div>
                 </div>
                 <a class="prev" style="text-align:center" onclick="currentSlide(1)">&#10094;</a>
+                <div style="display: none"><input type="text" name="option" value="Retirement"></div>
+            </div>
+
+
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
+                        When are you planning to retire?
+                    </div>
+                    <div style="padding: 30px 0px 0px;">
+                        <div class="form-label-group" >
+                            <input name="Date" type="text" id="retirementDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus>
+                            <label for="retirementDate">MM/YYYY</label>
+                        </div>
+                    </div>
+                    <div style="padding: 40px 80px 0px; ">
+                        <button type="button" onclick="currentSlide(6)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                    </div>
+                </div>
+                <a class="prev" style="text-align:center" onclick="currentSlide(4)">&#10094;</a>
             </div>
 
 
@@ -248,15 +269,15 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="retirementAmount" type="text" id="retirementAmount" class="form-control" placeholder="$ Amount" size="32" autofocus>
+                            <input name="Amount" type="text" id="retirementAmount" class="form-control" placeholder="$ Amount" size="32" autofocus>
                             <label for="retirementAmount">$ Amount</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
-                        <button type="button" onclick="currentSlide(6)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                        <button type="button" onclick="currentSlide(7)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
                     </div>
                 </div>
-                <a class="prev" style="text-align:center" onclick="currentSlide(4)">&#10094;</a>
+                <a class="prev" style="text-align:center" onclick="currentSlide(5)">&#10094;</a>
             </div>
 
             <div class="mySlides">
@@ -265,16 +286,16 @@ body {
                         How much risk are you willing to have in your retirement portfolio?
                     </div>
                     <div style="padding: 8px 0px;">
-                        <input name="highRetirement" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="High Risk">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="High Risk">
                     </div>
                     <div style="padding: 8px 0px;">
-                        <input name="mediumRetirement" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Medium Risk">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Medium Risk">
                     </div>
                     <div style="padding: 8px 0px;">
-                        <input name="lowRetirement" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Low Risk">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Low Risk">
                     </div>
                 </div>
-                <a class="prev" style="text-align:center" onclick="currentSlide(5)">&#10094;</a>
+                <a class="prev" style="text-align:center" onclick="currentSlide(6)">&#10094;</a>
             </div>
         </form>
 
@@ -284,19 +305,39 @@ body {
             <div class="mySlides">
                 <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
                     <div>
+                        How much would you like to invest?
+                    </div>
+                    <div style="padding: 30px 0px 0px;">
+                        <div class="form-label-group" >
+                            <input name="initialInvestment" type="text" id="initialInvestment_id" class="form-control" placeholder="$ Amount" size="32" autofocus>
+                            <label for="initialInvestment_id">$ Amount</label>
+                        </div>
+                    </div>
+                    <div style="padding: 40px 80px 0px; ">
+                        <button type="button" onclick="currentSlide(9)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                    </div>
+                </div>
+                <a class="prev" style="text-align:center" onclick="currentSlide(1)">&#10094;</a>
+                <div style="display: none"><input type="text" name="option" value="Purchase"></div>
+            </div>
+
+
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
                         When are you planning to make your purchase?
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="purchaseDate" type="text" id="purchaseDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus>
+                            <input name="Date" type="text" id="purchaseDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus>
                             <label for="purchaseDate">MM/YYYY</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
-                        <button type="button" onclick="currentSlide(8)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                        <button type="button" onclick="currentSlide(10)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
                     </div>
                 </div>
-                <a class="prev" style="text-align:center" onclick="currentSlide(1)">&#10094;</a>
+                <a class="prev" style="text-align:center" onclick="currentSlide(8)">&#10094;</a>
             </div>
 
 
@@ -308,15 +349,15 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="purchaseAmount" type="text" id="purchaseAmount" class="form-control" placeholder="$ Amount" size="32" autofocus>
+                            <input name="Amount" type="text" id="purchaseAmount" class="form-control" placeholder="$ Amount" size="32" autofocus>
                             <label for="purchaseAmount">$ Amount</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
-                        <button type="button" onclick="currentSlide(9)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                        <button type="button" onclick="currentSlide(11)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
                     </div>
                 </div>
-                <a class="prev" style="text-align:center" onclick="currentSlide(7)">&#10094;</a>
+                <a class="prev" style="text-align:center" onclick="currentSlide(9)">&#10094;</a>
             </div>
 
 
@@ -326,16 +367,16 @@ body {
                         How much risk are you willing to have in saving for your purchase?
                     </div>
                     <div style="padding: 8px 0px;">
-                        <input name="highPurchase" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="High Risk">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="High Risk">
                     </div>
                     <div style="padding: 8px 0px;">
-                        <input name="mediumPurchase" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Medium Risk">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Medium Risk">
                     </div>
                     <div style="padding: 8px 0px;">
-                        <input name="lowRetirement" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Low Risk">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Low Risk">
                     </div>
                 </div>
-                <a class="prev" style="text-align:center" onclick="currentSlide(8)">&#10094;</a>
+                <a class="prev" style="text-align:center" onclick="currentSlide(10)">&#10094;</a>
             </div>
         </form>
     </div>
