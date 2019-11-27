@@ -392,10 +392,9 @@ def portfolioview():
     #     p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
     print('FINISHED')
 
-    # TODO: GIVE BACK QUESTIONNAIRE THAT IN VIA REQUEST ARGS
     return render_template('portfolioview.jinja2', title='Sign In', weightings=weightings, risk=risk,
                            expectedRet=expectedReturn, expectedVol=expectedVol, histValues=histValues, long=None,
-                           short=None, portfolioName=portfolio_name)
+                           short=None, portfolioName=portfolio_name, questionnaire=questionnaire)
     # except:
     #     return render_template('OptionDecision.jinja2')
 
