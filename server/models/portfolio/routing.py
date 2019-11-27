@@ -16,7 +16,7 @@ from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYM
 from server.models.portfolio.bt import back_test
 from server.models.user_preferences.user_preferences import fetch_latest_questionnaire_from_type, \
     fetch_questionnaire_from_uuid_and_type, update_new_questionnaire, initialize_new_questionnaire
-
+import urllib
 from datetime import datetime
 from scipy.stats.mstats import gmean
 from dateutil.relativedelta import relativedelta
@@ -294,8 +294,8 @@ def portfoliio():
 '''
 
 op_to_q_map = {
-    'retirement': ['investmentGoal', 'endDate', 'riskAppetite'],
-    'purchase': ['investmentGoal', 'timeHorizon', 'riskAppetite'],
+    'retirement': ['initialInvestment', 'retirementAmount', 'retirementDate', 'riskAppetite'],
+    'purchase': ['initialInvestment', 'purchaseAmount', 'purchaseDate', 'riskAppetite'],
     'wealth': ['initialInvestment', 'riskAppetite']
 }
 
@@ -340,26 +340,34 @@ def portfolioview():
 
     # Updating questionnaire data
     portfolio_name = request.headers.get('portfolioName')
-    option_type = request.headers.get("optionType")
+    if 'purchaseAmount' in request.query_string.decode("utf-8"):
+        option_type = 'purchase'
+    elif 'retirementAmount' in request.query_string.decode("utf-8"):
+        option_type = 'retirement'
+    elif 'initialInvestment' in request.query_string.decode("utf-8"):
+        option_type = 'wealth'
+    else:
+        print(request.query_string.decode("utf-8"))
+        raise ValueError('Bad query parameters. No such option type.')
 
     questionnaire = {}
     is_new_portfolio = False
 
-    if option_type not in op_to_q_map:
-        print(option_type)
-        raise ValueError("Bad option type. Something went terribly wrong.")
-
     for question in op_to_q_map[option_type]:
-        questionnaire[question] = request.headers.get(question)
+        if 'Date' in question:
+            raw_dates = request.args.get(question).split('/')
+            questionnaire[question] = datetime(int(raw_dates[1]), int(raw_dates[0]), 1)
+        else:
+            questionnaire[question] = request.args.get(question)
 
     print("questionnaire: ", questionnaire)
 
     _id = getUuidFromPortfolioName(portfolio_name)
     # need to check if request no uuid, will create uuid
-    # if _id is None:
-    #     _id = uuid.uuid4()
-    #     is_new_portfolio = True
-    #     initialize_new_questionnaire(questionnaire, option_type, uuid=_id)
+    if _id is None:
+        _id = uuid.uuid4()
+        is_new_portfolio = True
+        # initialize_new_questionnaire(questionnaire, option_type, uuid=_id)
     # else:
     #     update_new_questionnaire(questionnaire, option_type, uuid=_id)
 
@@ -376,13 +384,15 @@ def portfolioview():
     start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
 
     histValues = back_test(p.x1.to_dict()[list(p.x1.to_dict().keys())[0]], start_date)[0].sum(axis=1) \
-                 * float(questionnaire['investmentGoal'][0])
+                 * float(questionnaire['initialInvestment'])
     # if is_new_portfolio:
     #     p.make_new_portfolios(questionnaire['investmentGoal'], option_type, 'r5')
     # else:
     #     print(p.x1.to_dict())
     #     p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
     print('FINISHED')
+
+    # TODO: GIVE BACK QUESTIONNAIRE THAT IN VIA REQUEST ARGS
     return render_template('portfolioview.jinja2', title='Sign In', weightings=weightings, risk=risk,
                            expectedRet=expectedReturn, expectedVol=expectedVol, histValues=histValues, long=None,
                            short=None, portfolioName=portfolio_name)
@@ -485,6 +495,7 @@ def portfoliodashboard():
 
     weightings = p.x1.to_numpy().flatten()
 
+    # TODO: NEED TO GIVE BACK TICKERS AS ARRAY
     print(weightings)
     short = []
     long = []
@@ -494,6 +505,7 @@ def portfoliodashboard():
         if weightings[i] > 0:
             long.append(weightings[i])
 
+    # TODO: NEED TO UPDATE
     expectedReturn = .1
     expectedVol = .12
     risk = 'high'
@@ -514,7 +526,24 @@ def editportfolio():
 
     option_type = getOptionTypeFromName(portfolio_name)
     questionnaire = fetch_latest_questionnaire_from_type(option_type=option_type)
-    return render_template(str.capitalize(option_type) + '.jinja2', title='Sign In', questionnaire=questionnaire)
+
+    # todo: PORTFOLIO NAME IS NONE
+    if portfolio_name is None:
+        if 'purchaseAmount' in request.query_string.decode("utf-8"):
+            option_type = 'purchase'
+        elif 'retirementAmount' in request.query_string.decode("utf-8"):
+            option_type = 'retirement'
+        elif 'initialInvestment' in request.query_string.decode("utf-8"):
+            option_type = 'wealth'
+        else:
+            raise ValueError('Bad query parameters. No such option type.')
+
+        for question in op_to_q_map[option_type]:
+            questionnaire[question] = request.args.get(question)
+
+        print("questionnaire: ", questionnaire)
+
+    return render_template('Build.jinja2', title='Sign In', questionnaire=questionnaire)
 
     # if portfolio is option 2
     # return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
