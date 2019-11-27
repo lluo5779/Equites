@@ -21,7 +21,7 @@ def fetch_questionnaire_from_uuid_and_type(option_type, uuid):
     """Called when selecting specific portfolio (ie. from port dashboard)"""
     if "_questionnaire" not in option_type:
         option_type = option_type + "_questionnaire"
-    query ="""select * from '{}' where "uuid" like '{}';""".format(option_type, uuid)
+    query ="""select * from {} where "uuid" like '{}';""".format(option_type, uuid)
 
     df =  pd.read_sql(query,
                        Database.DATABASE.engine, index_col='index')

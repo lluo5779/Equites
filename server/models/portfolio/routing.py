@@ -469,7 +469,7 @@ def portfoliodashboard():
     """
 
     portfolio_name = request.headers.get('portfolioName')
-    username = current_user.username
+    username = 'test1'#current_user.username
     print('username: ', username)
 
     _id = getUuidFromPortfolioName(portfolio_name)
@@ -529,7 +529,6 @@ def editportfolio():
     option_type = getOptionTypeFromName(portfolio_name)
     questionnaire = fetch_latest_questionnaire_from_type(option_type=option_type)
 
-    # todo: PORTFOLIO NAME IS NONE
     if portfolio_name is None:
         if 'purchaseAmount' in request.query_string.decode("utf-8"):
             option_type = 'purchase'
