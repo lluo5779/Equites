@@ -2,7 +2,7 @@
 
 {% block content %}
     <script>
-        function storeParameters(){
+        function storeParameters() {
             window.localStorage.setItem('investmentGoal', {{ investmentGoal }})
             window.localStorage.setItem('timeHorizon', {{ timeHorizon }})
             window.localStorage.setItem('riskAppetite', {{ riskAppetite }})
@@ -10,25 +10,6 @@
 
         document.onload(storeParameters())
 
-        function sendStoredValues(){
-            var data = JSON.stringify(false);
-
-            var xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
-
-            xhr.addEventListener("readystatechange", function () {
-              if (this.readyState === 4) {
-                console.log(this.responseText);
-              }
-            });
-
-            xhr.open("GET", "{{ url_for('/.server_models_portfolio_routing_editportfolio')}}");
-            xhr.setRequestHeader("investmentGoal", "application/json");
-            xhr.setRequestHeader("timeHorizon", "no-cache");
-            xhr.setRequestHeader("riskAppetite", "no-cache");
-
-            xhr.send(data);
-        }
     </script>
     <div>
         Step 1: Expected year of purchase
@@ -42,7 +23,7 @@
     <div>
         Step 4: View created portfolio, name and save
     </div>
-    <a href="{{ url_for('/.server_models_portfolio_routing_option3PurchaseA')}}">
+    <a href="{{ url_for('/.server_models_portfolio_routing_option3PurchaseA') }}">
         <button type="submit">Next</button>
     </a>
 

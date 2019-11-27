@@ -7,6 +7,9 @@
             window.localStorage.setItem('timeHorizon', {{ timeHorizon }})
             window.localStorage.setItem('riskAppetite', {{ riskAppetite }})
         }
+
+        document.onload(storeParameters())
+
     </script>
 
     <div>

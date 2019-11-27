@@ -27,8 +27,9 @@ def create_app():
     connex_app.add_api('swagger.yaml', base_path='/')
 
     from server.models.auth.routing import auth_mold
+    from server.models.portfolio.routing import trackSpecialCase
     app.register_blueprint(auth_mold, url_prefix="/auth")
-
+    app.register_blueprint(trackSpecialCase, url_prefix="")
     # Initialize Database before running any other command
     # @app.before_first_request
     # def init_db():

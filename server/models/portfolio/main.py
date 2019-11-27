@@ -9,6 +9,7 @@ from server.models.portfolio.stats import *
 from server.models.portfolio.cost import costs
 from server.models.stock.tiingo import get_data
 from server.models.factors.fama import fama_french
+from server.models.portfolio.risk import risk_prefs
 from server.models.portfolio.optimize import optimize
 from server.models.portfolio.bl import bl, get_mkt_cap
 from server.models.portfolio.rs import regime_switch, current_regime, business_days, expected_returns, covariance
@@ -204,6 +205,27 @@ print(cost)
 
 
 ## *********************************************************************************************************************
+#  risk preferences
+## *********************************************************************************************************************
+
+# in years
+horizon = 10
+
+# target goal amount in dollars
+target_dollars, initial_dollars = 1300, 1250
+
+# low 1, medium 2, high = 3
+aversion = 3
+
+return_target = (target_dollars / initial_dollars) ** (1 / (2 * horizon)) - 1
+
+alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, initial_dollars, target_dollars, l, mu_bl1, mu_bl2, cov_bl1)
+
+# assign the risk tolerances
+risk_tolerance = (multipliers, exposures, cardinality, 'MCVAR')
+
+
+## *********************************************************************************************************************
 #  optimization
 ## *********************************************************************************************************************
 
@@ -211,21 +233,13 @@ print('\n\n********************************************************************'
 print('\toptimization')
 print('********************************************************************')
 
-# full cardinality, include all assets
-cardinality = [1] * N
-cardinality = [1] * 5 + [0] * (N-5)
-
-risk_tolerance = [((1, 10), (0, 0.10), cardinality, 'MCVAR'),
-                  ((5, 5), (0, 0.20), cardinality, 'MCVAR'),
-                  ((10, 1), (-0.05, 0.50), cardinality, 'MCVAR')]
-
 soln, agg_soln = optimize(mu = (mu_bl1.values.ravel(), mu_bl2.values.ravel()),
                           sigma = (cov_bl1.values, cov_bl2.values),
-                          alpha = (0.05, 0.10),
-                          return_target = (0.06, 0.06),
+                          alpha = (alpha, alpha * 1.02),
+                          return_target = (return_target, return_target),
                           costs = cost,
                           prices = prices.iloc[-2, :].values if prices.iloc[-1, :].isnull().values.any() else prices.iloc[-1, :].values,
-                          gamma = risk_tolerance[2])
+                          gamma = risk_tolerance)
 
 x1 = pd.DataFrame(soln.x[:int(len(mu_bl1))], index=mu_bl1.index, columns=['weight'])
 x2 = pd.DataFrame(soln.x[int(len(mu_bl2)):], index=mu_bl2.index, columns=['weight'])
