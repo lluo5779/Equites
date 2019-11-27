@@ -351,6 +351,10 @@ paths:
         200:
           description: A list of users
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 112b2bafb1a71220ebcaa0468982148d9699cf52
   /build:
     get:
       operationId: "server.models.portfolio.routing.build"
@@ -415,4 +419,8 @@ paths:
         - text/html
       responses:
         200:
+<<<<<<< HEAD
           description: A list of users
+=======
+          description: A list of users
+>>>>>>> 112b2bafb1a71220ebcaa0468982148d9699cf52
