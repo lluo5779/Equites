@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        function sendStoredValues(){
+            var data = JSON.stringify(false);
+
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+
+            xhr.addEventListener("readystatechange", function () {
+              if (this.readyState === 4) {
+                console.log(this.responseText);
+              }
+            });
+
+            window.localStorage.setItem('riskAppetite', document.getElementById("riskAppetite").value);
+
+            xhr.open("GET", "{{ url_for('/.server_models_portfolio_routing_portfolioview')}}");
+            xhr.setRequestHeader("investmentGoal", window.localStorage.getItem('investmentGoal'));
+            xhr.setRequestHeader("timeHorizon", window.localStorage.getItem('timeHorizon'));
+            xhr.setRequestHeader("riskAppetite", window.localStorage.getItem('riskAppetite'));
+            xhr.setRequestHeader("optionType", window.localStorage.getItem('Retirement'));
+
+            xhr.send(data);
+        }
+    </script>
+    <div>
+        Amount of risk you would like in your portfolio?
+    </div>
+    <div>
+        <select name="riskAppetite" id="riskAppetite">
+            {% if riskAppetite == 3 %}
+                <option selected>
+                    High
+                </option>
+                <option>
+                    Medium
+                </option>
+                <option>
+                    Low
+                </option>
+            {% elif riskAppetite == 2 %}
+                <option>
+                    High
+                </option>
+                <option selected>
+                    Medium
+                </option>
+                <option>
+                    Low
+                </option>
+            {% else %}
+                <option>
+                    High
+                </option>
+                <option>
+                    Medium
+                </option>
+                <option selected>
+                    Low
+                </option>
+            {% endif %}
+        </select>
+    </div>
+    <button type="submit" onclick="sendStoredValues()">Next</button>
+    <a href="{{url_for('/.server_models_portfolio_routing_option3RetirementB')}}">
+        <button type="submit">Back</button>
+    </a>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        function storeParameters(){
+            window.localStorage.setItem('investmentGoal', {{ investmentGoal }})
+            window.localStorage.setItem('timeHorizon', {{ timeHorizon }})
+            window.localStorage.setItem('riskAppetite', {{ riskAppetite }})
+        }
+
+        document.onload(storeParameters())
+
+    </script>
+
+    <div>
+        Step 1: Expected year of retirement
+    </div>
+    <div>
+        Step 2: Amount you'll need for retirement
+    </div>
+    <div>
+        Step 3: Amount of risk you would like in your portfolio
+    </div>
+    <div>
+        Step 4: View created portfolio, name and save
+    </div>
+    <a href="{{ url_for('/.server_models_portfolio_routing_option3RetirementA')}}">
+        <button type="submit">Next</button>
+    </a>
+{% endblock %}

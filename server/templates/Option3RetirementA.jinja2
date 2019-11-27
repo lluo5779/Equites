@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        function storeParameters(){
+            window.localStorage.setItem('timeHorizon', document.getElementById("myRange").value);
+        };
+        function getParameters(){
+          let input = document.getElementById("myRange");
+          input.value = window.localStorage.getItem('timeHorizon');
+        };
+        window.addEventListener("DOMContentLoaded", function() {
+            getParameters()
+        }, false);
+    </script>
+    <div>
+        Step 1: Expected year of retirement
+    </div>
+    <div>
+         <input type="range" min="2019" max="2100"id="myRange" name="timeHorizon">
+    </div>
+    <a href="{{ url_for('/.server_models_portfolio_routing_option3RetirementB') }}">
+        <button type="submit" onclick="storeParameters()">Next</button>
+    </a>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        function storeParameters(){
+            window.localStorage.setItem('investmentGoal', document.getElementById("investmentGoal").value);
+        };
+        function getParameters(){
+          let input = document.getElementById("investmentGoal");
+          input.value = window.localStorage.getItem('investmentGoal');
+        };
+        window.addEventListener("DOMContentLoaded", function() {
+            getParameters()
+        }, false);
+    </script>
+    <div>
+        Amount you'll need for purchase
+    </div>
+    <input type="text" name="investmentGoal" id="investmentGoal">
+    <a href="{{ url_for('/.server_models_portfolio_routing_option3PurchaseC')}}">
+        <button type="submit" onclick="storeParameters()">Next</button>
+    </a>
+    <a href="{{url_for('/.server_models_portfolio_routing_option3PurchaseA')}}">
+        <button type="submit">Back</button>
+    </a>
+
+{% endblock %}

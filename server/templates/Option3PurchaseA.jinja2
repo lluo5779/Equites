@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        function storeParameters(){
+            window.localStorage.setItem('timeHorizon', document.getElementById("myRange").value);
+        };
+        function getParameters(){
+          let input = document.getElementById("myRange");
+          input.value = window.localStorage.getItem('timeHorizon');
+        };
+        window.addEventListener("DOMContentLoaded", function() {
+            getParameters()
+        }, false);
+    </script>
+
+    <div>
+        Expected year of purchase
+    </div>
+    <div>
+        <input type="range" min="2019" max="2100" id="myRange" name="myRange">
+    </div>
+    <a href="{{ url_for('/.server_models_portfolio_routing_option3PurchaseB') }}">
+        <button type="submit" onclick="storeParameters()">Next</button>
+    </a>
+
+{% endblock %}

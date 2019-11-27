@@ -12,16 +12,18 @@ from server.models.portfolio.bt import back_test
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import pandas as pd
+import numpy as np
 
 import flask
 from plotly.graph_objs import Scatter, Pie, Layout
 from datetime import datetime
 from io import BytesIO
+from flask import Blueprint
 import urllib
 import base64
 import plotly.offline
 
-
+trackSpecialCase = Blueprint("", __name__)
 s = Stocks()
 
 
@@ -61,16 +63,15 @@ def create_portfolio():  # Views form to create portfolio associated with active
     return render_template('/portfolios/new_portfolio.jinja2')
 
 
-#@login_required
+# @login_required
 def optiondecision():
     return render_template('OptionDecision.jinja2', title='optiondecision')
 
 
-#@login_required
+# @login_required
 def track():
     if len(request.query_string) == 0:
-        weightings =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        
+        weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         return render_template('Option1.jinja2', tickers=s.tickers, weightings=weightings)
     else:
         # do this after you extract the starting and ending dates ...
@@ -80,45 +81,70 @@ def track():
         values = [float(x) for x in args[1::2]]
         weights = [x / sum(values) for x in values]
         portfolio = dict(zip(tickers, weights))
-
-        start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
+        #start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
+        start_date = args[-1]
 
         values, success, msg = back_test(portfolio, start_date, dollars=sum(values))
         port_values = values.sum(axis=1)
 
-        plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode = 'lines')
-        
+        minValue = round(min(port_values), 2)
+        maxValue = round(max(port_values), 2)
+        vol = round((np.std(port_values.pct_change()) * 252 ** 0.5)*100, 1)
+        stats = [maxValue, minValue, vol]
+
+        plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines')
+
         plot = plotly.offline.plot({"data": plot_data},
-                                    output_type='div',
-                                    include_plotlyjs=False,
-                                    show_link=False,
-                                    config={"displayModeBar": False})
+                                   output_type='div',
+                                   include_plotlyjs=False,
+                                   show_link=False,
+                                   config={"displayModeBar": False})
 
-        return render_template('Option1.jinja2', tickers=tickers, weightings=values, plot=plot)
+        return render_template('Option1Results.jinja2', tickers=tickers, weightings=values, plot=plot, stats=stats)
 
-#@login_required
+@trackSpecialCase.route('/track2', methods=["GET", "POST"])
+def track2():
+    if len(request.query_string) == 0:
+        weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings, stats=stats)
+    else:
+        #save option type 2 to database
+        tickers = ["AAPL", "SPY", "TLT"]
+        weightings = [.1,.1,.1]
+        fig = plotly.graph_objs.Figure(data=[plotly.graph_objs.Pie(labels=tickers, values=weightings, hole=.3)])
+
+        plot = plotly.offline.plot({"data": fig},
+                                   output_type='div',
+                                   include_plotlyjs=False,
+                                   show_link=False,
+                                   config={"displayModeBar": False})
+
+        return render_template('Option2.jinja2', tickers=tickers, weightings=weightings, plot=plot)
+
+# @login_required
 def option2():
     weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     timeHorizon = 50
     return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings, timeHorizon=timeHorizon)
 
 
-#@login_required
+# @login_required
 def option3parent():
     return render_template('Option3Parent.jinja2', title='optiondecision')
 
 
-#@login_required
+# @login_required
 def option3childa():
     return render_template('Option3ChildA.jinja2', title='optiondecision')
 
 
-#@login_required
+# @login_required
 def option3childb():
     return render_template('Option3ChildB.jinja2', title='optiondecision')
 
 
-#@login_required
+# @login_required
 def option3childc():
     print("request.query_string: ", len(request.query_string))
     if len(request.query_string) == 0:
@@ -154,11 +180,11 @@ def portfoliio():
     return render_template('portfolio.jinja2', title='Sign In', weightings=weightings, risk=risk,histPortValue=histPortValue,histVOL=histVol, expectedReturn=expectedReturn,expectedVol=expectedVol)
 '''
 
-@login_required
+
+#@login_required
 def portfolioview():
     # initial user input
     # try:
-
     username = current_user.username
     print('username: ', username)
     p = Portfolio(username)
@@ -183,7 +209,6 @@ def portfolioview():
 
     return render_template('portfolio.jinja2', title='Sign In', weightings=weightings, risk=risk,
                            expectedReturn=expectedReturn, expectedVol=expectedVol)
-
     # except:
     #     return render_template('OptionDecision.jinja2')
 
@@ -263,18 +288,64 @@ def portfoliodashboard():
                            short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk)
 
 
-
 #@login_required
 def editportfolio():
     #pull most recent questionaire data if portfolioName==""
-
     #if portfolio is option 1
+    weightings = [0]
     return render_template('Option1.jinja2', title='Sign In', weightings=weightings)
 
     #if portfolio is option 2
-    return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
+    #return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
 
 def saveportfolio():
     return render_template("home.jinja2")
+
+
+'''Option 3'''
+#@login_required
+def option3Parent():
+    return render_template('Option3Parent.jinja2', title='optiondecision')
+
+def option3Purchase():
+    timeHorizon = 2019
+    investmentGoal = 0
+    riskAppetite = "Medium"
+    return render_template('Option3Purchase.jinja2', title='optiondecision', timeHorizon=timeHorizon, investmentGoal=investmentGoal, riskAppetite=riskAppetite)
+
+def option3PurchaseA():
+    return render_template('Option3PurchaseA.jinja2')
+
+def option3PurchaseB():
+    return render_template('Option3PurchaseB.jinja2')
+
+def option3PurchaseC():
+    return render_template('Option3PurchaseC.jinja2')
+
+def option3Retirement():
+    timeHorizon = 2019
+    investmentGoal = 0
+    riskAppetite = "Medium"
+    return render_template('Option3Retirement.jinja2', title='optiondecision', timeHorizon=timeHorizon, investmentGoal=investmentGoal, riskAppetite=riskAppetite)
+
+def option3RetirementA():
+    return render_template('Option3RetirementA.jinja2', title='optiondecision')
+
+def option3RetirementB():
+    return render_template('Option3RetirementB.jinja2', title='optiondecision')
+
+def option3RetirementC():
+    return render_template('Option3RetirementC.jinja2', title='optiondecision')
+
+def option3Wealth():
+    initialInvestment = 0
+    riskAppetite = "Medium"
+    return render_template('Option3Wealth.jinja2', title='optiondecision', initialInvestment=initialInvestment, riskAppetite=riskAppetite)
+
+def option3WealthA():
+    return render_template('Option3WealthA.jinja2', title='optiondecision')
+
+def option3WealthB():
+    return render_template('Option3WealthB.jinja2', title='optiondecision')
 
 
