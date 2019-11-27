@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" >
 {% endblock %}
 
+
 {% block content %}
     <div class="container-fluid">
       <div class="row no-gutter">
@@ -14,7 +15,7 @@
             <div class="container">
               <div class="row">
                 <div class="col-md-9 col-lg-8 mx-auto">
-                  <h3 class="login-heading mb-4"><font color="white">Welcome back!</font></h3>
+                  <h3 class="login-heading mb-4"> Welcome back! </h3>
                   <form action="" method="post" novalidate>
                       {{ form.hidden_tag() }}
                       {{ form.csrf_token }}
@@ -30,11 +31,11 @@
 
                     <div class="custom-control custom-checkbox mb-3">
                       <input type="checkbox" class="custom-control-input" id="customCheck1">
-                      <label class="custom-control-label" for="customCheck1">Remember password</label>
+                      <label for="customCheck1"> <text color="#3B4F66 !important"> Remember password </text> </label>
                     </div>
                     <button class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" type="submit">Sign in</button>
                     <div class="text-center">
-                    <p><font color="white">New User? </font><a href="{{ '/auth/register' }}">Click to Register!</a></p>
+                    <p><font color="#3B4F66">New User? </font><a href="{{ '/auth/register' }}">Click to Register!</a></p>
                   </form>
                 </div>
               </div>
@@ -43,15 +44,5 @@
         </div>
       </div>
     </div>
-
-{% endblock %}
-
-{% block content_test %}
-
-{% endblock %}
-
-{% block script %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 
 {% endblock %}

@@ -68,39 +68,59 @@ def optiondecision():
     return render_template('OptionDecision.jinja2', title='optiondecision')
 
 
+
 # @login_required
 def track():
     if len(request.query_string) == 0:
-        weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        return render_template('Option1.jinja2', tickers=s.tickers, weightings=weightings)
+        return render_template('Option1.jinja2', display=False)
     else:
         # do this after you extract the starting and ending dates ...
         args = list(request.args.values())
 
-        tickers = args[::2]
-        values = [float(x) for x in args[1::2]]
+        start_date = args[0]
+        end_date = args[1]
+
+        portfolio_data = args[2:]
+
+        tickers = portfolio_data[::2]
+        values = [abs(float(x)) for x in portfolio_data[1::2]]
         weights = [x / sum(values) for x in values]
         portfolio = dict(zip(tickers, weights))
-        #start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
-        start_date = args[-1]
 
-        values, success, msg = back_test(portfolio, start_date, dollars=sum(values))
-        port_values = values.sum(axis=1)
+        values, success, msg = back_test(portfolio, start_date, end_date, dollars=sum(values))
 
-        minValue = round(min(port_values), 2)
-        maxValue = round(max(port_values), 2)
-        vol = round((np.std(port_values.pct_change()) * 252 ** 0.5)*100, 1)
-        stats = [maxValue, minValue, vol]
+        if success:
+            port_values = values.sum(axis=1)
+            port_values.rename( columns={'Unnamed: 0':'value'}, inplace=True )
+            port_returns = (port_values / port_values.shift(1) - 1).dropna()
+            
+            total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
+            
+            min_value = round(min(port_values), 2)
+            max_value = round(max(port_values), 2)
 
-        plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines')
+            stats = [total_returns, min_value, max_value]
 
-        plot = plotly.offline.plot({"data": plot_data},
+            plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines')
+
+            plot = plotly.offline.plot({"data": plot_data},
+                                       output_type='div',
+                                       include_plotlyjs=False,
+                                       show_link=False,
+                                       config={"displayModeBar": False})
+
+            # show the pie graph of the portfolio
+            pie = plotly.offline.plot({"data": [Pie(labels=tickers, values=weights)]},
                                    output_type='div',
                                    include_plotlyjs=False,
                                    show_link=False,
                                    config={"displayModeBar": False})
 
-        return render_template('Option1Results.jinja2', tickers=tickers, weightings=values, plot=plot, stats=stats)
+            return render_template('Option1Results.jinja2', display=True, tickers=tickers, weightings=values, plot=plot, pie=pie, stats=stats)
+
+        else: 
+            # TODO: ERROR CATCHING
+            pass
 
 @trackSpecialCase.route('/track2', methods=["GET", "POST"])
 def track2():
