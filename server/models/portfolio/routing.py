@@ -494,8 +494,8 @@ def portfoliodashboard():
     # portfolio composition
 
     weightings = p.x1.to_numpy().flatten()
+    tickers = p.x1.columns
 
-    # TODO: NEED TO GIVE BACK TICKERS AS ARRAY
     print(weightings)
     short = []
     long = []
@@ -505,16 +505,19 @@ def portfoliodashboard():
         if weightings[i] > 0:
             long.append(weightings[i])
 
-    # TODO: NEED TO UPDATE
-    expectedReturn = .1
-    expectedVol = .12
-    risk = 'high'
+    expectedReturn = p.get_portfolio_return()
+    expectedVol = p.get_portfolio_volatility()
+
+    option_type = getOptionTypeFromName(portfolio_name)
+    questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
+
+    risk = questionnaire['riskAppetite']
 
     # regime? bull/bear
 
     return render_template('portfoliodashboard.jinja2', title='optiondecision',
                            returnSinceInception=returnSinceInception, histValues=histValues, weightings=weightings,
-                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk)
+                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk, tickers=tickers)
 
 
 # @login_required
