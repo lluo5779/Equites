@@ -52,7 +52,6 @@ class UserPortfolio(db.DATABASE.Model):
     timestamp = db.DATABASE.Column(db.DATABASE.DateTime, index=True, default=datetime.utcnow)
     preferences = db.DATABASE.relationship('user_preferences', backref='author', lazy='dynamic')
 
-
     def __init__(self, username, portfolio_name, uuid, active, timestamp, portfolio_type, ITOT, DIA, SPY, XLG, AIA, GXC, XLY, XLE, XLF, XLV, XLI, XLB, XLK, XLU,
                  ICLN, CGW, WOOD, IYR, ITOT2, DIA2, SPY2, XLG2, AIA2, GXC2, XLY2, XLE2, XLF2, XLV2, XLI2, XLB2, XLK2,
                  XLU2, ICLN2, CGW2, WOOD2, IYR2, preferences):
