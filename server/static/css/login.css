@@ -12,10 +12,13 @@
   background-image: url('/static/images/Equites\ XL.png');
   background-size: cover;
   background-position: center;
+  width: auto;
+  height:auto ;
 }
 
 .login-heading {
   font-weight: 300;
+  color: #3B4F66;
 }
 
 .btn-login {

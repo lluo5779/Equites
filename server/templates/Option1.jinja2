@@ -2,12 +2,9 @@
 
 {% block css %}
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
-
     <style type="text/css">
         .table-wrapper {
-            width: 700px;
+            width: 100%;
             margin: 30px auto;
             background: #fff;
             padding: 20px;
@@ -97,6 +94,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker3.css" rel="stylesheet" id="bootstrap-css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+
+
     <script type="text/javascript">
         // $(document).ready( function() {
         //     $().click(function() {
@@ -159,50 +160,165 @@
         });
     </script>
 
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#start_date').datepicker({
+                format: "yyyy-mm-dd",
+                autoclose: true,
+                todayHighlight: true,
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                autoclose: true,
+                changeMonth: true,
+                changeYear: true,
+                orientation: "button"
+            }).on('changeDate', function (selected) {
+                var minDate = new Date(selected.date.valueOf());
+                $('#end_date').datepicker('setStartDate', minDate);
+            });
+
+            $('#end_date').datepicker({
+                format: "yyyy-mm-dd",
+                autoclose: true,
+                todayHighlight: true,
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                autoclose: true,
+                changeMonth: true,
+                changeYear: true,
+                orientation: "button"
+            }).on('changeDate', function (selected) {
+                var minDate = new Date(selected.date.valueOf());
+                $('#start_date').datepicker('setEndDate', minDate);
+            });
+        });
+    </script> 
+
+
 {% endblock %}
 
 {% block content %}
     <section>
-        <form action="/track" method="get">
+        <form action="/track" method="get" autocomplete="off">
         <!-- <form method="get"> -->
            <div class="container">
-                <div class="table-wrapper col-md-12">
-                    <div class="table-title">
-                        <div class="row">
-                            <div class="col-sm-8"></div>
-                            <div class="col-sm-4">
-                                <button type="button" class="button add-new"><i class="fa fa-plus"></i> Add New </button>
+
+                <div class="row">
+
+                    <div class="col-lg-12 section-heading text-center">
+                        <br>
+                        <h2> Track a Portfolio </h2>
+                    </div>
+
+                    <div class="table-wrapper col-lg-12">
+                        <div class="table-title">
+                            <div class="row text-center" >
+                                <div class="col-lg-2">
+                                    <label for="StartDate">Start Date</label>
+                                </div>
+
+                                <div class="col-lg-2">
+                                    <div class='input-group date' id='start_date'>
+                                        <input type='text' id="start_date" name="start_date" class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>                                
+                                </div>
+                                
+                                <div class="col-lg-2">
+                                    <label for="StartDate">End Date</label>
+                                </div>
+
+                                <div class="col-lg-2">
+                                    <div class='input-group date' id='end_date'>
+                                        <input type='text' id="end_date" name="end_date" class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>       
+                                </div>
+
+                                <div class="col-lg-4">
+                                    <button type="button" class="button add-new"><i class="fa fa-plus"></i> Add New </button>
+                                </div>
                             </div>
                         </div>
+
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Ticker</th>
+                                    <th>Dollar Amount</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td><input id="ticker_0" type="text" placeholder="AAPL" class="form-control" name="ticker_0"></td>
+                                    <td><input id="value_0" type="text" placeholder="1000" class="form-control" name="value_0"></td>
+                                    <td><a style="centre-align" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Ticker</th>
-                                <th>Dollar Amount</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td><input id="ticker_0" type="text" placeholder="AAPL" class="form-control" name="ticker_0"></td>
-                                <td><input id="value_0" type="text" placeholder="1000" class="form-control" name="value_0"></td>
-                                <td><a style="centre-align" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
-               <label for="start">Start Date:</label>
-                <input type="date" id="start" name="start" min="2010-01-01" max="2019-11-01" value="2015">
-
            </div>
-
 
             <center><input type="submit" id="next" value="Submit"></center>
         </form>
     </section>
 
-    {% block results %}{% endblock %}
+    {% if display == True %}
+    <section>
+        <div class="container">
+
+            <div class="section-heading text-center">
+                <br>
+                <h2>Portfolio Allocation</h2>
+                    <p class="text-muted">Let's take a look at this portfolio</p>
+                <br>
+            </div>
+
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="feature-item">
+                            <h3>{{ stats[0] }}&#37; </h3>
+                            <p class="text-muted"> Total Period Returns </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="feature-item">
+                        <h3> {{ '${:,.2f}'.format(stats[1]) }} </h3>
+                        <p class="text-muted"> Minimum Portfolio Value </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="feature-item">
+                        <h3> {{ '${:,.2f}'.format(stats[2]) }} </h3>
+                        <p class="text-muted"> Maximum Portfolio Value</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    {{plot}}
+                </div>
+
+                <div class="col-lg-4">
+                    {{pie}}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 
 {% endblock %}

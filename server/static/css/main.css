@@ -1373,17 +1373,15 @@ body {
 /* Footer */
 
 	#footer {
-          text-transform: uppercase;
-          background: #3B4F66 !important;
+      text-transform: uppercase;
+      background: #3B4F66 !important;
 		padding: 4em 0 2em 0;
 		text-align: center;
+		min-width:100%;
+        max-width:100%;
 	}
 
-		#footer .inner {
-			width: 50%;
-			margin: 0 auto;
-		}
-
+		
 			@media screen and (max-width: 980px) {
 
 				#footer .inner {
