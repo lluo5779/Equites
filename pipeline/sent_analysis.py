@@ -8,11 +8,12 @@ import torch
 from torch import nn
 import torch.backends.cudnn as cudnn
 
-from vocab import VocabBuilder, GloveVocabBuilder
-from dataloader import TextClassDataLoader
-from model import RNN
-from util import AverageMeter, accuracy
-from util import adjust_learning_rate
+#from vocab import VocabBuilder, GloveVocabBuilder
+from pipeline.dataloader import TextClassDataLoader
+from pipeline.model import RNN
+import pipeline.util as util
+from pipeline.util import AverageMeter
+#from pipeline.util import adjust_learning_rate
 
 np.random.seed(0)
 torch.manual_seed(0)
@@ -20,18 +21,18 @@ torch.manual_seed(0)
 class SentimentAnalysis(object):
 
 	def __init__(self,
-				 epochs = 50,
-				 batch_size = 128,
+				 epochs = 20,
+				 batch_size = 96,
 				 learning_rate = 0.005,
 				 weight_decay = 1e-4,
 				 print_freq = 10,
 				 save_freq = 10,
-				 embedding_size = 50,
-				 hidden_size = 128,
+				 embedding_size = 1,
+				 hidden_size = 64,
 				 layers = 2,
 				 view_size = None,
 				 min_samples = 5,
-				 cuda = 5,
+				 cuda = 0,
 				 glove = None,
 				 rnn = 'GRU',
 				 mean_seq = False,
@@ -52,7 +53,6 @@ class SentimentAnalysis(object):
 		self.rnn  = rnn
 		self.mean_seq = mean_seq
 		self.clip = clip
-		self.model = None
 
 	def get_vocab(self):
 		print("Creating vocabulary...")
@@ -70,23 +70,22 @@ class SentimentAnalysis(object):
 		joblib.dump(d_word_index, '../data/gen/d_word_index.pkl', compress = 3)
 		return d_word_index, embed
 
-	def get_trainer(self, d_word_index):
+	def get_trainer(self):
 		print('Creating dataloaders...')
-		train_loader = TextClassDataLoader('../data/train.csv', d_word_index, batch_size = self.batch_size)
-		val_loader = TextClassDataLoader('../data/test.csv', d_word_index, batch_size = self.batch_size)
+		train_loader = TextClassDataLoader('test.csv', batch_size = self.batch_size)
+		val_loader = TextClassDataLoader('test.csv', batch_size = self.batch_size)
 		return train_loader, val_loader
 
-	def get_model(self, d_word_index, embed):
+	def get_model(self):
 		print("Creating RNN model...")
-		vocab_size = len(d_word_index)
-		self.model = RNN(vocab_size = vocab_size, embed_size = self.embedding_size,
-						 num_outputs = self.view_size, rnn_model = self.rnn,
+		model = RNN(embed_size = self.embedding_size,
+						 num_output = 1, rnn_model = self.rnn,
 						 use_last = (not self.mean_seq), hidden_size = self.hid_size,
-						 embedding_tensor = embed, num_layers = self.layers, batch_first = True)
+						 num_layers = self.layers, batch_first = True)
 		print(model)
 
 		optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr = self.lr, weight_decay = self.wd)
-		criterion = 'SOMETHING AIDAN YOU SILLY' #BCE LOSS, SET target = 1 if greater than median returns, look at prices/prices.shift(1) returns stuff
+		criterion = nn.MSELoss() #BCE LOSS, SET target = 1 if greater than median returns, look at prices/prices.shift(1) returns stuff
 
 		print(optimizer)
 		print(criterion)
@@ -99,7 +98,17 @@ class SentimentAnalysis(object):
 
 		return model, criterion, optimizer
 
-def train(train_loader, model, criterion, optimizer, epoch, cuda):
+def optimize_loss_function(self, output, target):
+	for i in range(len(output)):
+		if output[i] < target[i]:
+			output[i] = 0
+			target[i] = 1
+		else:
+			output[i] = 1
+			target[i] = 1
+	return output, target
+
+def train(train_loader, model, criterion, optimizer, epoch, cuda=0):
 	batch_time = AverageMeter()
 	data_time = AverageMeter()
 	losses = AverageMeter()
@@ -108,53 +117,54 @@ def train(train_loader, model, criterion, optimizer, epoch, cuda):
 	model.train()
 
 	end = time.time()
-	for i, (input, target, seq_lengths) in enumerate(train_loader):
+	for i, (input, target) in enumerate(train_loader):
 		data_time.update(time.time() - end)
 
 		if cuda:
 			input = input.cuda(async = True)
 			target = target.cuda(async = True)
-
-		output = model(input, seq_lengths)
+		target = target.type(torch.FloatTensor)
+		output = model(input)
+		#output, target = optimize_loss_function(output, target)
 		loss = criterion(output, target)
 
-		prec1 = accuracy(output.data, target, topk = (1,))
+		#prec1 = util.accuracy(output.data, target, topk = (1,))
 		losses.update(loss.data, input.size(0))
-		top1.update(prec1[0][0], input.size(0))
+		#top1.update(prec1[0][0], input.size(0))
 
 		optimizer.zero_grad()
 		loss.backward()
 
-		torch.nn.utils.clip_grad_norm_(model.parameters(), self.clip)
+		torch.nn.utils.clip_grad_norm_(model.parameters(), 0.25)
 		optimizer.step()
-
 		batch_time.update(time.time() - end)
 		end = time.time()
 		
-		if i != 0 and i % args.print_freq == 0:
+		if i != 0 and i % 4 == 0:
 			print('Epoch: [{0}][{1}/{2}]  Time {batch_time.val:.3f} ({batch_time.avg:.3f})  '
-				  'Data {data_time.val:.3f} ({data_time.avg:.3f})  Loss {loss.val:.4f} ({loss.avg:.4f})  '
-				  'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
-				   epoch, i, len(train_loader), batch_time=batch_time, data_time=data_time, loss=losses, top1=top1))
+				  'Data {data_time.val:.3f} ({data_time.avg:.3f})  Loss {loss.val:.4f} ({loss.avg:.4f}))'.format(
+				   epoch, i, len(train_loader), batch_time=batch_time, data_time=data_time, loss=losses))
 			gc.collect()
+		
 
-def test(val_loader, model, criterion, cuda):
+def test(val_loader, model, criterion, cuda=0):
 	batch_time = AverageMeter()
 	losses = AverageMeter()
 	top1 = AverageMeter()
 
 	model.eval()
 	end = time.time()
-	for i, (input, target, seq_lengths) in enumerate(val_loader):
+	for i, (input, target) in enumerate(val_loader):
 
 		if cuda:
 			input = input.cuda(async = True)
 			target = target.cuda(async = True)
 
-		output = model(input, seq_lengths)
+		output = model(input)
+		output, target = optimize_loss_function(output, target)
 		loss = criterion(output, target)
 
-		prec1 = accuracy(output.data, target, topk = (1,))
+		prec1 = util.accuracy(output.data, target, topk = (1,))
 		losses.update(loss.data, input.size(0))
 		top1.update(prec1[0][0], input.size(0))
 
@@ -171,20 +181,29 @@ def test(val_loader, model, criterion, cuda):
 	return top1.avg
 
 
-def main():
+def re_train():
 	sent_analysis = SentimentAnalysis()
-	d_word_index, embed = sent_analysis.get_vocab()
-	train_loader, val_loader = sent_analysis.get_trainer(d_word_index)
-	model, criterion, optimizer = sent_analysis.get_model(d_word_index, embed)
+	#d_word_index, embed = sent_analysis.get_vocab()
+	train_loader, val_loader = sent_analysis.get_trainer()
+	model, criterion, optimizer = sent_analysis.get_model()
 
-	print(sent_analysis.epochs())
-	for epoch in range(1, sent_analysis.epochs() + 1):
-
-		adjust_learning_rate(sent_analysis.lr(), optimizer, epoch)
+	for epoch in range(1, sent_analysis.epochs + 1):
+		util.adjust_learning_rate(sent_analysis.lr, optimizer, epoch)
 		train(train_loader, model, criterion, optimizer, epoch)
-		test(val_loader, model, criterion)
+		#test(val_loader, model, criterion)
 
-		if epoch % sent_analysis.save_freq() == 0:
+		if epoch % sent_analysis.sf == 0:
 			name_model = 'rnn_{}.pkl'.format(epoch)
-			path_save_model = os.path.join('../data/gen', name_model)
+			path_save_model = os.path.join('./', name_model)
 			joblib.dump(model.float(), path_save_model, compress = 2)
+
+def predict(prices):
+	sent_analysis = SentimentAnalysis()
+	model, _, _ = sent_analysis.get_model()
+	model.load_state_dict(torch.load('path'))
+	model.eval()
+	preds = model(prices)
+	predict_loader = TextClassDataLoader(prices, batch_size = 1, predict=True, preds_to_format = preds)
+	_, preds = predict_loader.predict_batches
+	return preds
+re_train()

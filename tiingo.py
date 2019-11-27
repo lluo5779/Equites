@@ -4,7 +4,7 @@ import requests
 
 import pandas as pd
 
-TIINGO_KEY = '2e64578d69892c20fab750efe3ae9ed176f7c1af' #'6d2d79e31c7c1b6bae9be7e8986b4a5fe3ce5111'
+TIINGO_KEY = '0a9f5eb496bc7b1ce18c4f41fcc6948197580cb1'#'2e64578d69892c20fab750efe3ae9ed176f7c1af' #'6d2d79e31c7c1b6bae9be7e8986b4a5fe3ce5111'
 TIINGO_EOD = 'https://api.tiingo.com/tiingo/daily/%s/prices?startDate=%s&endDate=%s'
 
 def get_data(tickers, data_point, start_date, end_date, save):
@@ -13,6 +13,7 @@ def get_data(tickers, data_point, start_date, end_date, save):
 
     try:
         for ticker in tickers:
+            print('hey1')
             data[ticker] = tiingo(ticker, start_date, end_date)[data_point]
 
         print("\n\nSUCCESS: retrieved new %s data ..." % data_point)
@@ -37,9 +38,9 @@ def get_data(tickers, data_point, start_date, end_date, save):
 def tiingo(ticker, start_date, end_date):
     headers = {'Content-Type': 'application/json',
                'Authorization': 'Token %s' % TIINGO_KEY}
-
     response = requests.get(TIINGO_EOD % (ticker, start_date, end_date),
                             headers=headers).json()
     data = pd.DataFrame(response)
+
 
     return data.set_index('date')

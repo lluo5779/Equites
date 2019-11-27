@@ -153,7 +153,7 @@ print('********************************************************************')
 
 # temp mu_ml
 mu_ml = mu_bl1.mul(pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=mu_bl1.index, columns=mu_bl1.columns))
-
+print("HELLO", mu_ml)
 
 ## *********************************************************************************************************************
 #  black litterman for period two returns

@@ -2,38 +2,50 @@ from __future__ import print_function
 import torch
 import pandas as pd 
 import numpy as np 
-import util as ut
+import pipeline.util as ut
+import ast
+from sklearn.preprocessing import MinMaxScaler
 
 class TextClassDataLoader(object):
 
-	def __init__(self, data, word_to_index = None, batch_size = 32):
+	def __init__(self, path_file, word_to_index = None, batch_size = 32, predict = False, check_mu = None, preds_to_format= None):
 
 		self.batch_size = batch_size
 		#self.word_to_index = word_to_index
+		self.scaler = MinMaxScaler()
 
-		#df = pd.read_csv(path_file)
-		df = data
+		df = pd.read_csv(path_file)
+		df = df[['prices', 'return2']]
+		df.prices = df.prices.apply(lambda x: ast.literal_eval(x))
 		#df['body'] = df['body'].apply(ut._tokenize)
 		#df['body'] = df['body'].apply(self.generate_indexifyer())
+
 		self.samples = df.values.tolist()
+		all_values = []
+		for x in range(len(self.samples)):
+			temp = self.samples[x][0] + [self.samples[x][1]]
+			all_values += temp
+		all_values = np.asarray(all_values).reshape(-1, 1)
+		self.scaler.fit(all_values)
+		prices = self.scaler.transform(df.prices.values.tolist())
+		return2 = self.scaler.transform(np.asarray(df.return2.values).reshape(-1,1))
+		for i in range(len(self.samples)):
+			self.samples[i][0] = prices[i]
+			self.samples[i][1] = return2[i][0]
 
 		self.n_samples = len(self.samples)
 		self.n_batches = int(self.n_samples / self.batch_size)
-		self.max_length = self._get_max_length()
+		#self.max_length = self._get_max_length()
 		self._shuffle_indices()
 
 		self.report()
+		if predict:
+			self.predict_batches = (self.samples, check_mu.mul(pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=check_mu.index, columns=check_mu.columns))) 
 
 	def _shuffle_indices(self):
-		self.indices = np.random.permutations(self.n_samples)
+		self.indices = np.random.permutation(self.n_samples)
 		self.index = 0
 		self.batch_index = 0
-
-	def convert_targets(self, label):
-		if label < self.mean_returns:
-			label = 0
-		else:
-			label = 1
 
 	def generate_indexifer(self):
 
@@ -46,7 +58,6 @@ class TextClassDataLoader(object):
 					indices.append(self.word_to_index['__UNK__'])
 			return indices
 		return indexify
-
 
 	@staticmethod
 	def _padding(batch_x):
@@ -62,27 +73,28 @@ class TextClassDataLoader(object):
 		n = 0
 		while n < self.batch_size:
 			_index = self.indices[self.index]
+			#self.samples[_index][0] = self.scaler.transform(self.samples[_index][0])
+			#self.samples[_index][1] = self.scaler.transform(self.samples[_index][1])
 			batch.append(self.samples[_index])
 			self.index += 1
 			n += 1
 		self.batch_index += 1
 
-		label, string = tuple(zip(*batch))
-		label = map(self.convert_targets(label))
+		string, label = tuple(zip(*batch))
+		#seq_lengths = torch.LongTensor(list(map(len, string)))
+		length = len(string[0])
+		seq_tensor = torch.zeros(len(string), length).long()
+		for idx, seq in enumerate(string):
+			seq_tensor[idx, :length] = torch.FloatTensor(seq)
 
-		seq_lengths = torch.LongTensor(map(len, string))
-
-		seq_tensor = torch.zeros((len(string), seq_lengths.max())).long()
-		for idx, (seq, seqlen) in enumerate(zip(string, seq_lengths)):
-			seq_tensor[idx, :seqlen] = torch.LongTensor(seq)
-
-		seq_lengths, perm_idx = seq_lengths.sort(0, descending = True)
-		seq_tensor = seq_tensor[perm_idx]
+		seq_tensor = seq_tensor.transpose(0, 1)
+		#seq_lengths, perm_idx = seq_lengths.sort(0, descending = True)
+		#seq_tensor = seq_tensor[perm_idx]
 		# seq_tensor = seq_tensor.transpose(0, 1)
 		label = torch.LongTensor(label)
-		label = label[perm_idx]
+		#label = label[perm_idx]
 
-		return seq_tensor, label, seq_lengths
+		return seq_tensor, label
 
 
 	def __len__(self):
@@ -101,6 +113,6 @@ class TextClassDataLoader(object):
 
 	def report(self):
 		print('# samples: {}'.format(len(self.samples)))
-		print('max len: {}'.format(self.max_length))
-		print('# vocab: {}'.format(len(self.word_to_index)))
+		#print('max len: {}'.format(self.max_length))
+		#print('# vocab: {}'.format(len(self.word_to_index)))
 		print('# batches: {} (batch_size = {})'.format(self.n_batches, self.batch_size))

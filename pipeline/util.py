@@ -17,21 +17,21 @@ class AverageMeter(object):
 		self.count += n
 		self.avg = self.sum/self.count
 
-	def accuracy(output, target, topk(1,)):
-		maxk = max(topk)
-		batch_size = target.size(0)
+def accuracy(output, target, topk=(1,)):
+	maxk = max(topk)
+	batch_size = target.size(0)
 
-		_, pred = output.topk(maxk, 1, Tru, True)
-		pred = pred.t()
-		correct = pred.eq(targe.view(1, -1).expand_as(pred))
+	_, pred = output.topk(maxk, 1, True, True)
+	pred = pred.t()
+	correct = pred.eq(targe.view(1, -1).expand_as(pred))
 
-		res = []
-		for k in topk:
-			correct_k = correct[:k].view(-1).float().sum(0, keepdim = True)
-			res.append(correct_k.mul_(100.0 / batch_size))
-		return res
+	res = []
+	for k in topk:
+		correct_k = correct[:k].view(-1).float().sum(0, keepdim = True)
+		res.append(correct_k.mul_(100.0 / batch_size))
+	return res
 
-	def adjust_learning_rate(lr, optimizer, epoch):
-		lr = lr * (0.1 ** (epoch // 8))
-		for param_group in optimizer.param_groups:
-			param_group['lr'] = lr
+def adjust_learning_rate(lr, optimizer, epoch):
+	lr = lr * (0.1 ** (epoch // 8))
+	for param_group in optimizer.param_groups:
+		param_group['lr'] = lr
