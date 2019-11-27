@@ -217,7 +217,9 @@ target_dollars, initial_dollars = 1300, 1250
 # low 1, medium 2, high = 3
 aversion = 3
 
-alpha, return_target, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, initial_dollars, target_dollars, l, mu_bl1, mu_bl2, cov_bl1)
+return_target = (target_dollars / initial_dollars) ** (1 / (2 * horizon)) - 1
+
+alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, initial_dollars, target_dollars, l, mu_bl1, mu_bl2, cov_bl1)
 
 # assign the risk tolerances
 risk_tolerance = (multipliers, exposures, cardinality, 'MCVAR')

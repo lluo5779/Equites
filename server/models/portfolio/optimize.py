@@ -50,12 +50,12 @@ def optimize(mu, sigma, alpha, return_target, costs, prices, gamma):
                     constraints=[budget1, budget2, target1, target2])
 
     if soln.success:
-        print("SUCCESS: optimization completed with the return goals met!")
-        print('finished optimization in %f seconds.\n\n' % (time.time() - start))
+        # print("SUCCESS: optimization completed with the return goals met!")
+        # print('finished optimization in %f seconds.\n\n' % (time.time() - start))
 
         return soln, None
     else:
-        print("\n\nWARNING: the return targets are too aggressive for the risk tolerance level ...")
+        # print("\n\nWARNING: the return targets are too aggressive for the risk tolerance level ...")
 
         # SAFE SOLUTION ... just try to get a positive return
         target1 = make_constraint('ineq', return_p1, (mu[0], 0,))
@@ -85,10 +85,10 @@ def optimize(mu, sigma, alpha, return_target, costs, prices, gamma):
                                bounds=bounds,
                                constraints=[budget1, budget2, target1, target2])
 
-        print("The safe portfolio is the closest to the target returns while respecting the risk exposure tolerance... \n")
-        print("The target portfolio releases any risk exposure tolerances ... it's likely unreasonable so be careful! \n")
+        # print("The safe portfolio is the closest to the target returns while respecting the risk exposure tolerance... \n")
+        # print("The target portfolio releases any risk exposure tolerances ... it's likely unreasonable so be careful! \n")
 
-        print('finished optimization in %f seconds.\n\n' % (time.time() - start))
+        # print('finished optimization in %f seconds.\n\n' % (time.time() - start))
 
         return safe_soln, target_soln
 

@@ -80,14 +80,14 @@ paths:
         200:
           description: A list of users
 
-#  /track2:
-#    get:
-#      operationId: "server.models.portfolio.routing.track2"
-#      produces:
-#        - text/html
-#      responses:
-#        200:
-#          description: A list of users
+  /enhance:
+    get:
+      operationId: "server.models.portfolio.routing.enhance"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
 
   /option2:
     get:
@@ -345,6 +345,72 @@ paths:
   /option3WealthB:
     get:
       operationId: "server.models.portfolio.routing.option3WealthB"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
+  /build:
+    get:
+      operationId: "server.models.portfolio.routing.build"
+      parameters:
+        - name: initialInvestment
+          description: initialInvestment
+          in: query
+          type: number
+        - name: highWealth
+          description: highWealth
+          in: query
+          type: string
+        - name: mediumWealth
+          description: mediumWealth
+          in: query
+          type: string
+        - name: lowWealth
+          description: lowWealth
+          in: query
+          type: string
+        - name: retirementDate
+          description: retirementDate
+          in: query
+          type: string
+        - name: retirementAmount
+          description: retirementAmount
+          in: query
+          type: number
+        - name: highRetirement
+          description: highRetirement
+          in: query
+          type: string
+        - name: mediumRetirement
+          description: mediumRetirement
+          in: query
+          type: string
+        - name: lowRetirement
+          description: lowRetirement
+          in: query
+          type: string
+        - name: purchaseDate
+          description: purchaseDate
+          in: query
+          type: string
+        - name: purchaseAmount
+          description: purchaseAmount
+          in: query
+          type: number
+        - name: highPurchase
+          description: highPurchase
+          in: query
+          type: string
+        - name: mediumPurchase
+          description: mediumPurchase
+          in: query
+          type: string
+        - name: lowPurchase
+          description: lowPurchase
+          in: query
+          type: string
       produces:
         - text/html
       responses:

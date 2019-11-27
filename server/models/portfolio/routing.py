@@ -5,11 +5,13 @@ from server.models.auth.schema import User
 # import server.models.users.decorators as user_decorators
 from server.common.database import Database
 from server.models.portfolio.portfolio import Portfolio
-from server.models.portfolio.bt import back_test
 from server.models.stock.stock import Stocks
 from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
 from server.models.portfolio.bt import back_test
+from server.models.portfolio.rs import business_days
+from server.models.portfolio.risk import risk_prefs
 from datetime import datetime
+from scipy.stats.mstats import gmean
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 import numpy as np
@@ -69,12 +71,11 @@ def optiondecision():
 
 
 
-# @login_required
+@login_required
 def track():
     if len(request.query_string) == 0:
         return render_template('Option1.jinja2', display=False)
     else:
-        # do this after you extract the starting and ending dates ...
         args = list(request.args.values())
 
         start_date = args[0]
@@ -110,7 +111,7 @@ def track():
                                        config={"displayModeBar": False})
 
             # show the pie graph of the portfolio
-            pie = plotly.offline.plot({"data": [Pie(labels=tickers, values=weights)]},
+            pie = plotly.offline.plot({"data": [Pie(labels=tickers, values=weights, hole=.1)]},
                                    output_type='div',
                                    include_plotlyjs=False,
                                    show_link=False,
@@ -122,25 +123,53 @@ def track():
             # TODO: ERROR CATCHING
             pass
 
-@trackSpecialCase.route('/track2', methods=["GET", "POST"])
-def track2():
+@login_required
+def enhance():
     if len(request.query_string) == 0:
-        weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-        return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings, stats=stats)
+        return render_template('Option2.jinja2', display=False)
     else:
-        #save option type 2 to database
-        tickers = ["AAPL", "SPY", "TLT"]
-        weightings = [.1,.1,.1]
-        fig = plotly.graph_objs.Figure(data=[plotly.graph_objs.Pie(labels=tickers, values=weightings, hole=.3)])
+        args = list(request.args.values())
 
-        plot = plotly.offline.plot({"data": fig},
+        tickers = args[::2]
+        values = [abs(float(x)) for x in args[1::2]]
+        weights = [x / sum(values) for x in values]
+        portfolio = dict(zip(tickers, weights))
+
+        # always assign to past 6 months (ie rebalance the period)
+        start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
+
+        # get the number of days in the backtest period ... to determine target returns and variances later
+        days = business_days(start_date, datetime.now().strftime("%Y-%m-%d"))
+
+        # call backtest to get the value of the portfolio
+        portfolio_value = back_test(portfolio, start_date, end_date=None, dollars=None)[0].sum(axis=1)
+
+        # calculate portfolio returns
+        portfolio_returns = (portfolio_value / portfolio_value.shift(1) - 1).dropna()
+
+        # assign the target return and variance
+        return_target = float(gmean(portfolio_returns + 1, axis=0) - 1) * days
+
+        # set the other parameters for a generalized maximization
+        horizon, aversion, l= 10, 1, 5
+
+        p = Portfolio(current_user.username)
+        alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, return_target, l, p.mu_bl1, p.mu_bl2, p.cov_bl1)
+
+        # assign the risk tolerances
+        risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')
+
+        weights = p.run_optimization(alpha, return_target, risk_tolerance)[0]
+        weights = weights.loc[weights['weight'] != 0]
+
+        fig = plotly.graph_objs.Figure(data=[plotly.graph_objs.Pie(labels=weights.index, values=weights['weight'], hole=.1)])
+        pie = plotly.offline.plot({"data": fig},
                                    output_type='div',
                                    include_plotlyjs=False,
                                    show_link=False,
                                    config={"displayModeBar": False})
 
-        return render_template('Option2.jinja2', tickers=tickers, weightings=weightings, plot=plot)
+        return render_template('Option2.jinja2', pie=pie, display=True)
 
 # @login_required
 def option2():
@@ -367,5 +396,8 @@ def option3WealthA():
 
 def option3WealthB():
     return render_template('Option3WealthB.jinja2', title='optiondecision')
+
+def build():
+    return render_template('Build.jinja2')
 
 
