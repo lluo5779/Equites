@@ -678,4 +678,13 @@ def option3WealthB():
 
 
 def build():
-    return render_template('Build.jinja2')
+    portfolio_name = request.headers.get('portfolioName')
+    _id = getUuidFromPortfolioName(portfolio_name)
+
+    if portfolio_name == None:
+        questionnaire = None
+    else:
+        option_type = getOptionTypeFromName(portfolio_name)
+        questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
+
+    return render_template('Build.jinja2', questionnaire=questionnaire)
