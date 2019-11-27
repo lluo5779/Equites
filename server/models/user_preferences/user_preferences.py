@@ -83,3 +83,4 @@ def update_new_questionnaire(questionnaire, option_type, uuid):
     old_df.to_sql(name=option_type, con=Database.DATABASE.engine, if_exists="replace")
 
     print("Successfully updated questionnaire database")
+

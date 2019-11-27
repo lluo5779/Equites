@@ -8,8 +8,8 @@ from server.models.auth.schema import User
 from server.common.database import Database
 from server.models.portfolio.rs import business_days
 from server.models.portfolio.risk import risk_prefs
-from server.models.portfolio.portfolio import Portfolio, getUuidFromPortfolioName
-from server.models.portfolio.portfolio import Portfolio, getUuidFromPortfolioName, get_past_portfolios
+from server.models.portfolio.portfolio import Portfolio, getUuidFromPortfolioName, get_past_portfolios, \
+    getOptionTypeFromName
 from server.models.portfolio.bt import back_test
 from server.models.stock.stock import Stocks
 from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
@@ -130,8 +130,27 @@ def track():
             # TODO: ERROR CATCHING
             pass
 
+
 @trackSpecialCase.route('/track2', methods=["GET", "POST"])
 def track2():
+    """
+        Display option 2 portfolio with 2 states
+        Input:
+            Header:
+                numEntries <optional>
+                ticker_0, weight_0
+                ticker_1, weight_1
+                ...
+        Output:
+            Template
+            Params:
+               tickers=tickers, weightings=weightings, plot=plot
+
+        Accessed from:
+            main page
+            option2 upon submission
+    """
+
     if len(request.query_string) == 0:
         weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -140,8 +159,18 @@ def track2():
 
         # save option type 2 to database
         num_entries = request.headers.get('numEntries')
-        tickers = [request.headers.get('ticker_'+str(i)) for i in range(num_entries)]#["AAPL", "SPY", "TLT"]
-        weightings = [request.headers.get('weight_'+str(i)) for i in range(num_entries)]
+        if num_entries == None:
+            querys = request.query_string.split('ticker_')
+            num_entries = 0
+            for query in querys:
+                try:
+                    num = int(query[0])
+                    num_entries = max(num, num_entries)
+                except:
+                    continue
+
+        tickers = [request.headers.get('ticker_' + str(i)) for i in range(num_entries)]  # ["AAPL", "SPY", "TLT"]
+        weightings = [request.headers.get('weight_' + str(i)) for i in range(num_entries)]
 
         fig = plotly.graph_objs.Figure(data=[plotly.graph_objs.Pie(labels=tickers, values=weightings, hole=.3)])
 
@@ -152,6 +181,7 @@ def track2():
                                    config={"displayModeBar": False})
 
         return render_template('Option2.jinja2', tickers=tickers, weightings=weightings, plot=plot)
+
 
 @login_required
 def enhance():
@@ -181,10 +211,11 @@ def enhance():
         return_target = float(gmean(portfolio_returns + 1, axis=0) - 1) * days
 
         # set the other parameters for a generalized maximization
-        horizon, aversion, l= 10, 1, 5
+        horizon, aversion, l = 10, 1, 5
 
         p = Portfolio(current_user.username)
-        alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, return_target, l, p.mu_bl1, p.mu_bl2, p.cov_bl1)
+        alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, return_target, l, p.mu_bl1, p.mu_bl2,
+                                                                p.cov_bl1)
 
         # assign the risk tolerances
         risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')
@@ -192,14 +223,16 @@ def enhance():
         weights = p.run_optimization(alpha, return_target, risk_tolerance)[0]
         weights = weights.loc[weights['weight'] != 0]
 
-        fig = plotly.graph_objs.Figure(data=[plotly.graph_objs.Pie(labels=weights.index, values=weights['weight'], hole=.1)])
+        fig = plotly.graph_objs.Figure(
+            data=[plotly.graph_objs.Pie(labels=weights.index, values=weights['weight'], hole=.1)])
         pie = plotly.offline.plot({"data": fig},
-                                   output_type='div',
-                                   include_plotlyjs=False,
-                                   show_link=False,
-                                   config={"displayModeBar": False})
+                                  output_type='div',
+                                  include_plotlyjs=False,
+                                  show_link=False,
+                                  config={"displayModeBar": False})
 
         return render_template('Option2.jinja2', pie=pie, display=True)
+
 
 # @login_required
 def option2():
@@ -223,29 +256,30 @@ def option3childb():
     return render_template('Option3ChildB.jinja2', title='optiondecision')
 
 
-# @login_required
-def option3childc():
-    print("request.query_string: ", len(request.query_string))
-    if len(request.query_string) == 0:
-        return render_template('Option3ChildC.jinja2')
-    else:
-        p = Portfolio(current_user.username)  # Initializes portfolio object for user.
-        budget = float(request.args.get('investmentGoal'))
-        cardinality = [1] * 7 + [0] * (len(SYMBOLS) - 7)
-        if request.args.get('riskAppetite') == "High":
-            risk_tolerance = [((1, 10), (0, 0.10), cardinality, 'SHARPE'),
-                              ((5, 5), (0, 0.20), cardinality, 'SHARPE'),
-                              ((10, 1), (-0.05, 0.50), cardinality, 'SHARPE')]
-        else:
-            risk_tolerance = [((1, 10), (0, 0.10), cardinality, 'SHARPE'),
-                              ((5, 5), (0, 0.20), cardinality, 'SHARPE'),
-                              ((10, 1), (-0.05, 0.50), cardinality, 'SHARPE')]
-        weights = p.run_optimization(risk_tolerance)
-        p.make_new_portfolios(budget=budget, portfolio_type='option3childc')
-
-        return render_template('portfolio.jinja2', title='Sign In', weightings=weights, risk=p.get_portfolio_cvar(),
-                               expectedReturn=p.get_portfolio_return(), expectedVol=p.get_portfolio_volatility())
-
+#
+# # @login_required
+# def option3childc():
+#     print("request.query_string: ", len(request.query_string))
+#     if len(request.query_string) == 0:
+#         return render_template('Option3ChildC.jinja2')
+#     else:
+#         p = Portfolio(current_user.username)  # Initializes portfolio object for user.
+#         budget = float(request.args.get('investmentGoal'))
+#         cardinality = [1] * 7 + [0] * (len(SYMBOLS) - 7)
+#         if request.args.get('riskAppetite') == "High":
+#             risk_tolerance = [((1, 10), (0, 0.10), cardinality, 'SHARPE'),
+#                               ((5, 5), (0, 0.20), cardinality, 'SHARPE'),
+#                               ((10, 1), (-0.05, 0.50), cardinality, 'SHARPE')]
+#         else:
+#             risk_tolerance = [((1, 10), (0, 0.10), cardinality, 'SHARPE'),
+#                               ((5, 5), (0, 0.20), cardinality, 'SHARPE'),
+#                               ((10, 1), (-0.05, 0.50), cardinality, 'SHARPE')]
+#         weights = p.run_optimization(risk_tolerance)
+#         p.make_new_portfolios(budget=budget, portfolio_type='option3childc')
+#
+#         return render_template('portfolio.jinja2', title='Sign In', weightings=weights, risk=p.get_portfolio_cvar(),
+#                                expectedReturn=p.get_portfolio_return(), expectedVol=p.get_portfolio_volatility())
+#
 
 '''
 def portfoliio():
@@ -287,6 +321,206 @@ def getRiskToleranceFromQuestionnaire(questionnaire):
 
 # @login_required
 def portfolioview():
+    """
+        Display tentative portfolio
+        Input:
+            portfolioName <for editing known portfolio; None if finishing new questionnaire>
+            option_type
+        Output:
+            Template
+            Params:
+                title='Sign In', weightings=weightings, risk=risk,
+               expectedRet=expectedReturn, expectedVol=expectedVol, histValues=histValues, long=None,
+               short=None, portfolioName=portfolio_name
+
+        Accessed from:
+            options questionnaires upon save
+            # edit button from portfoliodashboard
+    """
+
+    # Updating questionnaire data
+    portfolio_name = request.headers.get('portfolioName')
+    option_type = request.headers.get("optionType")
+
+    questionnaire = {}
+    is_new_portfolio = False
+
+    if option_type not in op_to_q_map:
+        print(option_type)
+        raise ValueError("Bad option type. Something went terribly wrong.")
+
+    for question in op_to_q_map[option_type]:
+        questionnaire[question] = request.headers.get(question)
+
+    print("questionnaire: ", questionnaire)
+
+    _id = getUuidFromPortfolioName(portfolio_name)
+    # need to check if request no uuid, will create uuid
+    # if _id is None:
+    #     _id = uuid.uuid4()
+    #     is_new_portfolio = True
+    #     initialize_new_questionnaire(questionnaire, option_type, uuid=_id)
+    # else:
+    #     update_new_questionnaire(questionnaire, option_type, uuid=_id)
+
+    # Updating the portfolio data
+    p = Portfolio(current_user.username, _id=_id, generate_new=is_new_portfolio)
+
+    if is_new_portfolio:
+        p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
+
+    weightings = [p.x1, p.x2]
+    expectedReturn = p.get_portfolio_return()
+    expectedVol = p.get_portfolio_volatility()
+    risk = p.get_portfolio_cvar()
+    start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
+
+    histValues = back_test(p.x1.to_dict()[list(p.x1.to_dict().keys())[0]], start_date)[0].sum(axis=1) \
+                 * float(questionnaire['investmentGoal'][0])
+    # if is_new_portfolio:
+    #     p.make_new_portfolios(questionnaire['investmentGoal'], option_type, 'r5')
+    # else:
+    #     print(p.x1.to_dict())
+    #     p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
+    print('FINISHED')
+    return render_template('portfolioview.jinja2', title='Sign In', weightings=weightings, risk=risk,
+                           expectedRet=expectedReturn, expectedVol=expectedVol, histValues=histValues, long=None,
+                           short=None, portfolioName=portfolio_name)
+    # except:
+    #     return render_template('OptionDecision.jinja2')
+
+
+def portfoliosnapshot():
+    """
+        Displays all user portfolio
+        Input:
+            None
+        Output:
+            Template
+            Params:
+                title='optiondecision',
+                returnSinceInception=returnSinceInception,
+                histValues=histValues,
+                portfolioNames=portfolioNames
+
+        Accessed from:
+            menu
+            portfolioview upon save
+    """
+    username = current_user.username
+
+    all_past_p = get_past_portfolios(username=username, get_all=True)
+    print(">>> all_past_p: ", all_past_p)
+
+    portfolioNames = all_past_p[2]['portfolio_name']
+    print('>>>> portfolioNames: ', portfolioNames)
+
+    portfolioInitialValue = all_past_p[2]['budget'].tolist()
+    print('>>>> portfolioInitialValue: ', portfolioInitialValue)
+
+    start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
+    histValues = [back_test(portfolio.to_dict(), start_date)[0].sum(axis=1) * portfolioInitialValue[index] for
+                  index, portfolio in
+                  all_past_p[0].iterrows()]  # [[100, 110, 120, 115, 118], [50, 60]]
+    print('>>>> histValues: ', histValues)
+
+    # initial portfolio value (wont be in list above if port is > 1yr old)
+    returnSinceInception = []
+    for i in range(len(histValues)):
+        temp = round(((histValues[i][-1] / portfolioInitialValue[i]) - 1) * 100, 2)
+        returnSinceInception.append(temp)
+    print('>>>> returnSinceInception: ', returnSinceInception)
+
+    return render_template('portfoliosnapshot.jinja2', title='optiondecision',
+                           returnSinceInception=returnSinceInception, histValues=histValues,
+                           portfolioNames=portfolioNames)
+
+
+def portfoliodashboard():
+    """
+    Displays a dashboard of the portfolio based on portfolio name
+
+    Input:
+        Header: portfolioName
+    Output:
+        Template
+        Params:
+            title='optiondecision',
+            returnSinceInception=returnSinceInception
+            histValues=histValues
+            weightings=weightings
+            short=short
+            long=long
+            expectedReturn=expectedReturn
+            expectedVol=expectedVol
+            risk=risk
+
+    Accessed from:
+        portfoliosnapshot
+    """
+
+    portfolio_name = request.headers.get('portfolioName')
+    username = current_user.username
+    print('username: ', username)
+
+    _id = getUuidFromPortfolioName(portfolio_name)
+    p = Portfolio(username=username, _id=_id, generate_new=False)
+
+    start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
+    print('p.x1.to_dict()[list(p.x1.to_dict().keys())[0]]: ', p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
+    histValues = back_test(p.x1.to_dict()[list(p.x1.to_dict().keys())[0]], start_date)[0].sum(axis=1)
+    print('port hist: ', histValues)
+
+    returnSinceInception = histValues.apply(lambda x: round((x - 1) * 100, 2))
+
+    portfolioInitialValue = p.budget
+    histValues = histValues.apply(lambda x: x * portfolioInitialValue)
+    print('port hist: ', histValues)
+
+    # initial portfolio value (wont be in list above if port is > 1yr old)
+    # for i in range(len(histValues)):
+    #     temp = round(((histValues[i][-1] / portfolioInitialValue) - 1) * 100, 2)
+    #     returnSinceInception.append(temp)
+    # portfolio composition
+
+    weightings = p.x1.to_numpy().flatten()
+
+    print(weightings)
+    short = []
+    long = []
+    for i in range(len(weightings)):
+        if weightings[i] < 0:
+            short.append(weightings[i])
+        if weightings[i] > 0:
+            long.append(weightings[i])
+
+    expectedReturn = .1
+    expectedVol = .12
+    risk = 'high'
+
+    # regime? bull/bear
+
+    return render_template('portfoliodashboard.jinja2', title='optiondecision',
+                           returnSinceInception=returnSinceInception, histValues=histValues, weightings=weightings,
+                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk)
+
+
+# @login_required
+def editportfolio():
+    # pull most recent questionaire data if portfolioName==""
+    # if portfolio is option 1
+
+    portfolio_name = request.headers.get('portfolioName')
+
+    option_type = getOptionTypeFromName(portfolio_name)
+    questionnaire = fetch_latest_questionnaire_from_type(option_type=option_type)
+    return render_template(str.capitalize(option_type) + '.jinja2', title='Sign In', questionnaire=questionnaire)
+
+    # if portfolio is option 2
+    # return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
+
+
+def saveportfolio():
     # Updating questionnaire data
     portfolio_name = request.headers.get('portfolioName')
     option_type = request.headers.get("optionType")
@@ -312,132 +546,17 @@ def portfolioview():
         update_new_questionnaire(questionnaire, option_type, uuid=_id)
 
     # Updating the portfolio data
-    # TODO: current_user.username
-    p = Portfolio('test1', _id=_id, generate_new=is_new_portfolio)
+    p = Portfolio(current_user.username, _id=_id, generate_new=is_new_portfolio)
+
+    p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
 
     if is_new_portfolio:
-        p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
-
-    weightings = [p.x1, p.x2]
-    expectedReturn = p.get_portfolio_return()
-    expectedVol = p.get_portfolio_volatility()
-    risk = p.get_portfolio_cvar()
-    # d = {}
-    # for key, val in zip(SYMBOLS, weightings[0]):
-    #     d[key] = float(val)
-    start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
-    print('p.x1.to_dict(): ', p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
-    histValues = back_test(p.x1.to_dict()[list(p.x1.to_dict().keys())[0]], start_date)[0].sum(axis=1) \
-                 * float(questionnaire['investmentGoal'][0])
-    if is_new_portfolio:
-        p.make_new_portfolios(questionnaire['investmentGoal'], option_type, 'r5')
+        p.make_new_portfolios(questionnaire['investmentGoal'], option_type, portfolio_name)
     else:
         print(p.x1.to_dict())
         p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
     print('FINISHED')
-    return render_template('portfolioview.jinja2', title='Sign In', weightings=weightings, risk=risk,
-                           expectedRet=expectedReturn, expectedVol=expectedVol, histValues=histValues, long=None,
-                           short=None, portfolioName=portfolio_name)
-    # except:
-    #     return render_template('OptionDecision.jinja2')
-
-
-def portfoliosnapshot():
-    # username = current_user.username
-    # print('username: ', username)
-
-    all_past_p = get_past_portfolios(username='test1', get_all=True)
-    print(">>> all_past_p: ", all_past_p)
-
-
-    portfolioInitialValue = all_past_p[2]['budget'].tolist()
-    print('>>>> portfolioInitialValue: ', portfolioInitialValue)
-    start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
-    histValues = [back_test(portfolio.to_dict(), start_date)[0].sum(axis=1) * portfolioInitialValue[index] for
-                  index, portfolio in
-                  all_past_p[0].iterrows()]  # [[100, 110, 120, 115, 118], [50, 60]]
-
-    print('>>>> histValues: ', histValues)
-
-    # initial portfolio value (wont be in list above if port is > 1yr old)
-    returnSinceInception = []
-    for i in range(len(histValues)):
-        temp = round(((histValues[i][-1] / portfolioInitialValue[i]) - 1) * 100, 2)
-        returnSinceInception.append(temp)
-
-    print('>>>> returnSinceInception: ', returnSinceInception)
-
-    portfolioNames = all_past_p[2]['portfolio_name']
-
-    print('>>>> portfolioNames: ', portfolioNames)
-
-
-    return render_template('portfoliosnapshot.jinja2', title='optiondecision',
-                       returnSinceInception=returnSinceInception, histValues=histValues,
-                       portfolioNames=portfolioNames)
-
-
-def portfoliodashboard():
-    # list of portfolio values for past year or since inception of specific portfolio
-    # histValues = [100, 110, 120, 115, 118]
-
-    # EXPECT: portfolio name
-    # so that database can queried
-
-    username = current_user.username
-    print('username: ', username)
-
-    all_past_p = get_past_portfolios(get_all=True)
-    print(">>> all_past_p: ", all_past_p)
-
-    portfolioInitialValue = all_past_p[2]['budget'].tolist()
-    print('>>>> portfolioInitialValue: ', portfolioInitialValue)
-    start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
-    histValues = [back_test(portfolio.to_dict(), start_date)[0].sum(axis=1) * portfolioInitialValue[index] for
-                  index, portfolio in
-                  all_past_p[0].iterrows()]  # [[100, 110, 120, 115, 118], [50, 60]]
-
-    print(">>> current_user: ", current_user.is_authenticated)
-
-    # initial portfolio value (wont be in list above if port is > 1yr old)
-    returnSinceInception = []
-    for i in range(len(histValues)):
-        temp = round(((histValues[i][-1] / portfolioInitialValue[i]) - 1) * 100, 2)
-        returnSinceInception.append(temp)
-    # portfolio composition
-    weightings = [.1, -.1, .1, .1]
-    short = []
-    long = []
-    for i in range(len(weightings)):
-        if weightings[i] < 0:
-            short.append(weightings[i])
-        if weightings[i] > 0:
-            long.append(weightings[i])
-
-    expectedReturn = .1
-    expectedVol = .12
-    risk = 'high'
-
-    # regime? bull/bear
-
-    return render_template('portfoliodashboard.jinja2', title='optiondecision',
-                           returnSinceInception=returnSinceInception, histValues=histValues, weightings=weightings,
-                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk)
-
-
-# @login_required
-def editportfolio():
-    # pull most recent questionaire data if portfolioName==""
-    # if portfolio is option 1
-    weightings = [0]
-    return render_template('Option1.jinja2', title='Sign In', weightings=weightings)
-
-    # if portfolio is option 2
-    # return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
-
-
-def saveportfolio():
-    return render_template("home.jinja2")
+    return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
 
 
 '''Option 3'''
@@ -449,7 +568,20 @@ def option3Parent():
 
 
 def option3Purchase():
-    return render_template('Option3Purchase.jinja2', title='optiondecision')
+    _id = request.args.get('uuid')
+    if _id == None:
+        timeHorizon = 2019
+        investmentGoal = 0
+        riskAppetite = "Medium"
+    else:
+        questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type='purchase')
+        timeHorizon = questionnaire['timeHorizon']
+        investmentGoal = questionnaire['timeHorizon']
+        riskAppetite = questionnaire['timeHorizon']
+
+    # TODO: WHAT DOES THIS PAGE NEED?
+
+    return render_template('Purchase.jinja2', title='optiondecision')
 
 
 def option3PurchaseA():
@@ -465,10 +597,18 @@ def option3PurchaseC():
 
 
 def option3Retirement():
-    timeHorizon = 2019
-    investmentGoal = 0
-    riskAppetite = "Medium"
-    return render_template('Option3Retirement.jinja2', title='optiondecision', timeHorizon=timeHorizon,
+    _id = request.args.get('uuid')
+    if _id == None:
+        timeHorizon = 2019
+        investmentGoal = 0
+        riskAppetite = "Medium"
+    else:
+        questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type='retirement')
+        timeHorizon = questionnaire['timeHorizon']
+        investmentGoal = questionnaire['timeHorizon']
+        riskAppetite = questionnaire['timeHorizon']
+
+    return render_template('Retirement.jinja2', title='optiondecision', timeHorizon=timeHorizon,
                            investmentGoal=investmentGoal, riskAppetite=riskAppetite)
 
 
@@ -485,9 +625,17 @@ def option3RetirementC():
 
 
 def option3Wealth():
-    initialInvestment = 0
-    riskAppetite = "Medium"
-    return render_template('Option3Wealth.jinja2', title='optiondecision', initialInvestment=initialInvestment,
+    _id = request.args.get('uuid')
+    if _id == None:
+        timeHorizon = 2019
+        investmentGoal = 0
+        riskAppetite = "Medium"
+    else:
+        questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type='wealth')
+        investmentGoal = questionnaire['timeHorizon']
+        riskAppetite = questionnaire['timeHorizon']
+
+    return render_template('Wealth.jinja2', title='optiondecision', initialInvestment=initialInvestment,
                            riskAppetite=riskAppetite)
 
 

@@ -47,6 +47,8 @@ class Portfolio(object):
         p2 = df[[c + "2" for c in SYMBOLS]]
         p2.columns = SYMBOLS
 
+        self.budget = df['budget']
+
         if p2.isnull().all().all():
             p2 = p1
 
@@ -176,6 +178,12 @@ def get_past_portfolios(username, get_all=False):
         print("Error in fetching past portfolio from database {}".format(COLLECTION))
         p1, p2 = None, None
         return [None, None, None]
+
+def getOptionTypeFromName(portfolioName):
+    df= pd.read_sql(
+        """select "portfolio_type" from {} where "portfolio_name" like '{}';""".format(COLLECTION, portfolioName), con=Database.DATABASE.engine)
+
+    return df.to_numpy()[0][0]
 
 
 
