@@ -348,4 +348,7 @@ def option3WealthA():
 def option3WealthB():
     return render_template('Option3WealthB.jinja2', title='optiondecision')
 
+def build():
+    return render_template('Build.jinja2')
+
 
