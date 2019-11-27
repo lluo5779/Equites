@@ -114,19 +114,13 @@
                 var index = $("table tbody tr:last-child").index();
                 var counter = index + 1;
                 var row = '<tr>' +
-<<<<<<< HEAD
-                    '<td><input id="ticker_'+counter+'" type="text" class="form-control" name="ticker_'+counter+'"></td>' +
-                    '<td><input id="value_'+counter+'" type="text" class="form-control" name="value_'+counter+'"></td>' +
-=======
                     '<td><input id="ticker_'+counter+'" type="text" class="form-control" name="ticker_'+counter+'"  pattern="[A-Za-z]{1,4}" title="Please a enter valid ticker" required></td>' +
                     '<td><input id="value_'+counter+'" type="text" class="form-control" name="value_'+counter+'" pattern="[0-9]+" title="Please enter numbers only" required></td>' +
->>>>>>> 112b2bafb1a71220ebcaa0468982148d9699cf52
                     '<td>' + actions + '</td>' +
                 '</tr>';
                 $("table").append(row);
                 $('[data-toggle="tooltip"]').tooltip();
             });
-
             // Add row on add button click
             $(document).on("click", ".add", function(){
                 var empty = false;
@@ -146,7 +140,6 @@
                     });
                 }
             });
-
             // Edit row on edit button click
             $(document).on("click", ".edit", function(){
                 $(this).parents("tr").find("td:not(:last-child)").each(function(){
@@ -164,7 +157,6 @@
             });
         });
     </script>
-<<<<<<< HEAD
 
     <script type="text/javascript">
 
@@ -201,9 +193,6 @@
         });
     </script> 
 
-
-=======
->>>>>>> 112b2bafb1a71220ebcaa0468982148d9699cf52
 {% endblock %}
 
 {% block content %}
@@ -251,52 +240,15 @@
 
                             <tbody>
                                 <tr>
-                                    <td><input id="ticker_0" type="text" placeholder="AAPL" class="form-control" name="ticker_0"></td>
-                                    <td><input id="value_0" type="text" placeholder="1000" class="form-control" name="value_0"></td>
+                                    <td><input id="ticker_0" type="text" placeholder="AAPL" class="form-control" name="ticker_0" pattern="[A-Za-z]{1,4}" title="Please a enter valid ticker" required></td>
+                                    <td><input id="value_0" type="text" placeholder="1000" class="form-control" name="value_0" pattern="^\d*(\.\d{0,2})?$" title="Please enter numbers only" required></td>
                                     <td><a style="centre-align" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-<<<<<<< HEAD
                 </div>
            </div>
-
-=======
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Ticker</th>
-                                <th>Dollar Amount</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td><input id="ticker_0" type="text" placeholder="AAPL" class="form-control" name="ticker_0" pattern="[A-Za-z]{1,4}" title="Please a enter valid ticker" required></td>
-                                <td><input id="value_0" type="text" placeholder="1000" class="form-control" name="value_0" pattern="^\d*(\.\d{0,2})?$" title="Please enter numbers only" required></td>
-                                <td><a style="centre-align" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-               <label for="riskAppetite">Risk Tolerance</label>
-               <select name="riskAppetite" id="riskAppetite">
-                        <option selected>
-                            High
-                        </option>
-                        <option>
-                            Medium
-                        </option>
-                        <option>
-                            Low
-                        </option>
-               </select><br>
-               <label for="cardinality">Number of Assets You Would Like in Your Portfolio</label>
-               <input type="text" name="cardinality"><br>
-           </div>
->>>>>>> 112b2bafb1a71220ebcaa0468982148d9699cf52
             <center><input type="submit" id="next" value="Submit"></center>
         </form>
     </section>

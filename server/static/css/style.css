@@ -3086,10 +3086,10 @@ input[type="button"].btn-block {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 4'%3e%3cpath stroke='%23fff' d='M0 2h4'/%3e%3c/svg%3e"); }
 
 .custom-checkbox .custom-control-input:disabled:checked ~ .custom-control-label::before {
-  background-color: rgba(0, 123, 255, 0.5); }
+  background-color: #3B4F66 important!; }
 
 .custom-checkbox .custom-control-input:disabled:indeterminate ~ .custom-control-label::before {
-  background-color: rgba(0, 123, 255, 0.5); }
+  background-color: #3B4F66 important!; }
 
 .custom-radio .custom-control-label::before {
   border-radius: 50%; }
@@ -3098,7 +3098,7 @@ input[type="button"].btn-block {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e"); }
 
 .custom-radio .custom-control-input:disabled:checked ~ .custom-control-label::before {
-  background-color: rgba(0, 123, 255, 0.5); }
+  background-color:  }
 
 .custom-switch {
   padding-left: 2.25rem; }
@@ -8250,7 +8250,7 @@ h1, h2, h3, h4, h5,
 
 
 .navbar-brand {
-  font-weight: 600;
+  font-weight: 1000;
   font-size: 2.5rem;
   text-transform: uppercase; }
   .navbar-brand span {
