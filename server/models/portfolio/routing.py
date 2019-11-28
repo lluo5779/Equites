@@ -495,7 +495,7 @@ def saveportfolio():
     return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
 
 
-
+@login_required
 def build():
     portfolio_name = request.headers.get('portfolioName')
     _id = getUuidFromPortfolioName(portfolio_name)
