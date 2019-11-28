@@ -72,6 +72,11 @@ class Portfolio(object):
 
     def run_optimization(self, risk_tolerance, alpha=(0.05, 0.10), return_target=0.05):
         print("self.cost: ", self.cost)
+        print("risk_tolerance: ", risk_tolerance)
+        print("alpha: ", alpha)
+        print("return target: ", return_target)
+        print('prices: ', self.prices)
+
 
         safe_soln, target_soln = optimize(mu=(self.mu_bl1.values.ravel(), self.mu_bl2.values.ravel()),
                                           sigma=(self.cov_bl1.values, self.cov_bl2.values),
@@ -80,7 +85,7 @@ class Portfolio(object):
                                           costs=self.cost.T,
                                           prices=self.prices.iloc[-2, :].values if self.prices.iloc[-1,:].isnull().values.any() else self.prices.iloc[-1,:].values,
                                           gamma=risk_tolerance)
-        soln = safe_soln if target_soln is None else target_soln
+        soln = safe_soln #if target_soln is None else target_soln
 
         self.x1 = pd.DataFrame(soln.x[:int(len(self.mu_bl1))], index=self.mu_bl1.index, columns=['weight'])
         self.x2 = pd.DataFrame(soln.x[int(len(self.mu_bl2)):], index=self.mu_bl2.index, columns=['weight'])

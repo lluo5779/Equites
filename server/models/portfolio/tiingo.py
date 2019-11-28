@@ -17,7 +17,7 @@ def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=Tru
            data[ticker] = tiingo(ticker, start_date, end_date)[data_point]
         # data = s.get_all()
 
-        print("\n\nSUCCESS: retrieved new %s data ..." % data_point)
+        # print("\n\nSUCCESS: retrieved new %s data ..." % data_point)
         print('finished retrieving %s data in %f seconds.\n\n' % (data_point, time.time() - start))
 
     except:
@@ -50,7 +50,7 @@ def tiingo(ticker, start_date, end_date):
     response = requests.get(TIINGO_EOD % (ticker, start_date, end_date),
                             headers=headers).json()
 
-    print('tiingo response: ', response)
+    # print('tiingo response: ', response)
     data = pd.DataFrame(response)
 
     return data.set_index('date')

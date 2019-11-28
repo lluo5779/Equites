@@ -53,8 +53,8 @@ def back_test(portfolio, start_date, end_date=None, dollars=None):
         return None, False, msg
 
     msg = "SUCCESS: retrieved pricing data all assets given."
-    print("\n\n{}".format(msg))
-    print(prices.tail(10))
+    # print("\n\n{}".format(msg))
+    # print(prices.tail(10))
 
     # check if any prices are missing ... if so drop the row
     if prices.isnull().values.any():

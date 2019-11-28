@@ -302,6 +302,7 @@ def portfolioview():
     risk = p.get_portfolio_cvar()
     start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
 
+    print(p.x1.to_dict())
     histValues = back_test(p.x1.to_dict()[list(p.x1.to_dict().keys())[0]], start_date)[0].sum(axis=1) \
                  * float(questionnaire['initialInvestment'])
     # if is_new_portfolio:
@@ -335,7 +336,7 @@ def portfoliosnapshot():
             menu
             portfolioview upon save
     """
-    username = 'test1'#current_user.username
+    username = current_user.username
 
     all_past_p = get_past_portfolios(username=username, get_all=True)
     print(">>> all_past_p: ", all_past_p)
@@ -343,7 +344,7 @@ def portfoliosnapshot():
     portfolioNames = all_past_p[2]['portfolio_name']
     print('>>>> portfolioNames: ', portfolioNames)
 
-    portfolioInitialValue = all_past_p[2]['budget'].tolist()
+    portfolioInitialValue = all_past_p[2]['budget']
     print('>>>> portfolioInitialValue: ', portfolioInitialValue)
 
     start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
@@ -352,7 +353,10 @@ def portfoliosnapshot():
     histValues = []
     counter = 0
     for index, portfolio in all_past_p[0].iterrows():
-        histValues.append(back_test(portfolio.to_dict(), start_date)[0].sum(axis=1) * portfolioInitialValue[counter])
+        portfolio_returns = back_test(portfolio.to_dict(), start_date)[0].sum(axis=1)
+        print(portfolio_returns)
+        print(portfolioInitialValue[index])
+        histValues.append(portfolio_returns * portfolioInitialValue[index])
         counter += 1
     # histValues = [back_test(portfolio.to_dict(), start_date)[0].sum(axis=1) * portfolioInitialValue[index] for
     #               index, portfolio in
@@ -395,14 +399,16 @@ def portfoliodashboard():
     """
 
     portfolio_name = request.headers.get('portfolioName')
-    username = 'test1'#current_user.username
+    username = current_user.username
     print('username: ', username)
 
     _id = getUuidFromPortfolioName(portfolio_name)
+    if _id is None:
+        return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
     p = Portfolio(username=username, _id=_id, generate_new=False)
 
     start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
-    print('p.x1.to_dict()[list(p.x1.to_dict().keys())[0]]: ', p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
+    print('p.x1.to_dict(): ', p.x1.to_dict())
     histValues = back_test(p.x1.to_dict()[list(p.x1.to_dict().keys())[0]], start_date)[0].sum(axis=1)
     print('port hist: ', histValues)
 
@@ -482,7 +488,7 @@ def editportfolio():
 
 
 def saveportfolio():
-    username = 'test1'#current_user.username
+    username = current_user.username
 
     # Updating questionnaire data
     portfolio_name = request.args.get('portfolioName')
