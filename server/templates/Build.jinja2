@@ -124,8 +124,17 @@ body {
 
     <script>
         window.addEventListener("DOMContentLoaded", function() {
-            let slideIndex = 1;
-            showSlides(slideIndex);
+            if ("{{ questionnaire['option'] }}" == "Wealth"){
+                showSlides(2);
+            }
+            else if ("{{ questionnaire['option'] }}" == "Retirement"){
+                showSlides(4);
+            }
+            else if ("{{ questionnaire['option'] }}" == "Purchase"){
+                showSlides(8);
+            }
+            else{showSlides(1);}
+
         }, false);
 
         function plusSlides(n) {
@@ -140,7 +149,6 @@ body {
             let slideIndex = n
           var i;
           var slides = document.getElementsByClassName("mySlides");
-          var dots = document.getElementsByClassName("dot");
           if (n > slides.length) {slideIndex = 1}
           if (n < 1) {slideIndex = slides.length}
           for (i = 0; i < slides.length; i++) {
@@ -184,7 +192,7 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="initialInvestment" type="text" id="initialInvestment" class="form-control" placeholder="$ Amount" size="32" autofocus>
+                            <input name="initialInvestment" type="text" id="initialInvestment" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}">
                             <label for="initialInvestment">$ Amount</label>
                         </div>
                     </div>
@@ -192,7 +200,6 @@ body {
                         <button type="button" onclick="currentSlide(3)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
                     </div>
                 </div>
-                <a class="prev" style="text-align:center" onclick="currentSlide(1)">&#10094;</a>
                 <div style="display: none"><input type="text" name="option" value="Wealth"></div>
             </div>
 
@@ -226,7 +233,7 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="initialInvestment" type="text" id="initialInvestmentID" class="form-control" placeholder="$ Amount" size="32" autofocus>
+                            <input name="initialInvestment" type="text" id="initialInvestmentID" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}">
                             <label for="initialInvestmentID">$ Amount</label>
                         </div>
                     </div>
@@ -234,7 +241,6 @@ body {
                         <button type="button" onclick="currentSlide(5)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
                     </div>
                 </div>
-                <a class="prev" style="text-align:center" onclick="currentSlide(1)">&#10094;</a>
                 <div style="display: none"><input type="text" name="option" value="Retirement"></div>
             </div>
 
@@ -246,7 +252,7 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="retirementDate" type="text" id="retirementDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus>
+                            <input name="retirementDate" type="text" id="retirementDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['retirementDate'] }}">
                             <label for="retirementDate">MM/YYYY</label>
                         </div>
                     </div>
@@ -266,7 +272,7 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="retirementAmount" type="text" id="retirementAmount" class="form-control" placeholder="$ Amount" size="32" autofocus>
+                            <input name="retirementAmount" type="text" id="retirementAmount" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['retirementAmount'] }}">
                             <label for="retirementAmount">$ Amount</label>
                         </div>
                     </div>
@@ -306,7 +312,7 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="initialInvestment" type="text" id="initialInvestment_id" class="form-control" placeholder="$ Amount" size="32" autofocus>
+                            <input name="initialInvestment" type="text" id="initialInvestment_id" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}">
                             <label for="initialInvestment_id">$ Amount</label>
                         </div>
                     </div>
@@ -314,7 +320,6 @@ body {
                         <button type="button" onclick="currentSlide(9)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
                     </div>
                 </div>
-                <a class="prev" style="text-align:center" onclick="currentSlide(1)">&#10094;</a>
                 <div style="display: none"><input type="text" name="option" value="Purchase"></div>
             </div>
 
@@ -326,7 +331,7 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="purchaseDate" type="text" id="purchaseDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus>
+                            <input name="purchaseDate" type="text" id="purchaseDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['purchaseDate'] }}">
                             <label for="purchaseDate">MM/YYYY</label>
                         </div>
                     </div>
@@ -346,7 +351,7 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="purchaseAmount" type="text" id="purchaseAmount" class="form-control" placeholder="$ Amount" size="32" autofocus>
+                            <input name="purchaseAmount" type="text" id="purchaseAmount" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['purchaseAmount'] }}">
                             <label for="purchaseAmount">$ Amount</label>
                         </div>
                     </div>

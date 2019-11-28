@@ -513,4 +513,6 @@ def build():
     return render_template('Build.jinja2', questionnaire=questionnaire)
     '''
 
-    return render_template('Build.jinja2')
+    questionnaire = {'initialInvestment':"", 'retirementAmount':"", 'retirementDate':"",'purchaseAmount':"", 'purchaseDate':"", 'riskAppetite':"",'option':""}
+
+    return render_template('Build.jinja2', questionnaire=questionnaire)
