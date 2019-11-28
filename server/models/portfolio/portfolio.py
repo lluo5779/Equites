@@ -144,22 +144,22 @@ class Portfolio(object):
         # x1 = x1.set_index('uuid', drop=True)
         print('WHY NO WORK: ', x1.columns)
         print('Saving the following to database {}: '.format(COLLECTION), x1)
-        x1.to_sql(COLLECTION, con=Database.DATABASE.engine, if_exists="append", index=True, index_col='uuid')
+        x1.to_sql(COLLECTION, con=Database.DATABASE.engine, if_exists="append", index=True)
 
     def update_existing_portfolio(self, uuid, new_values={}):
         portfolio_df = pd.read_sql('select * from {}'.format(COLLECTION), con=Database.DATABASE.engine, index_col='uuid')
         print('before: ', portfolio_df)
 
-        portfolio_df.loc[portfolio_df.uuid == uuid, list(new_values.keys())] = list(new_values.values())
+        portfolio_df.loc[uuid, list(new_values.keys())] = list(new_values.values())
         print('after: ', portfolio_df)
-        portfolio_df.to_sql(COLLECTION, con=Database.DATABASE.engine, if_exists="replace", index=True, index_col='uuid')
+        portfolio_df.to_sql(COLLECTION, con=Database.DATABASE.engine, if_exists="replace", index=True)
 
 def get_past_portfolios(username, get_all=False):
     try:
         query = """select * from "{}" where "username" like '{}' and "active" like '{}' order by "timestamp" asc;""".format(
             COLLECTION, username, "Y")
         df = pd.read_sql(query,
-                         Database.DATABASE.engine, index_col='index')
+                         Database.DATABASE.engine, index_col='uuid')
 
         print(">>> query df: ", df)
         if not get_all:
@@ -181,7 +181,10 @@ def get_past_portfolios(username, get_all=False):
 
 def getOptionTypeFromName(portfolioName):
     df= pd.read_sql(
-        """select "portfolio_type" from {} where "portfolio_name" like '{}';""".format(COLLECTION, portfolioName), con=Database.DATABASE.engine, index_col='index')
+        """select "portfolio_type" from {} where "portfolio_name" like '{}';""".format(COLLECTION, portfolioName), con=Database.DATABASE.engine)
+    if len(df) == 0:
+        print(df)
+        return None
 
     return df.to_numpy()[0][0]
 

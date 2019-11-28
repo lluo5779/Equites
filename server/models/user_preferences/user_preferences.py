@@ -5,6 +5,9 @@ import datetime
 
 def fetch_latest_questionnaire_from_type(option_type):
     """Called when portfolio name has not been declared by the user (ie. from portfolioview edit button)"""
+    if option_type is None:
+        return {}
+
     if "_questionnaire" not in option_type:
         option_type = option_type + "_questionnaire"
 
@@ -52,7 +55,7 @@ def initialize_new_questionnaire(questionnaire, option_type, uuid):
 
     questionnaire=questionnaire.set_index('uuid')
     print("this is questionaire: ", questionnaire)
-    questionnaire.to_sql(option_type, con=Database.DATABASE.engine, if_exists="append", index=True, index_col='uuid')
+    questionnaire.to_sql(option_type, con=Database.DATABASE.engine, if_exists="append", index=True)
 
 
 def update_new_questionnaire(questionnaire, option_type, uuid):
@@ -78,9 +81,9 @@ def update_new_questionnaire(questionnaire, option_type, uuid):
 
     """When user edits an existing question naire"""
 
-    old_df.loc[old_df.uuid == uuid, list(questionnaire.keys())] = list(questionnaire.values())
-    print("Database row after upsert from some uuid: ", old_df.loc[old_df.uuid == uuid])
-    old_df.to_sql(name=option_type, con=Database.DATABASE.engine, if_exists="replace", index=True, index_col='uuid')
+    old_df.loc[uuid, list(questionnaire.keys())] = list(questionnaire.values())
+    print("Database row after upsert from some uuid: ", old_df.loc[uuid])
+    old_df.to_sql(name=option_type, con=Database.DATABASE.engine, if_exists="replace", index=True)
 
     print("Successfully updated questionnaire database")
 

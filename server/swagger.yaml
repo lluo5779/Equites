@@ -139,7 +139,6 @@ paths:
     get:
       operationId: "server.models.portfolio.routing.saveportfolio"
       parameters:
-      parameters:
         - name: initialInvestment
           description: initialInvestment
           in: query
@@ -185,7 +184,7 @@ paths:
         - name: initialInvestment
           description: initialInvestment
           in: query
-          type: number
+          type: string
         - name: riskAppetite
           description: riskAppetite
           in: query
@@ -240,11 +239,11 @@ paths:
         - name: retirementAmount
           description: retirementAmount
           in: query
-          type: number
+          type: string
         - name: purchaseAmount
           description: purchaseAmount
           in: query
-          type: number
+          type: string
         - name: option
           description: option
           in: query
