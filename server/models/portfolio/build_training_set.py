@@ -5,12 +5,12 @@ from scipy.stats.mstats import gmean
 from dateutil.relativedelta import relativedelta
 import os
 
-from stats import *
-from cost import costs
-from tiingo import get_data
-from optimize import optimize
-from bl import bl, get_mkt_cap
-from rs import fama_french, regime_switch, current_regime, business_days, expected_returns, covariance
+from server.models.portfolio.stats import *
+from server.models.portfolio.cost import costs
+from server.models.portfolio.tiingo import get_data
+from server.models.portfolio.optimize import optimize
+from server.models.portfolio.bl import bl, get_mkt_cap
+from server.models.portfolio.rs import fama_french, regime_switch, current_regime, business_days, expected_returns, covariance
 
 tickers = list(pd.read_csv(os.getcwd() + r'/data/tickers.csv')['Tickers'])
 
