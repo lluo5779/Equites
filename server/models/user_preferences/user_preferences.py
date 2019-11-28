@@ -9,7 +9,7 @@ def fetch_latest_questionnaire_from_type(option_type):
         option_type = option_type + "_questionnaire"
 
     df = pd.read_sql('select * from {} order by "timestamp" asc;'.format(option_type),
-                    Database.DATABASE.engine)
+                    Database.DATABASE.engine, index_col='uuid')
     print("df", df)
     if len(df) != 1:
         df = df.iloc[0]
@@ -24,7 +24,7 @@ def fetch_questionnaire_from_uuid_and_type(option_type, uuid):
     query ="""select * from {} where "uuid" like '{}';""".format(option_type, uuid)
 
     df =  pd.read_sql(query,
-                       Database.DATABASE.engine, index_col='index')
+                       Database.DATABASE.engine, index_col='uuid')
     print("df", df)
     if len(df) != 1:
         df = df.iloc[0]
@@ -52,7 +52,7 @@ def initialize_new_questionnaire(questionnaire, option_type, uuid):
 
     questionnaire=questionnaire.set_index('uuid')
     print("this is questionaire: ", questionnaire)
-    questionnaire.to_sql(option_type, con=Database.DATABASE.engine, if_exists="append")
+    questionnaire.to_sql(option_type, con=Database.DATABASE.engine, if_exists="append", index=True, index_col='uuid')
 
 
 def update_new_questionnaire(questionnaire, option_type, uuid):
@@ -66,7 +66,7 @@ def update_new_questionnaire(questionnaire, option_type, uuid):
         questionnaire['option_type'] = [option_type]
 
     query = 'select * from {}'.format(option_type)
-    old_df = pd.read_sql(query, con=Database.DATABASE.engine)
+    old_df = pd.read_sql(query, con=Database.DATABASE.engine, index_col='uuid')
     if 'level_0' in old_df.columns:
         old_df = old_df.drop(['level_0'], axis=1)
     if 'index' in old_df.columns:
@@ -80,7 +80,7 @@ def update_new_questionnaire(questionnaire, option_type, uuid):
 
     old_df.loc[old_df.uuid == uuid, list(questionnaire.keys())] = list(questionnaire.values())
     print("Database row after upsert from some uuid: ", old_df.loc[old_df.uuid == uuid])
-    old_df.to_sql(name=option_type, con=Database.DATABASE.engine, if_exists="replace")
+    old_df.to_sql(name=option_type, con=Database.DATABASE.engine, if_exists="replace", index=True, index_col='uuid')
 
     print("Successfully updated questionnaire database")
 

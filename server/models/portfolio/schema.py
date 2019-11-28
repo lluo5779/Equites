@@ -7,6 +7,7 @@ class UserPortfolio(db.DATABASE.Model):
     username = db.DATABASE.Column(db.DATABASE.String(80))
     uuid = db.DATABASE.Column(db.DATABASE.String(80), primary_key=True)
     active = db.DATABASE.Column(db.DATABASE.String(10))
+    budget = db.DATABASE.Column(db.DATABASE.Float())
     period = db.DATABASE.Column(db.DATABASE.Float())
     portfolio_type = db.DATABASE.Column(db.DATABASE.String(80))
     portfolio_name = db.DATABASE.Column(db.DATABASE.String(80), unique=True)
@@ -54,10 +55,10 @@ class UserPortfolio(db.DATABASE.Model):
 
     def __init__(self, username, portfolio_name, uuid, active, timestamp, portfolio_type, ITOT, DIA, SPY, XLG, AIA, GXC, XLY, XLE, XLF, XLV, XLI, XLB, XLK, XLU,
                  ICLN, CGW, WOOD, IYR, ITOT2, DIA2, SPY2, XLG2, AIA2, GXC2, XLY2, XLE2, XLF2, XLV2, XLI2, XLB2, XLK2,
-                 XLU2, ICLN2, CGW2, WOOD2, IYR2, preferences):
+                 XLU2, ICLN2, CGW2, WOOD2, IYR2, budget,preferences):
         self.username = username
         self.uuid = uuid
-        # self.period = period
+        self.budget = budget
         self.active = active
         self.timestamp = timestamp
         self.portfolio_type = portfolio_type

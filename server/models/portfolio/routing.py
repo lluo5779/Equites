@@ -475,11 +475,11 @@ def editportfolio():
 
 
 def saveportfolio():
-    username = current_user.username
+    username = 'test1'#current_user.username
 
     # Updating questionnaire data
-    portfolio_name = request.headers.get('portfolioName')
-    option_type = request.headers.get("optionType")
+    portfolio_name = request.args.get('portfolioName')
+    option_type = request.args.get("optionType")
     questionnaire = {}
     is_new_portfolio = False
 
