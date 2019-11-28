@@ -178,7 +178,7 @@ def enhance():
         # assign the risk tolerances
         risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')
 
-        weights = p.run_optimization(alpha, return_target, risk_tolerance)[0]
+        weights = p.run_optimization(risk_tolerance=risk_tolerance, alpha=alpha, return_target=return_target)[0]
         weights = weights.loc[weights['weight'] != 0]
 
         fig = plotly.graph_objs.Figure(
