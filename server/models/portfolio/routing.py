@@ -496,8 +496,9 @@ def saveportfolio():
     return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
 
 
-@login_required
+#@login_required
 def build():
+    '''
     portfolio_name = request.headers.get('portfolioName')
     _id = getUuidFromPortfolioName(portfolio_name)
 
@@ -507,4 +508,9 @@ def build():
         option_type = getOptionTypeFromName(portfolio_name)
         questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
 
+
+
     return render_template('Build.jinja2', questionnaire=questionnaire)
+    '''
+
+    return render_template('Build.jinja2')
