@@ -201,7 +201,7 @@ def re_train():
 def predict(prices, check_ml):
 	sent_analysis = SentimentAnalysis()
 	model, _, _ = sent_analysis.get_model()
-	model.load_state_dict(torch.load('path'))
+	model.load_state_dict(torch.load('server/models/portfolio/rnn_20.pkl'))
 	model.eval()
 	preds = model(prices)
 	predict_loader = TextClassDataLoader(preds, batch_size = 1, predict=True, check_ml = check_ml)
