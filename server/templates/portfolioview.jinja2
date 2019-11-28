@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="/saveportofolio" method="get">
-        {% portfolioName ="" %}
+    <form action="/saveportfolio" method="get">
         <input type="text" name="portfolioName" placeholder="Portfolio Name...">
         <div>
             {{ histValues[-1] }}

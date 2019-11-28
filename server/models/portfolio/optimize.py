@@ -37,6 +37,7 @@ def optimize(mu, sigma, alpha, return_target, costs, prices, gamma):
 
     # period one constraints
     budget1 = make_constraint('eq', budget_p1, (1, ))
+    print(mu, return_target)
     target1 = make_constraint('ineq', return_p1, (mu[0], return_target[0], ))
 
     # period two contraints
