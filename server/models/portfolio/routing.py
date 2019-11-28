@@ -452,7 +452,7 @@ def editportfolio():
 
 
 def saveportfolio():
-    username = 'test1'#current_user.username
+    username = current_user.username
 
     # Updating questionnaire data
     portfolio_name = request.headers.get('portfolioName')
