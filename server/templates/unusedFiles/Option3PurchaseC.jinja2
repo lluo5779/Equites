@@ -20,10 +20,12 @@
             xhr.setRequestHeader("investmentGoal", window.localStorage.getItem('investmentGoal'));
             xhr.setRequestHeader("timeHorizon", window.localStorage.getItem('timeHorizon'));
             xhr.setRequestHeader("riskAppetite", window.localStorage.getItem('riskAppetite'));
-            xhr.setRequestHeader("optionType", window.localStorage.getItem('Purchase'));
+            xhr.setRequestHeader("optionType", 'purchase');
 
             xhr.send(data);
         }
+
+
     </script>
     <div>
         Amount of risk you would like in your portfolio?
@@ -63,6 +65,7 @@
             {% endif %}
         </select>
     </div>
+
     <button type="submit" onclick="sendStoredValues()">Next</button>
     <a href="{{url_for('/.server_models_portfolio_routing_option3PurchaseB')}}">
         <button type="submit">Back</button>

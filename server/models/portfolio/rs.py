@@ -40,6 +40,7 @@ def fama_french(start_date, end_date, save):
     factors.replace(-999, np.nan)
 
     factors = factors / 100
+
     factors = factors.loc[start_date:end_date, :].iloc[1:]
     factors.index = pd.to_datetime(factors.index)
 

@@ -50,6 +50,7 @@ def tiingo(ticker, start_date, end_date):
     response = requests.get(TIINGO_EOD % (ticker, start_date, end_date),
                             headers=headers).json()
 
+    print('tiingo response: ', response)
     data = pd.DataFrame(response)
 
     return data.set_index('date')

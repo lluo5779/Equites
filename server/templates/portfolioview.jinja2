@@ -2,8 +2,8 @@
 
 {% block content %}
     <form action="/saveportofolio" method="get">
-        {% portolioName ="" %}
-        <input type="text" name="{{ portfolioName }}" placeholder="Portfolio Name...">
+        {% portfolioName ="" %}
+        <input type="text" name="portfolioName" placeholder="Portfolio Name...">
         <div>
             {{ histValues[-1] }}
         </div>

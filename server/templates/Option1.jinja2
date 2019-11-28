@@ -114,8 +114,8 @@
                 var index = $("table tbody tr:last-child").index();
                 var counter = index + 1;
                 var row = '<tr>' +
-                    '<td><input id="ticker_'+counter+'" type="text" class="form-control" name="ticker_'+counter+'"></td>' +
-                    '<td><input id="value_'+counter+'" type="text" class="form-control" name="value_'+counter+'"></td>' +
+                    '<td><input id="ticker_'+counter+'" type="text" class="form-control" name="ticker_'+counter+'"  pattern="[A-Za-z]{1,4}" title="Please a enter valid ticker" required></td>' +
+                    '<td><input id="value_'+counter+'" type="text" class="form-control" name="value_'+counter+'" pattern="[0-9]+" title="Please enter numbers only" required></td>' +
                     '<td>' + actions + '</td>' +
                 '</tr>';
                 $("table").append(row);
@@ -253,8 +253,8 @@
 
                             <tbody>
                                 <tr>
-                                    <td><input id="ticker_0" type="text" placeholder="AAPL" class="form-control" name="ticker_0"></td>
-                                    <td><input id="value_0" type="text" placeholder="1000" class="form-control" name="value_0"></td>
+                                    <td><input id="ticker_0" type="text" placeholder="AAPL" class="form-control" name="ticker_0" pattern="[A-Za-z]{1,4}" title="Please a enter valid ticker" required></td>
+                                    <td><input id="value_0" type="text" placeholder="1000" class="form-control" name="value_0" pattern="^\d*(\.\d{0,2})?$" title="Please enter numbers only" required></td>
                                     <td><a style="centre-align" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
                                 </tr>
                             </tbody>

@@ -8,9 +8,8 @@ class UserPortfolio(db.DATABASE.Model):
     uuid = db.DATABASE.Column(db.DATABASE.String(80), primary_key=True)
     active = db.DATABASE.Column(db.DATABASE.String(10))
     period = db.DATABASE.Column(db.DATABASE.Float())
-
-    port_name = db.DATABASE.Column(db.DATABASE.String(80), unique=True)
-
+    portfolio_type = db.DATABASE.Column(db.DATABASE.String(80))
+    portfolio_name = db.DATABASE.Column(db.DATABASE.String(80), unique=True)
     ITOT = db.DATABASE.Column(db.DATABASE.Float())
     DIA = db.DATABASE.Column(db.DATABASE.Float())
     SPY = db.DATABASE.Column(db.DATABASE.Float())
@@ -49,23 +48,21 @@ class UserPortfolio(db.DATABASE.Model):
     WOOD2 = db.DATABASE.Column(db.DATABASE.Float())
     IYR2 = db.DATABASE.Column(db.DATABASE.Float())
 
-    budget = db.DATABASE.Column(db.DATABASE.Float())
-
     print(">>> datetime.utcnow", datetime.utcnow())
     timestamp = db.DATABASE.Column(db.DATABASE.DateTime, index=True, default=datetime.utcnow)
+    preferences = db.DATABASE.relationship('user_preferences', backref='author', lazy='dynamic')
 
-
-    def __init__(self, username, port_name, uuid, active, period, ITOT, DIA, SPY, XLG, AIA, GXC, XLY, XLE, XLF, XLV, XLI, XLB, XLK, XLU,
+    def __init__(self, username, portfolio_name, uuid, active, timestamp, portfolio_type, ITOT, DIA, SPY, XLG, AIA, GXC, XLY, XLE, XLF, XLV, XLI, XLB, XLK, XLU,
                  ICLN, CGW, WOOD, IYR, ITOT2, DIA2, SPY2, XLG2, AIA2, GXC2, XLY2, XLE2, XLF2, XLV2, XLI2, XLB2, XLK2,
-                 XLU2, ICLN2, CGW2, WOOD2, IYR2, timestamp, budget):
+                 XLU2, ICLN2, CGW2, WOOD2, IYR2, preferences):
         self.username = username
         self.uuid = uuid
-        self.period = period
+        # self.period = period
         self.active = active
-        self.budget = budget
         self.timestamp = timestamp
+        self.portfolio_type = portfolio_type
 
-        self.port_name = port_name
+        self.portfolio_name = portfolio_name
 
         self.ITOT = ITOT
         self.DIA = DIA
@@ -104,6 +101,7 @@ class UserPortfolio(db.DATABASE.Model):
         self.CGW2 = CGW2
         self.WOOD2 = WOOD2
         self.IYR2 = IYR2
+
 
     def __repr(self):
         return '<Portfolio for auth %s>' % self.username

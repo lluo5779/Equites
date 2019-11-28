@@ -188,3 +188,4 @@ paths:
       responses:
         200:
           description: A list of users
+
