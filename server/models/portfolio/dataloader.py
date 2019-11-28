@@ -8,13 +8,13 @@ from sklearn.preprocessing import MinMaxScaler
 
 class TextClassDataLoader(object):
 
-	def __init__(self, path_file, word_to_index = None, batch_size = 32, predict = False, check_ml = None, preds_to_format= None):
+	def __init__(self, path_file, word_to_index = None, batch_size = 32, predict = False, check_ml = None):
 
 		self.batch_size = batch_size
 		#self.word_to_index = word_to_index
 		self.scaler = MinMaxScaler()
-
-		df = pd.read_csv(path_file)
+		
+		df = pd.read_csv('server/models/portfolio/data/test.csv')
 		df = df[['prices', 'return2']]
 		df.prices = df.prices.apply(lambda x: ast.literal_eval(x))
 		#df['body'] = df['body'].apply(ut._tokenize)

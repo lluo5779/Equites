@@ -163,7 +163,11 @@ print('\tcalculating period two estimates')
 print('********************************************************************')
 
 # temp mu_ml
-mu_ml = predict()
+df = pd.DataFrame()
+df['prices'] = prices.apply(lambda x: ','.join(x.astype(str)), axis = 1)
+df['prices'] = df_prices.apply(lambda x: [float(y) for y in x.split(',')])
+df.prices = df.prices.apply(lambda x: ast.literal_eval(x))
+mu_ml = predict(torch.FloatTensor(df['prices'].values.tolist(), check_ml = mu_bl1)
 
 
 ## *********************************************************************************************************************

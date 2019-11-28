@@ -13,6 +13,7 @@ from server.models.portfolio.dataloader import TextClassDataLoader
 from server.models.portfolio.model import RNN
 import server.models.portfolio.util as util
 from server.models.portfolio.util import AverageMeter
+import torch
 #from pipeline.util import adjust_learning_rate
 
 np.random.seed(0)
@@ -72,8 +73,8 @@ class SentimentAnalysis(object):
 
 	def get_trainer(self):
 		print('Creating dataloaders...')
-		train_loader = TextClassDataLoader('test.csv', batch_size = self.batch_size)
-		val_loader = TextClassDataLoader('test.csv', batch_size = self.batch_size)
+		train_loader = TextClassDataLoader('server/models/portfolio/data/test.csv', batch_size = self.batch_size)
+		val_loader = TextClassDataLoader('server/models/portfolio/data/test.csv', batch_size = self.batch_size)
 		return train_loader, val_loader
 
 	def get_model(self):
@@ -203,6 +204,6 @@ def predict(prices, check_ml):
 	model.load_state_dict(torch.load('path'))
 	model.eval()
 	preds = model(prices)
-	predict_loader = TextClassDataLoader(prices, batch_size = 1, predict=True, check_ml = check_ml, preds_to_format = preds)
+	predict_loader = TextClassDataLoader(preds, batch_size = 1, predict=True, check_ml = check_ml)
 	_, preds = predict_loader.predict_batches
 	return preds
