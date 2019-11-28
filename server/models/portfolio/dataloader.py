@@ -2,19 +2,19 @@ from __future__ import print_function
 import torch
 import pandas as pd 
 import numpy as np 
-import pipeline.util as ut
+import server.models.portfolio.util as ut
 import ast
 from sklearn.preprocessing import MinMaxScaler
 
 class TextClassDataLoader(object):
 
-	def __init__(self, path_file, word_to_index = None, batch_size = 32, predict = False, check_mu = None, preds_to_format= None):
+	def __init__(self, path_file, word_to_index = None, batch_size = 32, predict = False, check_ml = None):
 
 		self.batch_size = batch_size
 		#self.word_to_index = word_to_index
 		self.scaler = MinMaxScaler()
-
-		df = pd.read_csv(path_file)
+		
+		df = pd.read_csv('server/models/portfolio/data/test.csv')
 		df = df[['prices', 'return2']]
 		df.prices = df.prices.apply(lambda x: ast.literal_eval(x))
 		#df['body'] = df['body'].apply(ut._tokenize)
@@ -40,7 +40,7 @@ class TextClassDataLoader(object):
 
 		self.report()
 		if predict:
-			self.predict_batches = (self.samples, check_mu.mul(pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=check_mu.index, columns=check_mu.columns))) 
+			self.predict_batches = (self.samples, check_ml.mul(pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=check_mu.index, columns=check_mu.columns))) 
 
 	def _shuffle_indices(self):
 		self.indices = np.random.permutation(self.n_samples)

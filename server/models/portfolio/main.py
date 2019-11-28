@@ -5,6 +5,7 @@ from datetime import datetime
 from scipy.stats.mstats import gmean
 from dateutil.relativedelta import relativedelta
 
+from server.models.portfolio.sent_analysis import SentimentAnalysis, predict
 from server.models.portfolio.stats import *
 from server.models.portfolio.cost import costs
 from server.models.stock.tiingo import get_data
@@ -162,7 +163,11 @@ print('\tcalculating period two estimates')
 print('********************************************************************')
 
 # temp mu_ml
-mu_ml = mu_bl1.mul(pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=mu_bl1.index, columns=mu_bl1.columns)) #Stored
+df = pd.DataFrame()
+df['prices'] = prices.apply(lambda x: ','.join(x.astype(str)), axis = 1)
+df['prices'] = df_prices.apply(lambda x: [float(y) for y in x.split(',')])
+df.prices = df.prices.apply(lambda x: ast.literal_eval(x))
+mu_ml = predict(torch.FloatTensor(df['prices'].values.tolist(), check_ml = mu_bl1)
 
 
 ## *********************************************************************************************************************
