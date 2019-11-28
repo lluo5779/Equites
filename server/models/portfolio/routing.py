@@ -172,8 +172,7 @@ def enhance():
         horizon, aversion, l = 10, 1, 5
 
         p = Portfolio(current_user.username)
-        alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, return_target, l, p.mu_bl1, p.mu_bl2,
-                                                                p.cov_bl1)
+        alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, return_target, l, p.mu_bl1, p.mu_bl2, p.cov_bl1)
 
         # assign the risk tolerances
         risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')

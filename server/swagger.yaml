@@ -17,6 +17,15 @@ paths:
         200:
           description: A list of users
 
+  /track:
+    get:
+      operationId: "server.models.portfolio.routing.track"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
   /enhance:
     get:
       operationId: "server.models.portfolio.routing.enhance"
