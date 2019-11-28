@@ -35,48 +35,6 @@ import plotly.offline
 trackSpecialCase = Blueprint("", __name__)
 s = Stocks()
 
-
-# @user_decorators.requires_login
-def get_portfolio_page(portfolio_id):  # Renders unique portfolio page
-    return render_template('/portfolios/portfolio.jinja2')
-
-
-# @user_decorators.requires_login
-def change_risk(username):  # Views form to change portfolio's associated risk aversion parameter
-    port = Portfolio.get_by_id(username)
-    if request.method == "POST":
-        risk_appetite = request.form['risk_appetite']
-        port.risk_appetite = risk_appetite
-        port.update_portfolio()
-        img = BytesIO()
-        img.seek(0)
-        plot_data = base64.b64encode(img.read()).decode()
-        return render_template('/portfolios/optimal_portfolio.jinja2', portfolio=port, plot_url=plot_data)
-
-    return render_template('/portfolios/edit_portfolio.jinja2', portfolio=port)
-
-
-# @user_decorators.requires_login
-def create_portfolio():  # Views form to create portfolio associated with active/ loggedin auth
-    if request.method == "POST":
-        risk_appetite = request.form['risk_appetite']
-        port = Portfolio(session['email'], risk_appetite=risk_appetite)
-        port.update_portfolio()
-        fig = port.runMVO()
-        img = BytesIO()
-        fig.savefig(img)
-        img.seek(0)
-        plot_data = base64.b64encode(img.read()).decode()
-        return render_template('/portfolios/optimal_portfolio.jinja2', portfolio=port, plot_url=plot_data)
-
-    return render_template('/portfolios/new_portfolio.jinja2')
-
-
-# @login_required
-def optiondecision():
-    return render_template('OptionDecision.jinja2', title='optiondecision')
-
-
 @login_required
 def track():
     if len(request.query_string) == 0:
@@ -240,58 +198,6 @@ def option2():
     timeHorizon = 50
     return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings, timeHorizon=timeHorizon)
 
-
-# @login_required
-def option3parent():
-    return render_template('Option3Parent.jinja2', title='optiondecision')
-
-
-# @login_required
-def option3childa():
-    return render_template('Option3ChildA.jinja2', title='optiondecision')
-
-
-# @login_required
-def option3childb():
-    return render_template('Option3ChildB.jinja2', title='optiondecision')
-
-
-#
-# # @login_required
-# def option3childc():
-#     print("request.query_string: ", len(request.query_string))
-#     if len(request.query_string) == 0:
-#         return render_template('Option3ChildC.jinja2')
-#     else:
-#         p = Portfolio(current_user.username)  # Initializes portfolio object for user.
-#         budget = float(request.args.get('investmentGoal'))
-#         cardinality = [1] * 7 + [0] * (len(SYMBOLS) - 7)
-#         if request.args.get('riskAppetite') == "High":
-#             risk_tolerance = [((1, 10), (0, 0.10), cardinality, 'SHARPE'),
-#                               ((5, 5), (0, 0.20), cardinality, 'SHARPE'),
-#                               ((10, 1), (-0.05, 0.50), cardinality, 'SHARPE')]
-#         else:
-#             risk_tolerance = [((1, 10), (0, 0.10), cardinality, 'SHARPE'),
-#                               ((5, 5), (0, 0.20), cardinality, 'SHARPE'),
-#                               ((10, 1), (-0.05, 0.50), cardinality, 'SHARPE')]
-#         weights = p.run_optimization(risk_tolerance)
-#         p.make_new_portfolios(budget=budget, portfolio_type='option3childc')
-#
-#         return render_template('portfolio.jinja2', title='Sign In', weightings=weights, risk=p.get_portfolio_cvar(),
-#                                expectedReturn=p.get_portfolio_return(), expectedVol=p.get_portfolio_volatility())
-#
-
-'''
-def portfoliio():
-    weightings = [0.6,0.4,0,0,0,0,0,0,0,0,0,0,0]
-    #initial user input
-    histPortValue = [1000,990,1050,1100]
-    histVol = 0.12
-    expectedReturn = 0.1
-    expectedVol = 0.1
-    risk = 'High'
-    return render_template('portfolio.jinja2', title='Sign In', weightings=weightings, risk=risk,histPortValue=histPortValue,histVOL=histVol, expectedReturn=expectedReturn,expectedVol=expectedVol)
-'''
 
 op_to_q_map = {
     'retirement': ['initialInvestment', 'retirementAmount', 'retirementDate', 'riskAppetite'],
@@ -589,93 +495,15 @@ def saveportfolio():
     return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
 
 
-'''Option 3'''
-
-
-# @login_required
-def option3Parent():
-    return render_template('Option3Parent.jinja2', title='optiondecision')
-
-
-def option3Purchase():
-    _id = request.args.get('uuid')
-    if _id == None:
-        timeHorizon = 2019
-        investmentGoal = 0
-        riskAppetite = "Medium"
-    else:
-        questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type='purchase')
-        timeHorizon = questionnaire['timeHorizon']
-        investmentGoal = questionnaire['timeHorizon']
-        riskAppetite = questionnaire['timeHorizon']
-
-    # TODO: WHAT DOES THIS PAGE NEED?
-
-    return render_template('Purchase.jinja2', title='optiondecision')
-
-
-def option3PurchaseA():
-    return render_template('Option3PurchaseA.jinja2')
-
-
-def option3PurchaseB():
-    return render_template('Option3PurchaseB.jinja2')
-
-
-def option3PurchaseC():
-    return render_template('Option3PurchaseC.jinja2')
-
-
-def option3Retirement():
-    _id = request.args.get('uuid')
-    if _id == None:
-        timeHorizon = 2019
-        investmentGoal = 0
-        riskAppetite = "Medium"
-    else:
-        questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type='retirement')
-        timeHorizon = questionnaire['timeHorizon']
-        investmentGoal = questionnaire['timeHorizon']
-        riskAppetite = questionnaire['timeHorizon']
-
-    return render_template('Retirement.jinja2', title='optiondecision', timeHorizon=timeHorizon,
-                           investmentGoal=investmentGoal, riskAppetite=riskAppetite)
-
-
-def option3RetirementA():
-    return render_template('Option3RetirementA.jinja2', title='optiondecision')
-
-
-def option3RetirementB():
-    return render_template('Option3RetirementB.jinja2', title='optiondecision')
-
-
-def option3RetirementC():
-    return render_template('Option3RetirementC.jinja2', title='optiondecision')
-
-
-def option3Wealth():
-    _id = request.args.get('uuid')
-    if _id == None:
-        timeHorizon = 2019
-        investmentGoal = 0
-        riskAppetite = "Medium"
-    else:
-        questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type='wealth')
-        investmentGoal = questionnaire['timeHorizon']
-        riskAppetite = questionnaire['timeHorizon']
-
-    return render_template('Wealth.jinja2', title='optiondecision', initialInvestment=initialInvestment,
-                           riskAppetite=riskAppetite)
-
-
-def option3WealthA():
-    return render_template('Option3WealthA.jinja2', title='optiondecision')
-
-
-def option3WealthB():
-    return render_template('Option3WealthB.jinja2', title='optiondecision')
-
 
 def build():
-    return render_template('Build.jinja2')
+    portfolio_name = request.headers.get('portfolioName')
+    _id = getUuidFromPortfolioName(portfolio_name)
+
+    if portfolio_name == None:
+        questionnaire = None
+    else:
+        option_type = getOptionTypeFromName(portfolio_name)
+        questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
+
+    return render_template('Build.jinja2', questionnaire=questionnaire)

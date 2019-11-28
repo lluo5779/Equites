@@ -47,18 +47,18 @@ class PurchaseQuestionnaire(db.DATABASE.Model):
     timestamp = db.DATABASE.Column(db.DATABASE.DateTime, index=True, default=datetime.utcnow)
     option_type = db.DATABASE.Column(db.DATABASE.String(80))
     initialInvestment = db.DATABASE.Column(db.DATABASE.Float())
-    investmentGoal = db.DATABASE.Column(db.DATABASE.Float())
+    purchaseAmount = db.DATABASE.Column(db.DATABASE.Float())
     riskAppetite = db.DATABASE.Column(db.DATABASE.String(80))
-    endDate = db.DATABASE.Column(db.DATABASE.DateTime)
+    purchaseDate = db.DATABASE.Column(db.DATABASE.DateTime)
 
-    def __init__(self, uuid, timestamp, option_type, initialInvestment, investmentGoal, riskAppetite, endDate):
+    def __init__(self, uuid, timestamp, option_type, initialInvestment, purchaseAmount, riskAppetite, purchaseDate):
         self.uuid = uuid
         self.timestamp = timestamp
         self.option_type = option_type
-        self.investmentGoal = investmentGoal
+        self.purchaseAmount = purchaseAmount
         self.initialInvestment = initialInvestment
         self.riskAppetite = riskAppetite
-        self.endDate = endDate
+        self.purchaseDate = purchaseDate
 
     def __repr(self):
         return '<date %r>' % self.date
@@ -69,18 +69,18 @@ class RetirementQuestionnaire(db.DATABASE.Model):
     timestamp = db.DATABASE.Column(db.DATABASE.DateTime, index=True, default=datetime.utcnow)
     initialInvestment = db.DATABASE.Column(db.DATABASE.Float())
     option_type = db.DATABASE.Column(db.DATABASE.String(80))
-    investmentGoal = db.DATABASE.Column(db.DATABASE.Float())
+    retirementAmount = db.DATABASE.Column(db.DATABASE.Float())
     riskAppetite = db.DATABASE.Column(db.DATABASE.String(80))
-    endDate = db.DATABASE.Column(db.DATABASE.DateTime)
+    retirementDate = db.DATABASE.Column(db.DATABASE.DateTime)
 
-    def __init__(self, uuid, timestamp, option_type, initialInvestment, investmentGoal, riskAppetite, endDate):
+    def __init__(self, uuid, timestamp, option_type, initialInvestment, retirementAmount, riskAppetite, retirementDate):
         self.uuid = uuid
         self.timestamp = timestamp
         self.option_type = option_type
-        self.investmentGoal = investmentGoal
+        self.retirementAmount = retirementAmount
         self.initialInvestment = initialInvestment
         self.riskAppetite = riskAppetite
-        self.endDate = endDate
+        self.retirementDate = retirementDate
 
     def __repr(self):
         return '<date %r>' % self.date
