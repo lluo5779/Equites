@@ -13,7 +13,7 @@ from flask_login import current_user
 class Portfolio(object):
     # Portfolio class creates portfolio instances for auth portfolios using stocks in Stock class
 
-    def __init__(self, username, _id, generate_new=False):
+    def __init__(self, username, _id=None, generate_new=False):
         self.username = username
         # portfolio = self.get_params()
         # self.user_email = info['user_email'] if user_email is None else user_email
@@ -70,16 +70,16 @@ class Portfolio(object):
         return df.set_index(df.columns[0], drop=True)
 
 
-    def run_optimization(self, risk_tolerance, alpha=(0.05, 0.10), return_target=(0.05, 0.05)):
+    def run_optimization(self, risk_tolerance, alpha=(0.05, 0.10), return_target=0.05):
         print("self.cost: ", self.cost)
 
         safe_soln, target_soln = optimize(mu=(self.mu_bl1.values.ravel(), self.mu_bl2.values.ravel()),
                                           sigma=(self.cov_bl1.values, self.cov_bl2.values),
                                           alpha=alpha,
-                                          return_target=return_target,
+                                          return_target=(return_target, return_target),
                                           costs=self.cost.T,
                                           prices=self.prices.iloc[-2, :].values if self.prices.iloc[-1,:].isnull().values.any() else self.prices.iloc[-1,:].values,
-                                          gamma=risk_tolerance[2])
+                                          gamma=risk_tolerance)
         soln = safe_soln if target_soln is None else target_soln
 
         self.x1 = pd.DataFrame(soln.x[:int(len(self.mu_bl1))], index=self.mu_bl1.index, columns=['weight'])

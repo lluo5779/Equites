@@ -17,6 +17,15 @@ paths:
         200:
           description: A list of users
 
+  /track:
+    get:
+      operationId: "server.models.portfolio.routing.track"
+      produces:
+        - text/html
+      responses:
+        200:
+          description: A list of users
+
   /enhance:
     get:
       operationId: "server.models.portfolio.routing.enhance"
@@ -158,6 +167,7 @@ paths:
         200:
           description: A list of users
 
+
   /build:
     get:
       operationId: "server.models.portfolio.routing.build"
@@ -166,56 +176,20 @@ paths:
           description: initialInvestment
           in: query
           type: number
-        - name: highWealth
-          description: highWealth
+        - name: riskAppetite
+          description: riskAppetite
           in: query
           type: string
-        - name: mediumWealth
-          description: mediumWealth
+        - name: Date
+          description: Date
           in: query
           type: string
-        - name: lowWealth
-          description: lowWealth
-          in: query
-          type: string
-        - name: retirementDate
-          description: retirementDate
-          in: query
-          type: string
-        - name: retirementAmount
-          description: retirementAmount
+        - name: Amount
+          description: Amount
           in: query
           type: number
-        - name: highRetirement
-          description: highRetirement
-          in: query
-          type: string
-        - name: mediumRetirement
-          description: mediumRetirement
-          in: query
-          type: string
-        - name: lowRetirement
-          description: lowRetirement
-          in: query
-          type: string
-        - name: purchaseDate
-          description: purchaseDate
-          in: query
-          type: string
-        - name: purchaseAmount
-          description: purchaseAmount
-          in: query
-          type: number
-        - name: highPurchase
-          description: highPurchase
-          in: query
-          type: string
-        - name: mediumPurchase
-          description: mediumPurchase
-          in: query
-          type: string
-        - name: lowPurchase
-          description: lowPurchase
+        - name: option
+          description: option
           in: query
           type: string
       produces:
@@ -223,3 +197,4 @@ paths:
       responses:
         200:
           description: A list of users
+
