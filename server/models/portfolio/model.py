@@ -83,7 +83,7 @@ class RNN(nn.Module):
 		prices = get_data(self.tickers, 'adjClose', start_date, end_date, save=False)
 		factors = fama_french(start_date, end_date, save=False)
 		returns = (prices / prices.shift(1) - 1).dropna()[:len(factors)]
-		R = (returns.values - factors['RF'].values[:, None])
+		R = returns.values
 		
 		## *********************************************************************************************************************
 		#  factor model

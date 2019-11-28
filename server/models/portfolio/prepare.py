@@ -49,7 +49,7 @@ def prepare():
     print('********************************************************************')
 
     returns = (prices / prices.shift(1) - 1).dropna()[:len(factors)]
-    R = (returns.values - factors['RF'].values[:, None])
+    R = returns.values
     print(pd.DataFrame(R, index=factors.index, columns=prices.columns).tail(10))
 
     ## *********************************************************************************************************************

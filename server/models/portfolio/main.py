@@ -58,7 +58,7 @@ print('risk adjusted returns')
 print('********************************************************************')
 
 returns = (prices / prices.shift(1) - 1).dropna()[:len(factors)] #Stored
-R = (returns.values - factors['RF'].values[:, None])  #Stored
+R = returns.values  #Stored
 print(pd.DataFrame(R, index=factors.index, columns=prices.columns).tail(10))
 
 
