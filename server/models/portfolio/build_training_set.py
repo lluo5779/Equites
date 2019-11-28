@@ -22,7 +22,7 @@ def run_optimization(end_date, start_date, prices, factors):
 	#factors = fama_french(start_date, end_date, save=False)
 	print(factors.shape)
 	returns = (prices / prices.shift(1) - 1).dropna()[:len(factors)]
-	R = (returns.values - factors['RF'].values[:, None])
+	R = returns.values
 	
 	## *********************************************************************************************************************
 	#  factor model
