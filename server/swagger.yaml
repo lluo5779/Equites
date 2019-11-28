@@ -139,6 +139,7 @@ paths:
     get:
       operationId: "server.models.portfolio.routing.saveportfolio"
       parameters:
+      parameters:
         - name: initialInvestment
           description: initialInvestment
           in: query
@@ -147,12 +148,20 @@ paths:
           description: riskAppetite
           in: query
           type: string
-        - name: Date
-          description: Date
+        - name: retirementDate
+          description: retirementDate
           in: query
           type: string
-        - name: Amount
-          description: Amount
+        - name: purchaseDate
+          description: purchaseDate
+          in: query
+          type: string
+        - name: retirementAmount
+          description: retirementAmount
+          in: query
+          type: number
+        - name: purchaseAmount
+          description: purchaseAmount
           in: query
           type: number
         - name: option
@@ -181,12 +190,20 @@ paths:
           description: riskAppetite
           in: query
           type: string
-        - name: Date
-          description: Date
+        - name: retirementDate
+          description: retirementDate
           in: query
           type: string
-        - name: Amount
-          description: Amount
+        - name: purchaseDate
+          description: purchaseDate
+          in: query
+          type: string
+        - name: retirementAmount
+          description: retirementAmount
+          in: query
+          type: number
+        - name: purchaseAmount
+          description: purchaseAmount
           in: query
           type: number
         - name: option
@@ -212,12 +229,20 @@ paths:
           description: riskAppetite
           in: query
           type: string
-        - name: Date
-          description: Date
+        - name: retirementDate
+          description: retirementDate
           in: query
           type: string
-        - name: Amount
-          description: Amount
+        - name: purchaseDate
+          description: purchaseDate
+          in: query
+          type: string
+        - name: retirementAmount
+          description: retirementAmount
+          in: query
+          type: number
+        - name: purchaseAmount
+          description: purchaseAmount
           in: query
           type: number
         - name: option
