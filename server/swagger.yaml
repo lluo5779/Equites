@@ -139,14 +139,30 @@ paths:
     get:
       operationId: "server.models.portfolio.routing.saveportfolio"
       parameters:
-        - name: portofolioName
+        - name: initialInvestment
+          description: initialInvestment
+          in: query
+          type: number
+        - name: riskAppetite
+          description: riskAppetite
+          in: query
+          type: string
+        - name: Date
+          description: Date
+          in: query
+          type: string
+        - name: Amount
+          description: Amount
+          in: query
+          type: number
+        - name: option
+          description: option
+          in: query
+          type: string
+        - name: portfolioName
           description: portfolioName
           in: query
-          type: array
-          items:
-            type: array
-            items:
-              type: string
+          type: string
       produces:
         - text/html
       responses:
@@ -157,8 +173,24 @@ paths:
     get:
       operationId: "server.models.portfolio.routing.editportfolio"
       parameters:
-        - name: portofolioName
-          description: portfolioName
+        - name: initialInvestment
+          description: initialInvestment
+          in: query
+          type: number
+        - name: riskAppetite
+          description: riskAppetite
+          in: query
+          type: string
+        - name: Date
+          description: Date
+          in: query
+          type: string
+        - name: Amount
+          description: Amount
+          in: query
+          type: number
+        - name: option
+          description: option
           in: query
           type: string
       produces:

@@ -2,7 +2,19 @@
 
 {% block content %}
     <form action="/saveportfolio" method="get">
-        <input type="text" name="portfolioName" placeholder="Portfolio Name...">
+
+        <!-- Not Displayed -->
+        <div style="display: none;">
+            <input type="text" name="initialInvestment" value="{{ questionnaire["initialInvestment"] }}">
+            <input type="text" name="Amount" value="{{ questionnaire["Amount"] }}">
+            <input type="text" name="Date" value="{{ questionnaire["Date"] }}">
+            <input type="text" name="riskAppetite" value="{{ questionnaire["riskAppetite"] }}">
+            <input type="text" name="option" value="{{ questionnaire["option"] }}">
+        </div>
+        <!-- Above is not displayed -->
+
+
+        <input type="text" name="portfolioName" placeholder="Portfolio Name..." required>
         <div>
             {{ histValues[-1] }}
         </div>
@@ -28,6 +40,6 @@
             {{ short }}
         </div>
         <input type="submit" value="Save">
-        <input type="submit" action="/editportfolio" value="Edit">
+        <input type="submit" formaction="/editportfolio" value="Edit">
     </form>
 {% endblock %}
