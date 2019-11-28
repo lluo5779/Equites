@@ -210,6 +210,10 @@ paths:
           description: option
           in: query
           type: string
+        - name: portfolioName
+          description: PortfolioName
+          in: query
+          type: string
       produces:
         - text/html
       responses:

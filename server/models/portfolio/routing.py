@@ -416,13 +416,14 @@ def portfoliodashboard():
 
     return render_template('portfoliodashboard.jinja2', title='optiondecision',
                            returnSinceInception=returnSinceInception, histValues=histValues, weightings=weightings,
-                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk, tickers=tickers)
+                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk, tickers=tickers, questionnaire=questionnaire)
 
 
 # @login_required
 def editportfolio():
     # pull most recent questionaire data if portfolioName==""
     # if portfolio is option 1
+
 
     portfolio_name = request.headers.get('portfolioName')
 
