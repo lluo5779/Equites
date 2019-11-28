@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+    <script>
+        document.getElementById("portfolioName").addEventListener("keyup", function() {
+            var nameInput = document.getElementById('portfolioName').value;
+            if (nameInput != "") {
+                document.getElementById('submit').removeAttribute("disabled");
+            } else {
+                document.getElementById('submit').setAttribute("disabled", null);
+            }
+        });
+    </script>
+
     <form action="/saveportfolio" method="get">
 
         <!-- Not Displayed -->
@@ -16,7 +28,7 @@
         <!-- Above is not displayed -->
 
 
-        <input type="text" name="portfolioName" placeholder="Portfolio Name..." required>
+        <input type="text" name="portfolioName" id="portfolioName" placeholder="Portfolio Name...">
         <div>
             {{ histValues[-1] }}
         </div>
@@ -41,7 +53,7 @@
         <div>
             {{ short }}
         </div>
-        <input type="submit" value="Save">
+        <input type="submit" id="submit" value="Save" disabled>
         <input type="submit" formaction="/editportfolio" value="Edit">
     </form>
 {% endblock %}
