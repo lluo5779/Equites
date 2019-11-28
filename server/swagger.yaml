@@ -139,14 +139,39 @@ paths:
     get:
       operationId: "server.models.portfolio.routing.saveportfolio"
       parameters:
-        - name: portofolioName
+      parameters:
+        - name: initialInvestment
+          description: initialInvestment
+          in: query
+          type: number
+        - name: riskAppetite
+          description: riskAppetite
+          in: query
+          type: string
+        - name: retirementDate
+          description: retirementDate
+          in: query
+          type: string
+        - name: purchaseDate
+          description: purchaseDate
+          in: query
+          type: string
+        - name: retirementAmount
+          description: retirementAmount
+          in: query
+          type: number
+        - name: purchaseAmount
+          description: purchaseAmount
+          in: query
+          type: number
+        - name: option
+          description: option
+          in: query
+          type: string
+        - name: portfolioName
           description: portfolioName
           in: query
-          type: array
-          items:
-            type: array
-            items:
-              type: string
+          type: string
       produces:
         - text/html
       responses:
@@ -157,8 +182,32 @@ paths:
     get:
       operationId: "server.models.portfolio.routing.editportfolio"
       parameters:
-        - name: portofolioName
-          description: portfolioName
+        - name: initialInvestment
+          description: initialInvestment
+          in: query
+          type: number
+        - name: riskAppetite
+          description: riskAppetite
+          in: query
+          type: string
+        - name: retirementDate
+          description: retirementDate
+          in: query
+          type: string
+        - name: purchaseDate
+          description: purchaseDate
+          in: query
+          type: string
+        - name: retirementAmount
+          description: retirementAmount
+          in: query
+          type: number
+        - name: purchaseAmount
+          description: purchaseAmount
+          in: query
+          type: number
+        - name: option
+          description: option
           in: query
           type: string
       produces:
@@ -166,6 +215,7 @@ paths:
       responses:
         200:
           description: A list of users
+
 
   /build:
     get:
@@ -175,56 +225,28 @@ paths:
           description: initialInvestment
           in: query
           type: number
-        - name: highWealth
-          description: highWealth
-          in: query
-          type: string
-        - name: mediumWealth
-          description: mediumWealth
-          in: query
-          type: string
-        - name: lowWealth
-          description: lowWealth
+        - name: riskAppetite
+          description: riskAppetite
           in: query
           type: string
         - name: retirementDate
           description: retirementDate
           in: query
           type: string
-        - name: retirementAmount
-          description: retirementAmount
-          in: query
-          type: number
-        - name: highRetirement
-          description: highRetirement
-          in: query
-          type: string
-        - name: mediumRetirement
-          description: mediumRetirement
-          in: query
-          type: string
-        - name: lowRetirement
-          description: lowRetirement
-          in: query
-          type: string
         - name: purchaseDate
           description: purchaseDate
           in: query
           type: string
+        - name: retirementAmount
+          description: retirementAmount
+          in: query
+          type: number
         - name: purchaseAmount
           description: purchaseAmount
           in: query
           type: number
-        - name: highPurchase
-          description: highPurchase
-          in: query
-          type: string
-        - name: mediumPurchase
-          description: mediumPurchase
-          in: query
-          type: string
-        - name: lowPurchase
-          description: lowPurchase
+        - name: option
+          description: option
           in: query
           type: string
       produces:

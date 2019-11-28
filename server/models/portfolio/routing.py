@@ -81,7 +81,7 @@ def track():
                                       show_link=False,
                                       config={"displayModeBar": False})
 
-            return render_template('Option1Results.jinja2', display=True, tickers=tickers, weightings=values, plot=plot,
+            return render_template('Option1.jinja2', display=True, tickers=tickers, weightings=values, plot=plot,
                                    pie=pie, stats=stats)
 
         else:
@@ -177,7 +177,7 @@ def enhance():
         # assign the risk tolerances
         risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')
 
-        weights = p.run_optimization(alpha, return_target, risk_tolerance)[0]
+        weights = p.run_optimization(risk_tolerance=risk_tolerance, alpha=alpha, return_target=return_target)[0]
         weights = weights.loc[weights['weight'] != 0]
 
         fig = plotly.graph_objs.Figure(
@@ -214,15 +214,10 @@ def getCardinalityFromQuestionnaire(questionnaire):
 def getRiskToleranceFromQuestionnaire(questionnaire):
     cardinality = getCardinalityFromQuestionnaire(questionnaire)
 
-    if questionnaire['riskAppetite'] == 'High':
-        return [((1, 10), (0, 0.10), cardinality, 'SHARPE'),
-                ((5, 5), (0, 0.20), cardinality, 'SHARPE'),
-                ((10, 1), (-0.05, 0.50), cardinality, 'SHARPE')]
+    if questionnaire['riskAppetite'] == 'High Risk':
+        return ((1, 10), (0, 0.10), cardinality, 'SHARPE')
     else:
-        return [((1, 10), (0, 0.10), cardinality, 'SHARPE'),
-                ((5, 5), (0, 0.20), cardinality, 'SHARPE'),
-                ((10, 1), (-0.05, 0.50), cardinality, 'SHARPE')]
-
+        return ((1, 10), (0, 0.10), cardinality, 'SHARPE')
 
 # @login_required
 def portfolioview():
@@ -321,7 +316,7 @@ def portfoliosnapshot():
             menu
             portfolioview upon save
     """
-    username = current_user.username
+    username = 'test1'#current_user.username
 
     all_past_p = get_past_portfolios(username=username, get_all=True)
     print(">>> all_past_p: ", all_past_p)
@@ -456,6 +451,8 @@ def editportfolio():
 
 
 def saveportfolio():
+    username = current_user.username
+
     # Updating questionnaire data
     portfolio_name = request.headers.get('portfolioName')
     option_type = request.headers.get("optionType")
@@ -467,7 +464,12 @@ def saveportfolio():
         raise ValueError("Bad option type. Something went terribly wrong.")
 
     for question in op_to_q_map[option_type]:
-        questionnaire[question] = request.headers.get(question)
+        if 'Date' in question:
+            print(request.args.get(question))
+            raw_dates = request.args.get(question).split('/')
+            questionnaire[question] = datetime(int(raw_dates[1]), int(raw_dates[0]), 1)
+        else:
+            questionnaire[question] = request.args.get(question)
 
     print("questionnaire: ", questionnaire)
 
@@ -481,12 +483,12 @@ def saveportfolio():
         update_new_questionnaire(questionnaire, option_type, uuid=_id)
 
     # Updating the portfolio data
-    p = Portfolio(current_user.username, _id=_id, generate_new=is_new_portfolio)
+    p = Portfolio(username, _id=_id, generate_new=is_new_portfolio)
 
     p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
 
     if is_new_portfolio:
-        p.make_new_portfolios(questionnaire['investmentGoal'], option_type, portfolio_name)
+        p.make_new_portfolios(questionnaire['initialInvestment'], option_type, portfolio_name)
     else:
         print(p.x1.to_dict())
         p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
@@ -494,7 +496,7 @@ def saveportfolio():
     return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
 
 
-
+@login_required
 def build():
     portfolio_name = request.headers.get('portfolioName')
     _id = getUuidFromPortfolioName(portfolio_name)

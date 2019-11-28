@@ -9,10 +9,11 @@ from torch import nn
 import torch.backends.cudnn as cudnn
 
 #from vocab import VocabBuilder, GloveVocabBuilder
-from pipeline.dataloader import TextClassDataLoader
-from pipeline.model import RNN
-import pipeline.util as util
-from pipeline.util import AverageMeter
+from server.models.portfolio.dataloader import TextClassDataLoader
+from server.models.portfolio.model import RNN
+import server.models.portfolio.util as util
+from server.models.portfolio.util import AverageMeter
+import torch
 #from pipeline.util import adjust_learning_rate
 
 np.random.seed(0)
@@ -72,8 +73,8 @@ class SentimentAnalysis(object):
 
 	def get_trainer(self):
 		print('Creating dataloaders...')
-		train_loader = TextClassDataLoader('test.csv', batch_size = self.batch_size)
-		val_loader = TextClassDataLoader('test.csv', batch_size = self.batch_size)
+		train_loader = TextClassDataLoader('server/models/portfolio/data/test.csv', batch_size = self.batch_size)
+		val_loader = TextClassDataLoader('server/models/portfolio/data/test.csv', batch_size = self.batch_size)
 		return train_loader, val_loader
 
 	def get_model(self):
@@ -197,13 +198,12 @@ def re_train():
 			path_save_model = os.path.join('./', name_model)
 			joblib.dump(model.float(), path_save_model, compress = 2)
 
-def predict(prices):
+def predict(prices, check_ml):
 	sent_analysis = SentimentAnalysis()
 	model, _, _ = sent_analysis.get_model()
-	model.load_state_dict(torch.load('path'))
+	model.load_state_dict(torch.load('server/models/portfolio/rnn_20.pkl'))
 	model.eval()
 	preds = model(prices)
-	predict_loader = TextClassDataLoader(prices, batch_size = 1, predict=True, preds_to_format = preds)
+	predict_loader = TextClassDataLoader(preds, batch_size = 1, predict=True, check_ml = check_ml)
 	_, preds = predict_loader.predict_batches
 	return preds
-re_train()
