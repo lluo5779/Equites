@@ -81,7 +81,7 @@ def track():
                                       show_link=False,
                                       config={"displayModeBar": False})
 
-            return render_template('Option1Results.jinja2', display=True, tickers=tickers, weightings=values, plot=plot,
+            return render_template('Option1.jinja2', display=True, tickers=tickers, weightings=values, plot=plot,
                                    pie=pie, stats=stats)
 
         else:
