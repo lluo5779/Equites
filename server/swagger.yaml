@@ -206,10 +206,6 @@ paths:
           description: purchaseAmount
           in: query
           type: number
-        - name: option
-          description: option
-          in: query
-          type: string
         - name: portfolioName
           description: PortfolioName
           in: query

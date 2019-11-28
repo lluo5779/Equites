@@ -199,11 +199,27 @@ def option2():
 
 
 op_to_q_map = {
-    'retirement': ['initialInvestment', 'retirementAmount', 'retirementDate', 'riskAppetite'],
-    'purchase': ['initialInvestment', 'purchaseAmount', 'purchaseDate', 'riskAppetite'],
-    'wealth': ['initialInvestment', 'riskAppetite']
+    'Retirement': ['initialInvestment', 'retirementAmount', 'retirementDate', 'riskAppetite'],
+    'Purchase': ['initialInvestment', 'purchaseAmount', 'purchaseDate', 'riskAppetite'],
+    'Wealth': ['initialInvestment', 'riskAppetite']
 }
 
+def populateQuestionnaire(questionnaire, option_type):
+    if 'retirementAmount' not in questionnaire.keys():
+        questionnaire['retirementAmount'] = ""
+
+    if 'retirementDate' not in questionnaire.keys():
+        questionnaire['retirementDate'] = ""
+
+    if 'purchaseAmount' not in questionnaire.keys():
+        questionnaire['purchaseAmount'] = ""
+
+    if 'purchaseDate' not in questionnaire.keys():
+        questionnaire['purchaseDate'] = ""
+
+    questionnaire["option"] = option_type
+
+    return questionnaire
 
 def getCardinalityFromQuestionnaire(questionnaire):
     # TO-DO: NEED TO CHANGE TO LIVE INFO
@@ -241,11 +257,11 @@ def portfolioview():
     # Updating questionnaire data
     portfolio_name = request.headers.get('portfolioName')
     if 'purchaseAmount' in request.query_string.decode("utf-8"):
-        option_type = 'purchase'
+        option_type = 'Purchase'
     elif 'retirementAmount' in request.query_string.decode("utf-8"):
-        option_type = 'retirement'
+        option_type = 'Retirement'
     elif 'initialInvestment' in request.query_string.decode("utf-8"):
-        option_type = 'wealth'
+        option_type = 'Wealth'
     else:
         print(request.query_string.decode("utf-8"))
         raise ValueError('Bad query parameters. No such option type.')
@@ -261,6 +277,9 @@ def portfolioview():
             questionnaire[question] = request.args.get(question)
 
     print("questionnaire: ", questionnaire)
+
+    #populate rest of questionnaire with ""
+    questionnaire = populateQuestionnaire(questionnaire, option_type)
 
     _id = getUuidFromPortfolioName(portfolio_name)
     # need to check if request no uuid, will create uuid
@@ -410,6 +429,9 @@ def portfoliodashboard():
     option_type = getOptionTypeFromName(portfolio_name)
     questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
 
+    #populate rest of questionnaire with ""
+    questionnaire = populateQuestionnaire(questionnaire, option_type)
+
     risk = questionnaire['riskAppetite']
 
     # regime? bull/bear
@@ -421,7 +443,7 @@ def portfoliodashboard():
 
 # @login_required
 def editportfolio():
-    # pull most recent questionaire data if portfolioName==""
+    # pull most recent questionnaire data if portfolioName==""
     # if portfolio is option 1
 
 
@@ -432,11 +454,11 @@ def editportfolio():
 
     if portfolio_name is None:
         if 'purchaseAmount' in request.query_string.decode("utf-8"):
-            option_type = 'purchase'
+            option_type = 'Purchase'
         elif 'retirementAmount' in request.query_string.decode("utf-8"):
-            option_type = 'retirement'
+            option_type = 'Retirement'
         elif 'initialInvestment' in request.query_string.decode("utf-8"):
-            option_type = 'wealth'
+            option_type = 'Wealth'
         else:
             raise ValueError('Bad query parameters. No such option type.')
 
@@ -445,10 +467,11 @@ def editportfolio():
 
         print("questionnaire: ", questionnaire)
 
+    # populate rest of questionnaire with ""
+    questionnaire = populateQuestionnaire(questionnaire, option_type)
+
     return render_template('Build.jinja2', title='Sign In', questionnaire=questionnaire)
 
-    # if portfolio is option 2
-    # return render_template('Option2.jinja2', title='Sign In', weightings=weightings, timeHorizon=timeHorizon)
 
 
 def saveportfolio():
