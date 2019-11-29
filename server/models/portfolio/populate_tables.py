@@ -43,7 +43,7 @@ def get_params_for_optimization():
     print('\tretrieving asset prices')
     print('********************************************************************')
 
-    prices = get_data(tickers, 'adjClose', start_date, end_date, save=True)  # Stored
+    prices = get_data(tickers, 'adjClose', start_date, end_date, save=True).dropna()  # Stored
     print(prices.tail(10))
 
     print('\n\n********************************************************************')
@@ -66,6 +66,8 @@ def get_params_for_optimization():
     ## *********************************************************************************************************************
 
     factors.drop('RF', axis=1, inplace=True)
+    factors = factors[:len(returns)]
+
     F = np.hstack((np.atleast_2d(np.ones(factors.shape[0])).T, factors))
 
     print('\n\n********************************************************************')
