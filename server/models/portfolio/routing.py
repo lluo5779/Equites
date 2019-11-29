@@ -205,17 +205,27 @@ op_to_q_map = {
 }
 
 def populateQuestionnaire(questionnaire, option_type):
-    if 'retirementAmount' not in questionnaire.keys():
-        questionnaire['retirementAmount'] = ""
+    info = ['retirementAmount', 'retirementDate', 'purchaseAmount', 'purchaseDate']
 
-    if 'retirementDate' not in questionnaire.keys():
-        questionnaire['retirementDate'] = ""
+    for key in info:
+        if key not in questionnaire.keys():
+            questionnaire[key] = ""
+        elif 'Date' in key:
 
-    if 'purchaseAmount' not in questionnaire.keys():
-        questionnaire['purchaseAmount'] = ""
-
-    if 'purchaseDate' not in questionnaire.keys():
-        questionnaire['purchaseDate'] = ""
+            raw_dates = questionnaire[key]
+            if type(raw_dates) == datetime:
+                raw_dates = raw_dates.strftime("%m/%Y")
+            if '-' in raw_dates:
+                separator = '-'
+                raw_dates = raw_dates.split(separator)
+                year = int(raw_dates[0])
+                month = int(raw_dates[1])
+            else:
+                separator = '/'
+                raw_dates = raw_dates.split(separator)
+                month = int(raw_dates[0])
+                year = int(raw_dates[1])
+            questionnaire[key] = str(month) + '/' + str(year)
 
     questionnaire["option"] = option_type
 
@@ -271,8 +281,19 @@ def portfolioview():
 
     for question in op_to_q_map[option_type]:
         if 'Date' in question:
-            raw_dates = request.args.get(question).split('/')
-            questionnaire[question] = datetime(int(raw_dates[1]), int(raw_dates[0]), 1)
+            raw_dates = str(request.args.get(question))
+            print('raw_dates', raw_dates)
+            if '-' in raw_dates:
+                separator = '-'
+                raw_dates = raw_dates.split(separator)
+                year = int(raw_dates[0])
+                month = int(raw_dates[1])
+            else:
+                separator = '/'
+                raw_dates = raw_dates.split(separator)
+                month = int(raw_dates[0])
+                year = int(raw_dates[1])
+            questionnaire[question] = datetime(year, month, 1)
         else:
             questionnaire[question] = request.args.get(question)
 

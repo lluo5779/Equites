@@ -200,11 +200,11 @@ paths:
         - name: retirementAmount
           description: retirementAmount
           in: query
-          type: number
+          type: string
         - name: purchaseAmount
           description: purchaseAmount
           in: query
-          type: number
+          type: string
         - name: portfolioName
           description: PortfolioName
           in: query
