@@ -40,7 +40,6 @@ from dateutil.relativedelta import relativedelta
 def back_test(portfolio, start_date, end_date=None, dollars=None):
 
     print('portfolio, ', portfolio)
-    cash = 0
     if end_date is None: end_date = datetime.now().strftime("%Y-%m-%d")
     if dollars is None: dollars = 1
 
@@ -75,7 +74,7 @@ def back_test(portfolio, start_date, end_date=None, dollars=None):
     print("\n\n{}".format(msg))
 
     # adding the cash asset to the price dataframe
-    prices['CASH'] = prices.apply(lambda x: (1 + cash) ** (prices.index.get_loc(x.name) / 250), axis=1)
+    # prices['CASH'] = prices.apply(lambda x: (1 + cash) ** (prices.index.get_loc(x.name) / 250), axis=1)
 
     # get the number of shares
     shares = dollars * pd.Series(portfolio) / prices.iloc[0]
