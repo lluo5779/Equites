@@ -73,6 +73,73 @@
 {% endblock %}
 
 {% block content %}
+    <section>
+        <div class="container text-center">
+
+            <div class="section-heading text-center">
+                <br>
+                <h2>Portfolio View</h2>
+                    <p class="text-muted">Let's take a look at this portfolio</p>
+                <br>
+            </div>
+
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="feature-item">
+                            <h3><script language = "JavaScript">
+                            var num = {{ histValues[-1] }};
+                            num = num.toFixed(2);
+                            document.write(num);
+                            </script></h3>
+                            <p class="text-muted"> histValues </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="feature-item">
+                        <h3><script language = "JavaScript">
+                            var num = {{ expectedVol }};
+                            num = num.toFixed(2);
+                            document.write(num);
+                            </script> </h3>
+                        <p class="text-muted"> expectedVol </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="feature-item">
+                        <h3> <script language = "JavaScript">
+                            var num = {{ risk }};
+                            num = num.toFixed(2);
+                            document.write(num);
+                            </script> </h3>
+                        <p class="text-muted"> risk </p>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div>
+        
+        
+            <div id="container" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+        </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div>
+        
+        
+            <div id="piechart" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+        </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <script>
         document.getElementById("portfolioName").addEventListener("keyup", function() {
@@ -86,8 +153,8 @@
     </script>
     <center>
     <div>
-    <div id = "container" style = "width: 550px; height: 400px; margin: 0 auto; float:left"></div>
-    <div id = "piechart" style = "width: 550px; height: 400px; margin: 0 auto"></div>
+    <!--<div id = "container" style = "width: 550px; height: 400px; margin: 0 auto; float:left"></div>
+    <div id = "piechart" style = "width: 550px; height: 400px; margin: 0 auto"></div>-->
     </div>
     </center>
     <form action="/saveportfolio" method="get">
