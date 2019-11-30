@@ -35,7 +35,8 @@ import plotly.offline
 trackSpecialCase = Blueprint("", __name__)
 s = Stocks()
 
-#@login_required
+
+# @login_required
 def track():
     if len(request.query_string) == 0:
         return render_template('Option1.jinja2', display=False)
@@ -175,6 +176,7 @@ def enhance():
         p = Portfolio(current_user.username, generate_new=True)
         alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, return_target, l, p.mu_bl1, p.mu_bl2, p.cov_bl1)
 
+
         # assign the risk tolerances
         risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')
 
@@ -211,6 +213,7 @@ op_to_q_map = {
     'Wealth': ['initialInvestment', 'riskAppetite']
 }
 
+
 def populateQuestionnaire(questionnaire, option_type):
     info = ['retirementAmount', 'retirementDate', 'purchaseAmount', 'purchaseDate']
 
@@ -221,27 +224,28 @@ def populateQuestionnaire(questionnaire, option_type):
     for key in info:
         if key not in questionnaire.keys():
             questionnaire[key] = ""
-        elif 'Date' in key:
+        # elif 'Date' in key:
+        #
+        #     raw_dates = questionnaire[key]
+        #     print(type(raw_dates))
+        #     if type(raw_dates.to_pydatetime()) == datetime:
+        #         raw_dates = raw_dates.to_pydatetime().strftime("%m/%Y")
+        #     if '-' in raw_dates:
+        #         separator = '-'
+        #         raw_dates = raw_dates.split(separator)
+        #         year = int(raw_dates[0])
+        #         month = int(raw_dates[1])
+        #     else:
+        #         separator = '/'
+        #         raw_dates = raw_dates.split(separator)
+        #         month = int(raw_dates[0])
+        #         year = int(raw_dates[1])
+        #     questionnaire[key] = str(month) + '/' + str(year)
 
-            raw_dates = questionnaire[key]
-            print(type(raw_dates))
-            if type(raw_dates.to_pydatetime()) == datetime:
-                raw_dates = raw_dates.to_pydatetime().strftime("%m/%Y")
-            if '-' in raw_dates:
-                separator = '-'
-                raw_dates = raw_dates.split(separator)
-                year = int(raw_dates[0])
-                month = int(raw_dates[1])
-            else:
-                separator = '/'
-                raw_dates = raw_dates.split(separator)
-                month = int(raw_dates[0])
-                year = int(raw_dates[1])
-            questionnaire[key] = str(month) + '/' + str(year)
-
-    questionnaire["option"] = option_type
+    questionnaire["optionType"] = option_type
 
     return questionnaire
+
 
 def getCardinalityFromQuestionnaire(questionnaire):
     # TO-DO: NEED TO CHANGE TO LIVE INFO
@@ -256,6 +260,7 @@ def getRiskToleranceFromQuestionnaire(questionnaire):
         return ((1, 10), (0, 0.10), cardinality, 'SHARPE')
     else:
         return ((1, 10), (0, 0.10), cardinality, 'SHARPE')
+
 
 # @login_required
 def portfolioview():
@@ -311,7 +316,7 @@ def portfolioview():
 
     print("questionnaire: ", questionnaire)
 
-    #populate rest of questionnaire with ""
+    # populate rest of questionnaire with ""
     questionnaire = populateQuestionnaire(questionnaire, option_type)
 
     _id = getUuidFromPortfolioName(portfolio_name)
@@ -324,7 +329,7 @@ def portfolioview():
     #     update_new_questionnaire(questionnaire, option_type, uuid=_id)
 
     # Updating the portfolio data
-    #TODO: current_user.username
+    # TODO: current_user.username
     p = Portfolio('test1', _id=_id, generate_new=is_new_portfolio)
 
     if is_new_portfolio:
@@ -390,7 +395,7 @@ def portfoliosnapshot():
         portfolio_returns = back_test(portfolio.to_dict(), start_date)[0].sum(axis=1)
         print(portfolio_returns)
         print(portfolioInitialValue[index])
-        histValues.append(portfolio_returns * portfolioInitialValue[index])
+        histValues.append(portfolio_returns.apply(lambda x: x * portfolioInitialValue[index]).tolist())
         counter += 1
     # histValues = [back_test(portfolio.to_dict(), start_date)[0].sum(axis=1) * portfolioInitialValue[index] for
     #               index, portfolio in
@@ -399,18 +404,21 @@ def portfoliosnapshot():
 
     # initial portfolio value (wont be in list above if port is > 1yr old)
     returnSinceInception = []
+    percentCompleted= []
     for i in range(len(histValues)):
         temp = round(((histValues[i][-1] / portfolioInitialValue[i]) - 1) * 100, 2)
         returnSinceInception.append(temp)
+        percentCompleted.append(1)
     print('>>>> returnSinceInception: ', returnSinceInception)
 
-    #targetAmount
-    #percentCompleted = histValues[-1]/targetAmount -1
-    #timeTilCompletion = targetDate - today
+    targetAmount = 200
+
+    timeTilCompletion = 200#targetDate - today
 
     return render_template('portfoliosnapshot.jinja2', title='optiondecision',
                            returnSinceInception=returnSinceInception, histValues=histValues,
-                           portfolioNames=portfolioNames, targetAmount=targetAmount, percentCompleted=percentCompleted, timeTilCompletion=timeTilCompletion)
+                           portfolioNames=portfolioNames, targetAmount=targetAmount, percentCompleted=percentCompleted,
+                           timeTilCompletion=timeTilCompletion)
 
 
 def portfoliodashboard():
@@ -437,7 +445,7 @@ def portfoliodashboard():
     """
 
     portfolio_name = request.args.get('portfolioName')
-    username = 'test1'#current_user.username
+    username = 'test1'  # current_user.username
     print('username: ', username)
 
     _id = getUuidFromPortfolioName(portfolio_name)
@@ -480,27 +488,37 @@ def portfoliodashboard():
     option_type = getOptionTypeFromName(portfolio_name)
     questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
     risk = questionnaire['riskAppetite']
-    #populate rest of questionnaire with ""
+    # populate rest of questionnaire with ""
     questionnaire = populateQuestionnaire(questionnaire, option_type)
     print(">>> questionnaire: ", questionnaire)
 
-
     # regime? bull/bear
+    if 'purchase' in option_type.lower():
+        targetAmount = questionnaire['purchaseAmount']
+        percentCompleted = histValues[-1] / targetAmount - 1
+        timeTilCompletion = questionnaire['purchaseDate'] - datetime.utcnow()
+    elif 'retirement' in option_type.lower():
+        targetAmount = questionnaire['retirementAmount']
+        percentCompleted = histValues[-1] / targetAmount - 1
+        timeTilCompletion = questionnaire['retirementDate'] - datetime.utcnow()
+    else:
+        targetAmount = None
+        percentCompleted = None
+        timeTilCompletion = None
 
-    #targetAmount
-    #percentCompleted = histValues[-1]/targetAmount -1
-    #timeTilCompletion = targetDate - today
+    # timeTilCompletion = targetDate - today
 
     return render_template('portfoliodashboard.jinja2', title='optiondecision',
                            returnSinceInception=returnSinceInception, histValues=histValues, weightings=weightings,
-                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk, tickers=tickers, questionnaire=questionnaire, targetAmount=targetAmount, percentCompleted=percentCompleted, timeTilCompletion=timeTilCompletion)
+                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk,
+                           tickers=tickers, questionnaire=questionnaire, targetAmount=targetAmount,
+                           percentCompleted=percentCompleted, timeTilCompletion=timeTilCompletion)
 
 
 # @login_required
 def editportfolio():
     # pull most recent questionnaire data if portfolioName==""
     # if portfolio is option 1
-
 
     portfolio_name = request.headers.get('portfolioName')
 
@@ -525,8 +543,23 @@ def editportfolio():
     # populate rest of questionnaire with ""
     questionnaire = populateQuestionnaire(questionnaire, option_type)
 
-    return render_template('Build.jinja2', title='Sign In', questionnaire=questionnaire)
+    #     'Retirement': ['initialInvestment', 'retirementAmount', 'retirementDate', 'riskAppetite'],
+    #     'Purchase': ['initialInvestment', 'purchaseAmount', 'purchaseDate', 'riskAppetite'],
+    #     'Wealth': ['initialInvestment', 'riskAppetite']
+    #
+    # }
+    date_key = ''
+    if questionnaire['retirementDate'] != '':
+        date_key = 'retirementDate'
+    elif questionnaire['purchaseDate'] != '':
+        date_key = 'purchaseDate'
 
+    if date_key != '' and len(questionnaire[date_key]) >= 8:  # "MM/YYYY"
+        raw_date = questionnaire[date_key].split('-')
+        month = '0' + raw_date[1] if len(raw_date[1]) == 1 else raw_date[1]
+        questionnaire[date_key] = month + '/' + raw_date[0]
+
+    return render_template('Build.jinja2', title='Sign In', questionnaire=questionnaire)
 
 
 def saveportfolio():
@@ -545,8 +578,8 @@ def saveportfolio():
     for question in op_to_q_map[option_type]:
         if 'Date' in question:
             print(request.args.get(question))
-            raw_dates = request.args.get(question).split('/')
-            questionnaire[question] = datetime(int(raw_dates[1]), int(raw_dates[0]), 1)
+            raw_dates = request.args.get(question).split('-')
+            questionnaire[question] = datetime(int(raw_dates[0]), int(raw_dates[1]), 1)
         else:
             questionnaire[question] = request.args.get(question)
 
@@ -592,6 +625,7 @@ def build():
     return render_template('Build.jinja2', questionnaire=questionnaire)
     '''
 
-    questionnaire = {'initialInvestment':"", 'retirementAmount':"", 'retirementDate':"",'purchaseAmount':"", 'purchaseDate':"", 'riskAppetite':"",'option':""}
+    questionnaire = {'initialInvestment': "", 'retirementAmount': "", 'retirementDate': "", 'purchaseAmount': "",
+                     'purchaseDate': "", 'riskAppetite': "", 'option': ""}
 
     return render_template('Build.jinja2', questionnaire=questionnaire)

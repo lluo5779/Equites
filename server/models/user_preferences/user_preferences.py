@@ -24,6 +24,7 @@ def fetch_questionnaire_from_uuid_and_type(option_type, uuid):
     """Called when selecting specific portfolio (ie. from port dashboard)"""
     if "_questionnaire" not in option_type:
         option_type = option_type + "_questionnaire"
+    option_type = option_type.lower()
     query ="""select * from {} where "uuid" like '{}';""".format(option_type, uuid)
 
     df =  pd.read_sql(query,
@@ -47,6 +48,7 @@ def initialize_new_questionnaire(questionnaire, option_type, uuid):
     if "_questionnaire" not in option_type:
         option_type = option_type + "_questionnaire"
 
+    option_type = option_type.lower()
     if 'option_type' not in questionnaire:
         questionnaire['option_type'] = [option_type]
     questionnaire['uuid'] = [uuid]
@@ -65,15 +67,15 @@ def update_new_questionnaire(questionnaire, option_type, uuid):
     if "_questionnaire" not in option_type:
         option_type = option_type + "_questionnaire"
 
-    if 'option_type' not in questionnaire:
-        questionnaire['option_type'] = [option_type]
+    questionnaire['option_type'] = [option_type]
 
+    option_type = option_type.lower()
     query = 'select * from {}'.format(option_type)
     old_df = pd.read_sql(query, con=Database.DATABASE.engine, index_col='uuid')
-    if 'level_0' in old_df.columns:
-        old_df = old_df.drop(['level_0'], axis=1)
-    if 'index' in old_df.columns:
-        old_df = old_df.drop(['index'], axis=1)
+    # if 'level_0' in old_df.columns:
+    #     old_df = old_df.drop(['level_0'], axis=1)
+    # if 'index' in old_df.columns:
+    #     old_df = old_df.drop(['index'], axis=1)
 
 
     print('old_df: \n', old_df)

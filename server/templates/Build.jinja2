@@ -124,13 +124,13 @@ body {
 
     <script>
         window.addEventListener("DOMContentLoaded", function() {
-            if ("{{ questionnaire['option'] }}" == "Wealth"){
+            if ("{{ questionnaire['optionType'] }}" == "Wealth"){
                 showSlides(2);
             }
-            else if ("{{ questionnaire['option'] }}" == "Retirement"){
+            else if ("{{ questionnaire['optionType'] }}" == "Retirement"){
                 showSlides(4);
             }
-            else if ("{{ questionnaire['option'] }}" == "Purchase"){
+            else if ("{{ questionnaire['optionType'] }}" == "Purchase"){
                 showSlides(8);
             }
             else{showSlides(1);}
@@ -200,7 +200,7 @@ body {
                         <button type="button" onclick="currentSlide(3)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
                     </div>
                 </div>
-                <div style="display: none"><input type="text" name="option" value="Wealth"></div>
+                <div style="display: none"><input type="text" name="optionType" value="Wealth"></div>
             </div>
 
 
@@ -241,7 +241,7 @@ body {
                         <button type="button" onclick="currentSlide(5)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
                     </div>
                 </div>
-                <div style="display: none"><input type="text" name="option" value="Retirement"></div>
+                <div style="display: none"><input type="text" name="optionType" value="Retirement"></div>
             </div>
 
 
@@ -320,7 +320,7 @@ body {
                         <button type="button" onclick="currentSlide(9)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
                     </div>
                 </div>
-                <div style="display: none"><input type="text" name="option" value="Purchase"></div>
+                <div style="display: none"><input type="text" name="optionType" value="Purchase"></div>
             </div>
 
 
