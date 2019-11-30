@@ -14,7 +14,7 @@ def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=Tru
 
     try:
         for ticker in tickers:
-            print('ticker: ', ticker)
+            #print('ticker: ', ticker)
             data[ticker] = tiingo(ticker, start_date, end_date)[data_point]
 
         # print("\n\nSUCCESS: retrieved new %s data ..." % data_point)

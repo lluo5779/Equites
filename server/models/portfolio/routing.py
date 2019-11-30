@@ -495,11 +495,11 @@ def portfoliodashboard():
     # regime? bull/bear
     if 'purchase' in option_type.lower():
         targetAmount = questionnaire['purchaseAmount']
-        percentCompleted = histValues[-1] / targetAmount - 1
+        percentCompleted = histValues.iloc[-1].values[0] / targetAmount - 1
         timeTilCompletion = questionnaire['purchaseDate'] - datetime.utcnow()
     elif 'retirement' in option_type.lower():
         targetAmount = questionnaire['retirementAmount']
-        percentCompleted = histValues[-1] / targetAmount - 1
+        percentCompleted = histValues.iloc[-1].values[0] / targetAmount - 1
         timeTilCompletion = questionnaire['retirementDate'] - datetime.utcnow()
     else:
         targetAmount = None
