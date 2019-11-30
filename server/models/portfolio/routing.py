@@ -8,8 +8,7 @@ from server.models.auth.schema import User
 from server.common.database import Database
 from server.models.portfolio.rs import business_days
 from server.models.portfolio.risk import risk_prefs
-from server.models.portfolio.portfolio import Portfolio, getUuidFromPortfolioName, get_past_portfolios, \
-    getOptionTypeFromName
+from server.models.portfolio.portfolio import Portfolio, getUuidFromPortfolioName, get_past_portfolios, getOptionTypeFromName
 from server.models.portfolio.bt import back_test
 from server.models.stock.stock import Stocks
 from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
@@ -23,6 +22,7 @@ from dateutil.relativedelta import relativedelta
 import pandas as pd
 import numpy as np
 
+from server.models.portfolio.stats import *
 import flask
 from plotly.graph_objs import Scatter, Pie, Layout
 from datetime import datetime
@@ -57,7 +57,21 @@ def track():
         if success:
             port_values = values.sum(axis=1)
             port_values.rename(columns={'Unnamed: 0': 'value'}, inplace=True)
+
+            # calculate returns from the portfolio
             port_returns = (port_values / port_values.shift(1) - 1).dropna()
+
+            # detailed statistics
+            vols = rolling_volatility(port_returns, 100)
+            sharpe = rolling_sharpe(port_returns, 100)
+            drawdown = drawdown_table(port_returns)
+            underwater = drawdown_underwater(port_returns)
+
+            print("RESULTS")
+            print("rolling vols\n{}\n\n".format(vols))
+            print("rolling sharpe\n{}\n\n".format(sharpe))
+            print("drawdown\n{}\n\n".format(drawdown))
+            print("underwater vols\n{}\n\n".format(underwater))
 
             total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
 
@@ -150,7 +164,9 @@ def enhance():
 
         tickers = args[::2]
         values = [abs(float(x)) for x in args[1::2]]
-        weights = [x / sum(values) for x in values]
+
+        budget = sum(values)
+        weights = [x / budget for x in values]
         portfolio = dict(zip(tickers, weights))
 
         # always assign to past 6 months (ie rebalance the period)
@@ -171,13 +187,19 @@ def enhance():
         # set the other parameters for a generalized maximization
         horizon, aversion, l = 10, 1, 5
 
-        p = Portfolio(current_user.username)
+        p = Portfolio(current_user.username, generate_new=True)
         alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, return_target, l, p.mu_bl1, p.mu_bl2, p.cov_bl1)
 
         # assign the risk tolerances
         risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')
 
-        weights = p.run_optimization(risk_tolerance=risk_tolerance, alpha=alpha, return_target=return_target)[0]
+        weights = p.run_optimization(risk_tolerance=risk_tolerance,
+                                     alpha=alpha,
+                                     return_target=return_target,
+                                     budget=budget)[0]
+
+        print("\n\nSOLUTION:{}\n\n".format(weights))
+
         weights = weights.loc[weights['weight'] != 0]
 
         fig = plotly.graph_objs.Figure(

@@ -37,8 +37,7 @@ class EodPrices(db.DATABASE.Model):
     divCash = db.DATABASE.Column(db.DATABASE.Float(), unique=True)
     splitFactor = db.DATABASE.Column(db.DATABASE.Float(), unique=True)
 
-    def __init__(self, date, symbol, close, high, low, open, volume, adjClose, adjHigh, adjLow, adjVolume, divCash,
-                 splitFactor):
+    def __init__(self, date, symbol, close, high, low, open, volume, adjClose, adjHigh, adjLow, adjVolume, divCash, splitFactor):
         self.date = date
         self.symbol = symbol
         self.close = close

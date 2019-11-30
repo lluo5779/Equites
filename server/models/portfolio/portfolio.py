@@ -70,7 +70,7 @@ class Portfolio(object):
         return df.set_index(df.columns[0], drop=True)
 
 
-    def run_optimization(self, risk_tolerance, alpha=(0.05, 0.10), return_target=0.05):
+    def run_optimization(self, risk_tolerance, alpha=(0.05, 0.10), return_target=0.05, budget=1):
         print("self.cost: ", self.cost)
         print("risk_tolerance: ", risk_tolerance)
         print("alpha: ", alpha)
@@ -84,8 +84,10 @@ class Portfolio(object):
                                           return_target=(return_target, return_target),
                                           costs=self.cost.T,
                                           prices=self.prices.iloc[-2, :].values if self.prices.iloc[-1,:].isnull().values.any() else self.prices.iloc[-1,:].values,
-                                          gamma=risk_tolerance)
-        soln = safe_soln #if target_soln is None else target_soln
+                                          gamma=risk_tolerance,
+                                          budget=budget)
+
+        soln = safe_soln
 
         self.x1 = pd.DataFrame(soln.x[:int(len(self.mu_bl1))], index=self.mu_bl1.index, columns=['weight'])
         self.x2 = pd.DataFrame(soln.x[int(len(self.mu_bl2)):], index=self.mu_bl2.index, columns=['weight'])

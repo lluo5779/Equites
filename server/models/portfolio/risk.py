@@ -34,7 +34,7 @@ def risk_prefs(horizon, aversion, return_target, l, mu_bl1, mu_bl2, cov_bl1):
 
     else:
         cardinality = np.where(mu_bl1.rank() > len(mu_bl1) * 1 / 3, 1, 0).ravel()
-        exposures = (0, 0.30)
+        exposures = (0.00, 0.30)
         risk_mul *= 0.25
         turn_mul *= 2
 
@@ -43,4 +43,4 @@ def risk_prefs(horizon, aversion, return_target, l, mu_bl1, mu_bl2, cov_bl1):
 
     risk_mul *= aversion
 
-    return alpha, (risk_mul, turn_mul), exposures, list(cardinality)
+    return (alpha, alpha*1.02), (risk_mul, turn_mul), exposures, list(cardinality)

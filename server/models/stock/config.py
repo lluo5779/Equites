@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
 COLLECTION = 'prices'                                       # MongoDB collection
-SYMBOLS = ['ITOT', 'DIA', 'SPY', 'XLG', 'AIA', 'GXC', 'XLY', 'XLE', 'XLF', 'XLV', 'XLI', 'XLB', 'XLK', 'XLU', 'ICLN', 'CGW', 'WOOD', 'IYR']
+SYMBOLS = ['ITOT', 'DIA', 'SPY', 'XLG', 'AIA', 'GXC', 'XLY', 'XLE', 'XLF', 'XLV', 'XLI', 'XLB', 'XLK', 'XLU', 'ICLN', 'CGW', 'WOOD', 'IYR', 'F', 'DIS', 'MCD', 'KO', 'PEP', 'JPM', 'AAPL', 'PFE', 'JNJ', 'ED']
 
 SAMPLE_FREQUENCY = 'monthly'
 START_DATE = (date.today() - timedelta(days=6*365)).isoformat()
