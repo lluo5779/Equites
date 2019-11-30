@@ -29,6 +29,16 @@ class UserPortfolio(db.DATABASE.Model):
     CGW = db.DATABASE.Column(db.DATABASE.Float())
     WOOD = db.DATABASE.Column(db.DATABASE.Float())
     IYR = db.DATABASE.Column(db.DATABASE.Float())
+    F = db.DATABASE.Column(db.DATABASE.Float())
+    DIS = db.DATABASE.Column(db.DATABASE.Float())
+    MCD = db.DATABASE.Column(db.DATABASE.Float())
+    KO = db.DATABASE.Column(db.DATABASE.Float())
+    PEP = db.DATABASE.Column(db.DATABASE.Float())
+    JPM = db.DATABASE.Column(db.DATABASE.Float())
+    AAPL = db.DATABASE.Column(db.DATABASE.Float())
+    PFE = db.DATABASE.Column(db.DATABASE.Float())
+    JNJ = db.DATABASE.Column(db.DATABASE.Float())
+    ED = db.DATABASE.Column(db.DATABASE.Float())
 
     ITOT2 = db.DATABASE.Column(db.DATABASE.Float())
     DIA2 = db.DATABASE.Column(db.DATABASE.Float())
@@ -48,6 +58,16 @@ class UserPortfolio(db.DATABASE.Model):
     CGW2 = db.DATABASE.Column(db.DATABASE.Float())
     WOOD2 = db.DATABASE.Column(db.DATABASE.Float())
     IYR2 = db.DATABASE.Column(db.DATABASE.Float())
+    F2 = db.DATABASE.Column(db.DATABASE.Float())
+    DIS2 = db.DATABASE.Column(db.DATABASE.Float())
+    MCD2 = db.DATABASE.Column(db.DATABASE.Float())
+    KO2 = db.DATABASE.Column(db.DATABASE.Float())
+    PEP2 = db.DATABASE.Column(db.DATABASE.Float())
+    JPM2 = db.DATABASE.Column(db.DATABASE.Float())
+    AAPL2 = db.DATABASE.Column(db.DATABASE.Float())
+    PFE2 = db.DATABASE.Column(db.DATABASE.Float())
+    JNJ2 = db.DATABASE.Column(db.DATABASE.Float())
+    ED2 = db.DATABASE.Column(db.DATABASE.Float())
 
     print(">>> datetime.utcnow", datetime.utcnow())
     timestamp = db.DATABASE.Column(db.DATABASE.DateTime, index=True, default=datetime.utcnow)
@@ -55,7 +75,8 @@ class UserPortfolio(db.DATABASE.Model):
 
     def __init__(self, username, portfolio_name, uuid, active, timestamp, portfolio_type, ITOT, DIA, SPY, XLG, AIA, GXC, XLY, XLE, XLF, XLV, XLI, XLB, XLK, XLU,
                  ICLN, CGW, WOOD, IYR, ITOT2, DIA2, SPY2, XLG2, AIA2, GXC2, XLY2, XLE2, XLF2, XLV2, XLI2, XLB2, XLK2,
-                 XLU2, ICLN2, CGW2, WOOD2, IYR2, budget,preferences):
+                 XLU2, ICLN2, CGW2, WOOD2, IYR2, F, DIS, MCD, KO, PEP, JPM, AAPL, PFE, JNJ, ED, F2, DIS2, MCD2, KO2, PEP2, JPM2, AAPL2, PFE2, JNJ2, ED2, budget, preferences):
+
         self.username = username
         self.uuid = uuid
         self.budget = budget
@@ -103,6 +124,26 @@ class UserPortfolio(db.DATABASE.Model):
         self.WOOD2 = WOOD2
         self.IYR2 = IYR2
 
+        self.F = F
+        self.DIS = DIS
+        self.MCD = MCD
+        self.KO = KO
+        self.PEP = PEP
+        self.JPM = JPM
+        self.AAPL = AAPL
+        self.PFE = PFE
+        self.JNJ = JNJ
+        self.ED = ED
+        self.F2 = F2
+        self.DIS2 = DIS2
+        self.MCD2 = MCD2
+        self.KO2 = KO2
+        self.PEP2 = PEP2
+        self.JPM2 = JPM2
+        self.AAPL2 = AAPL2
+        self.PFE2 = PFE2
+        self.JNJ2 = JNJ2
+        self.ED2 = ED2
 
     def __repr(self):
         return '<Portfolio for auth %s>' % self.username

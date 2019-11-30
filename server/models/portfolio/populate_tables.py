@@ -18,10 +18,6 @@ from server.models.portfolio.config import SYMBOLS
 BASEPATH = "/server/models/portfolio/"
 
 
-
-
-
-
 ## *********************************************************************************************************************
 # parameters
 ## *********************************************************************************************************************
@@ -31,7 +27,7 @@ def get_params_for_optimization():
     tickers = SYMBOLS
 
     end_date = datetime.now().strftime("%Y-%m-%d")
-    start_date = (datetime.strptime(end_date, "%Y-%m-%d") - relativedelta(years=6)).strftime("%Y-%m-%d")
+    start_date = (datetime.strptime(end_date, "%Y-%m-%d") - relativedelta(years=10)).strftime("%Y-%m-%d")
 
     # target rebalance date ... based on calendar days ... need to adjust for trading days
     rebalance_date = (datetime.strptime(end_date, "%Y-%m-%d") + relativedelta(months=6, days=1)).strftime("%Y-%m-%d")
@@ -47,7 +43,7 @@ def get_params_for_optimization():
     print('\tretrieving asset prices')
     print('********************************************************************')
 
-    prices = get_data(tickers, 'adjClose', start_date, end_date, save=True)  # Stored
+    prices = get_data(tickers, 'adjClose', start_date, end_date, save=True).dropna()  # Stored
     print(prices.tail(10))
 
     print('\n\n********************************************************************')
@@ -70,6 +66,8 @@ def get_params_for_optimization():
     ## *********************************************************************************************************************
 
     factors.drop('RF', axis=1, inplace=True)
+    factors = factors[:len(returns)]
+
     F = np.hstack((np.atleast_2d(np.ones(factors.shape[0])).T, factors))
 
     print('\n\n********************************************************************')

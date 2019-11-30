@@ -82,8 +82,7 @@
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="#">My Settings</a>
-                            <a class="dropdown-item" href="#">My Goals</a>
-                            <a class="dropdown-item" href="#">My Portfolios</a>
+                            <a class="dropdown-item" href="{{ url_for('/.server_models_portfolio_routing_portfoliosnapshot') }}">My Portfolios</a>
 
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ '/auth/logout' }}">Logout</a>

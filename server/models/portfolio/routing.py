@@ -35,7 +35,7 @@ import plotly.offline
 trackSpecialCase = Blueprint("", __name__)
 s = Stocks()
 
-@login_required
+#@login_required
 def track():
     if len(request.query_string) == 0:
         return render_template('Option1.jinja2', display=False)
@@ -391,9 +391,13 @@ def portfoliosnapshot():
         returnSinceInception.append(temp)
     print('>>>> returnSinceInception: ', returnSinceInception)
 
+    #targetAmount
+    #percentCompleted = histValues[-1]/targetAmount -1
+    #timeTilCompletion = targetDate - today
+
     return render_template('portfoliosnapshot.jinja2', title='optiondecision',
                            returnSinceInception=returnSinceInception, histValues=histValues,
-                           portfolioNames=portfolioNames)
+                           portfolioNames=portfolioNames, targetAmount=targetAmount, percentCompleted=percentCompleted, timeTilCompletion=timeTilCompletion)
 
 
 def portfoliodashboard():
@@ -470,9 +474,13 @@ def portfoliodashboard():
 
     # regime? bull/bear
 
+    #targetAmount
+    #percentCompleted = histValues[-1]/targetAmount -1
+    #timeTilCompletion = targetDate - today
+
     return render_template('portfoliodashboard.jinja2', title='optiondecision',
                            returnSinceInception=returnSinceInception, histValues=histValues, weightings=weightings,
-                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk, tickers=tickers, questionnaire=questionnaire)
+                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk, tickers=tickers, questionnaire=questionnaire, targetAmount=targetAmount, percentCompleted=percentCompleted, timeTilCompletion=timeTilCompletion)
 
 
 # @login_required

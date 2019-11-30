@@ -14,17 +14,17 @@ def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=Tru
 
     try:
         for ticker in tickers:
-           data[ticker] = tiingo(ticker, start_date, end_date)[data_point]
-        # data = s.get_all()
+            data[ticker] = tiingo(ticker, start_date, end_date)[data_point]
 
         # print("\n\nSUCCESS: retrieved new %s data ..." % data_point)
         print('finished retrieving %s data in %f seconds.\n\n' % (data_point, time.time() - start))
 
-    except:
-        for ticker in tickers:
-           data[ticker] = tiingo(ticker, start_date, end_date)[data_point]
+    except Exception as e:
         if fail_safe:
-            data = pd.read_csv(os.getcwd() + r'/data/%s.csv' % data_point)
+            print(e)
+
+            data = pd.read_csv(os.getcwd() + r'/data/%s.csv' % data_point, index_col=0)
+            data.index = pd.to_datetime(data.index)
 
             print("\n\nERROR: could not retrieve new %s data ... retrieved old data" % data_point)
             print('finished retrieving %s data in %f seconds.\n' % (data_point, time.time() - start))

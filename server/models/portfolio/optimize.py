@@ -16,6 +16,12 @@ def make_constraint(type, func, args):
 
 def optimize(mu, sigma, alpha, return_target, costs, prices, gamma):
 
+    print("\n\nPERIOD ONE RETURNS {}".format(mu[0]))
+    print("\n\nPERIOD TWO RETURNS {}".format(mu[1]))
+
+    print("\n\nPERIOD ONE COV {}".format(sigma[1]))
+    print("\n\nPERIOD TWO COV {}".format(sigma[1]))
+
     start = time.time()
 
     # the number of assets

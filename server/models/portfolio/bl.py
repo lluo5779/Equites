@@ -18,8 +18,6 @@ def get_mkt_cap(tickers, save):
     try:
         for asset in tickers:
             data[asset] = mkt_cap(asset)
-
-        print("\n\nSUCCESS: retrieved new market cap values ...")
     except:
         data = pd.read_csv(os.getcwd() + BASEPATH + r'/data/mkt_cap.csv', index_col=0)
 
@@ -34,11 +32,13 @@ def get_mkt_cap(tickers, save):
 
     return mktcap
 
+
 def mkt_cap(ticker):
     url = YAHOO % (ticker, ticker)
 
     html = str(BeautifulSoup(requests.get(url).content, 'html5lib'))
     cap = re.search('"totalAssets":{"raw":(.*?),"fmt":"', html)
+    if cap is None: cap = re.search('"marketCap":{"raw":(.*?),"fmt":"', html)
 
     return float(cap.group(1))
 
