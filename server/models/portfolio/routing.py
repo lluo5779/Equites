@@ -214,14 +214,19 @@ op_to_q_map = {
 def populateQuestionnaire(questionnaire, option_type):
     info = ['retirementAmount', 'retirementDate', 'purchaseAmount', 'purchaseDate']
 
+    if type(questionnaire) == pd.DataFrame or type(questionnaire) == pd.Series:
+        questionnaire = questionnaire.T.to_dict()[questionnaire.index.values[0]]
+
+    print(questionnaire)
     for key in info:
         if key not in questionnaire.keys():
             questionnaire[key] = ""
         elif 'Date' in key:
 
             raw_dates = questionnaire[key]
-            if type(raw_dates) == datetime:
-                raw_dates = raw_dates.strftime("%m/%Y")
+            print(type(raw_dates))
+            if type(raw_dates.to_pydatetime()) == datetime:
+                raw_dates = raw_dates.to_pydatetime().strftime("%m/%Y")
             if '-' in raw_dates:
                 separator = '-'
                 raw_dates = raw_dates.split(separator)
@@ -272,7 +277,7 @@ def portfolioview():
     """
 
     # Updating questionnaire data
-    portfolio_name = request.headers.get('portfolioName')
+    portfolio_name = request.args.get('portfolioName')
     if 'purchaseAmount' in request.query_string.decode("utf-8"):
         option_type = 'Purchase'
     elif 'retirementAmount' in request.query_string.decode("utf-8"):
@@ -319,7 +324,8 @@ def portfolioview():
     #     update_new_questionnaire(questionnaire, option_type, uuid=_id)
 
     # Updating the portfolio data
-    p = Portfolio(current_user.username, _id=_id, generate_new=is_new_portfolio)
+    #TODO: current_user.username
+    p = Portfolio('test1', _id=_id, generate_new=is_new_portfolio)
 
     if is_new_portfolio:
         p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
@@ -430,8 +436,8 @@ def portfoliodashboard():
         portfoliosnapshot
     """
 
-    portfolio_name = request.headers.get('portfolioName')
-    username = current_user.username
+    portfolio_name = request.args.get('portfolioName')
+    username = 'test1'#current_user.username
     print('username: ', username)
 
     _id = getUuidFromPortfolioName(portfolio_name)
@@ -473,11 +479,11 @@ def portfoliodashboard():
 
     option_type = getOptionTypeFromName(portfolio_name)
     questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
-
+    risk = questionnaire['riskAppetite']
     #populate rest of questionnaire with ""
     questionnaire = populateQuestionnaire(questionnaire, option_type)
+    print(">>> questionnaire: ", questionnaire)
 
-    risk = questionnaire['riskAppetite']
 
     # regime? bull/bear
 
