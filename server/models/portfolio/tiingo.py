@@ -5,7 +5,7 @@ import requests
 import pandas as pd
 from server.models.stock.stock import Stocks
 
-TIINGO_KEY = '6d2d79e31c7c1b6bae9be7e8986b4a5fe3ce5111' # '2e64578d69892c20fab750efe3ae9ed176f7c1af'
+TIINGO_KEY = '2e64578d69892c20fab750efe3ae9ed176f7c1af' #'6d2d79e31c7c1b6bae9be7e8986b4a5fe3ce5111'
 TIINGO_EOD = 'https://api.tiingo.com/tiingo/daily/%s/prices?startDate=%s&endDate=%s'
 
 def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=True):
@@ -15,7 +15,7 @@ def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=Tru
     try:
         for ticker in tickers:
             #print('ticker: ', ticker)
-            data[ticker] = tiingo(ticker, start_date, end_date)[data_point]
+            data[ticker] = tiingo(ticker, start_date, end_date)[data_point] # Series with date as index and prices as values
 
         # print("\n\nSUCCESS: retrieved new %s data ..." % data_point)
         print('finished retrieving %s data in %f seconds.\n\n' % (data_point, time.time() - start))
