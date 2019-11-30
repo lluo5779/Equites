@@ -13,8 +13,7 @@ from server.models.portfolio.bt import back_test
 from server.models.stock.stock import Stocks
 from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
 from server.models.portfolio.bt import back_test
-from server.models.user_preferences.user_preferences import fetch_latest_questionnaire_from_type, \
-    fetch_questionnaire_from_uuid_and_type, update_new_questionnaire, initialize_new_questionnaire
+from server.models.user_preferences.user_preferences import fetch_latest_questionnaire_from_type, fetch_questionnaire_from_uuid_and_type, update_new_questionnaire, initialize_new_questionnaire
 import urllib
 from datetime import datetime
 from scipy.stats.mstats import gmean
@@ -25,6 +24,7 @@ import numpy as np
 from server.models.portfolio.stats import *
 import flask
 from plotly.graph_objs import Scatter, Pie, Layout
+import plotly.graph_objects as go
 from datetime import datetime
 from io import BytesIO
 from flask import Blueprint
@@ -58,102 +58,87 @@ def track():
             port_values = values.sum(axis=1)
             port_values.rename(columns={'Unnamed: 0': 'value'}, inplace=True)
 
-            # calculate returns from the portfolio
-            port_returns = (port_values / port_values.shift(1) - 1).dropna()
-
-            # detailed statistics
-            vols = rolling_volatility(port_returns, 100)
-            sharpe = rolling_sharpe(port_returns, 100)
-            drawdown = drawdown_table(port_returns)
-            underwater = drawdown_underwater(port_returns)
-
-            print("RESULTS")
-            print("rolling vols\n{}\n\n".format(vols))
-            print("rolling sharpe\n{}\n\n".format(sharpe))
-            print("drawdown\n{}\n\n".format(drawdown))
-            print("underwater vols\n{}\n\n".format(underwater))
-
-            total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
-
-            min_value = round(min(port_values), 2)
-            max_value = round(max(port_values), 2)
-
-            stats = [total_returns, min_value, max_value]
-
-            plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines')
-
-            plot = plotly.offline.plot({"data": plot_data},
-                                       output_type='div',
-                                       include_plotlyjs=False,
-                                       show_link=False,
-                                       config={"displayModeBar": False})
-
-            # show the pie graph of the portfolio
+            # PORTFOLIO HOLDINGS
             pie = plotly.offline.plot({"data": [Pie(labels=tickers, values=weights, hole=.1)]},
                                       output_type='div',
                                       include_plotlyjs=False,
                                       show_link=False,
                                       config={"displayModeBar": False})
 
-            return render_template('Option1.jinja2', display=True, tickers=tickers, weightings=values, plot=plot,
-                                   pie=pie, stats=stats)
+            # CUMULATIVE RETURNS
+            plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines', line = dict(color = '#3B4F66'))
+            plot = plotly.offline.plot({"data": plot_data},
+                                       output_type='div',
+                                       include_plotlyjs=False,
+                                       show_link=False,
+                                       config={"displayModeBar": False})
+
+            # calculate returns from the portfolio
+            port_returns = (port_values / port_values.shift(1) - 1).dropna()
+
+            # ROLLING VOLATILITY
+            vols = rolling_volatility(port_returns, 100).dropna()
+            vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines')
+            vols_plot = plotly.offline.plot({"data": vols_plot_data},
+                                       output_type='div',
+                                       include_plotlyjs=False,
+                                       show_link=False,
+                                       config={"displayModeBar": False})
+
+            # ROLLING SHARPE
+            sharpe = rolling_sharpe(port_returns, 100).dropna()
+            sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines')
+            sharpe_plot = plotly.offline.plot({"data": sharpe_plot_data},
+                                       output_type='div',
+                                       include_plotlyjs=False,
+                                       show_link=False,
+                                       config={"displayModeBar": False})
+
+            # detailed statistics
+            underwater = drawdown_underwater(port_returns)
+            underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines')
+            underwater_plot = plotly.offline.plot({"data": underwater_data},
+                                              output_type='div',
+                                              include_plotlyjs=False,
+                                              show_link=False,
+                                              config={"displayModeBar": False})
+
+            # DRAWDOWN
+            drawdown = drawdown_table(port_returns)
+            drawdown_fig = go.Figure(data=[go.Table(header=dict(values=list(drawdown.columns),
+                                                                align='left'),
+                                                    cells=dict(values=[drawdown["Net drawdown in %"],
+                                                                       drawdown["Peak date"],
+                                                                       drawdown["Valley date"],
+                                                                       drawdown["Recovery date"],
+                                                                       drawdown["Duration"]], align='center'))])
+            drawdown = plotly.offline.plot({"data": drawdown_fig},
+                                           output_type='div',
+                                           include_plotlyjs=False,
+                                           show_link=False,
+                                           config={"displayModeBar": False})
+
+
+            total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
+            min_value = round(min(port_values), 2)
+            max_value = round(max(port_values), 2)
+            stats = [total_returns, min_value, max_value]
+
+
+            return render_template('Option1.jinja2', display=True,
+                                   tickers=tickers,
+                                   weightings=values,
+                                   pie=pie,
+                                   plot=plot,
+                                   vols_plot=vols_plot,
+                                   sharpe_plot=sharpe_plot,
+                                   underwater=underwater_plot,
+                                   drawdown=drawdown,
+                                   stats=stats)
 
         else:
             # TODO: ERROR CATCHING
             pass
-
-
-@trackSpecialCase.route('/track2', methods=["GET", "POST"])
-def track2():
-    """
-        Display option 2 portfolio with 2 states
-        Input:
-            Header:
-                numEntries <optional>
-                ticker_0, weight_0
-                ticker_1, weight_1
-                ...
-        Output:
-            Template
-            Params:
-               tickers=tickers, weightings=weightings, plot=plot
-
-        Accessed from:
-            main page
-            option2 upon submission
-    """
-
-    if len(request.query_string) == 0:
-        weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-        return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings, stats=stats)
-    else:
-
-        # save option type 2 to database
-        num_entries = request.headers.get('numEntries')
-        if num_entries == None:
-            querys = request.query_string.split('ticker_')
-            num_entries = 0
-            for query in querys:
-                try:
-                    num = int(query[0])
-                    num_entries = max(num, num_entries)
-                except:
-                    continue
-
-        tickers = [request.headers.get('ticker_' + str(i)) for i in range(num_entries)]  # ["AAPL", "SPY", "TLT"]
-        weightings = [request.headers.get('weight_' + str(i)) for i in range(num_entries)]
-
-        fig = plotly.graph_objs.Figure(data=[plotly.graph_objs.Pie(labels=tickers, values=weightings, hole=.3)])
-
-        plot = plotly.offline.plot({"data": fig},
-                                   output_type='div',
-                                   include_plotlyjs=False,
-                                   show_link=False,
-                                   config={"displayModeBar": False})
-
-        return render_template('Option2.jinja2', tickers=tickers, weightings=weightings, plot=plot)
-
 
 @login_required
 def enhance():
@@ -200,7 +185,7 @@ def enhance():
 
         print("\n\nSOLUTION:{}\n\n".format(weights))
 
-        weights = weights.loc[weights['weight'] != 0]
+        weights = weights.round(2).loc[weights['weight'] != 0]
 
         fig = plotly.graph_objs.Figure(
             data=[plotly.graph_objs.Pie(labels=weights.index, values=weights['weight'], hole=.1)])

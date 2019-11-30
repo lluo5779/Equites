@@ -23,6 +23,8 @@ def drawdown_underwater(returns):
 
 # CALL THIS
 def drawdown_table(returns, top=10):
+
+    df_cum = cum_returns(returns, 1.0)
     drawdown_periods = get_top_drawdowns(returns, top=top)
     df_drawdowns = pd.DataFrame(index=list(range(top)),
                                 columns=['Net drawdown in %',
@@ -47,8 +49,7 @@ def drawdown_table(returns, top=10):
         else:
             df_drawdowns.loc[i, 'Recovery date'] = (recovery.to_pydatetime()
                                                     .strftime('%Y-%m-%d'))
-        df_drawdowns.loc[i, 'Net drawdown in %'] = (
-            (df_cum.loc[peak] - df_cum.loc[valley]) / df_cum.loc[peak]) * 100
+        df_drawdowns.loc[i, 'Net drawdown in %'] = ((df_cum.loc[peak] - df_cum.loc[valley]) / df_cum.loc[peak]) * 100
 
     df_drawdowns['Peak date'] = pd.to_datetime(df_drawdowns['Peak date'])
     df_drawdowns['Valley date'] = pd.to_datetime(df_drawdowns['Valley date'])
