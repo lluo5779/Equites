@@ -162,8 +162,12 @@ def enhance():
     else:
         args = list(request.args.values())
 
-        tickers = args[::2]
-        values = [abs(float(x)) for x in args[1::2]]
+        start_date = args[0]
+
+        portfolio_data = args[1:]
+
+        tickers = portfolio_data[::2]
+        values = [abs(float(x)) for x in portfolio_data[1::2]]
 
         budget = sum(values)
         weights = [x / budget for x in values]
@@ -189,7 +193,6 @@ def enhance():
 
         p = Portfolio(current_user.username, generate_new=True)
         alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, return_target, l, p.mu_bl1, p.mu_bl2, p.cov_bl1)
-
 
         # assign the risk tolerances
         risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')

@@ -11,6 +11,7 @@ class UserPortfolio(db.DATABASE.Model):
     period = db.DATABASE.Column(db.DATABASE.Float())
     portfolio_type = db.DATABASE.Column(db.DATABASE.String(80))
     portfolio_name = db.DATABASE.Column(db.DATABASE.String(80), unique=True)
+
     ITOT = db.DATABASE.Column(db.DATABASE.Float())
     DIA = db.DATABASE.Column(db.DATABASE.Float())
     SPY = db.DATABASE.Column(db.DATABASE.Float())
