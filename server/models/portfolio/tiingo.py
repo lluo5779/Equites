@@ -20,14 +20,7 @@ def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=Tru
                 ticker = ticker.upper()
                 data[ticker] = tiingo(ticker, start_date, end_date)[data_point]  # Series with date as index and prices as values
         else:
-            if tore:
-                year, month, days = start_date.split('-')
-                print('WHY NO WORK: ', year, month, days)
-
-                preset_prices = fetchEodPrices(fromtimeon=datetime.datetime(year, month, 1))
-            else:
-                preset_prices = fetchEodPrices()
-
+            preset_prices = fetchEodPrices()
             data[preset_prices.columns] = preset_prices
 
     except Exception as e:

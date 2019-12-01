@@ -222,24 +222,17 @@ def enhance():
                                          return_target=return_target,
                                          budget=budget)[0]
 
-            # round the weights to a nice number for display
-            weights = weights.round(2).loc[weights['weight'] != 0]
-
-            # make the pie graph of recommended weights
-            fig = plotly.graph_objs.Figure(
-                data=[plotly.graph_objs.Pie(labels=weights.index, values=weights['weight'], hole=.1)])
-            pie = plotly.offline.plot({"data": fig},
-                                      output_type='div',
-                                      include_plotlyjs=False,
-                                      show_link=False,
-                                      config={"displayModeBar": False})
-
+            # hacky solution lol
             enhanced_values = \
-            back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(axis=1)
+            back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(axis=1)[-(len(portfolio_value)+1):]
+            back_returns = (enhanced_values / enhanced_values.shift(1) - 1).dropna()
+            enhanced_values = cum_returns(back_returns, budget)
 
+            expected_returns = float(p.mu_bl1.T.dot(weights).iloc[0])
+
+            ## COMPARE PORTFOLIO RETURNS OVER THE PAST MONTHS
             returns_data = []
 
-            ## COMPARE PORTFOLIO VALUES
             benchmark = plotly.graph_objs.Scatter(x=list(portfolio_value.index),
                                                   y=portfolio_value,
                                                   mode='lines',
@@ -262,12 +255,55 @@ def enhance():
                                        show_link=False,
                                        config={"displayModeBar": False})
 
+            # COMPARE PORTFOLIO SHARPE RATIO
+            sharpe_data = []
+
+            portfolio_returns = (portfolio_value / portfolio_value.shift(1) - 1).dropna()
+            enhanced_returns = (enhanced_values / enhanced_values.shift(1) - 1).dropna()
+
+            benchmark_sharpe = rolling_sharpe(portfolio_returns, 10).dropna()
+            benchmark_sharpe_plot_data = plotly.graph_objs.Scatter(x=list(benchmark_sharpe.index),
+                                                                   y=benchmark_sharpe,
+                                                                   mode='lines',
+                                                                   name='benchmark',
+                                                                   line=dict(color='#A7E66E'))
+
+            sharpe_data.append(benchmark_sharpe_plot_data)
+
+            enhanced_sharpe = rolling_sharpe(enhanced_returns, 10).dropna()
+            enhanced_sharpe_plot_data = plotly.graph_objs.Scatter(x=list(enhanced_sharpe.index),
+                                                                  y=enhanced_sharpe,
+                                                                  mode='lines',
+                                                                  name='enhanced',
+                                                                  line=dict(color='#3B4F66'))
+
+            sharpe_data.append(enhanced_sharpe_plot_data)
+
+            sharpe_plot = plotly.offline.plot({"data": sharpe_data},
+                                              output_type='div',
+                                              include_plotlyjs=False,
+                                              show_link=False,
+                                              config={"displayModeBar": False})
+
+            # round the weights to a nice number for display
+            weights = weights.round(2).loc[weights['weight'] != 0]
+
+            # make the pie graph of recommended weights
+            fig = plotly.graph_objs.Figure(
+                data=[plotly.graph_objs.Pie(labels=weights.index, values=weights['weight'], hole=.1)])
+            pie = plotly.offline.plot({"data": fig},
+                                      output_type='div',
+                                      include_plotlyjs=False,
+                                      show_link=False,
+                                      config={"displayModeBar": False})
+
             return render_template('Option2.jinja2',
                                    display=True,
                                    error=(not success),
                                    cardinal=cardinal,
                                    pie=pie,
-                                   plot=plot)
+                                   plot=plot,
+                                   sharpe_plot=sharpe_plot)
         else:
             return render_template('Option2.jinja2', display=False, error=(not success))
 
