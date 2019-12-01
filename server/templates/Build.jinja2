@@ -77,6 +77,7 @@
               $('.carousel-control-next').show();
           }
 
+<<<<<<< HEAD
           // If first item hide prev arrow
           if($(e.relatedTarget).index() == 0){
               $('.carousel-control-prev').hide();
@@ -84,9 +85,24 @@
           else{
               $('.carousel-control-prev').show();
           }
+=======
+        div label input {
+           margin-right:100px;
+        }
+        body {
+            font-family:sans-serif;
+        }
+>>>>>>> 20cf273fe8985fc71df337055b4561970bdb59b8
 
         });
 
+<<<<<<< HEAD
+=======
+        #ck-button input:checked + span {
+            background-color:#911;
+            color:#fff;
+        }
+>>>>>>> 20cf273fe8985fc71df337055b4561970bdb59b8
 
         $("#wealth_builder").validate({
             ignore: [],
@@ -100,27 +116,215 @@
                 //return false;
                 form.submit(); // <-- this is default
             }
+<<<<<<< HEAD
         });
     });  
     </script>
+=======
+            else{showSlides(1);}
 
+        }, false);
+
+        function plusSlides(n) {
+          showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+          showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            let slideIndex = n
+          var i;
+          var slides = document.getElementsByClassName("mySlides");
+          if (n > slides.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = slides.length}
+          for (i = 0; i < slides.length; i++) {
+              slides[i].style.display = "none";
+          }
+          slides[slideIndex-1].style.display = "block";
+        }
+        function nextButton(formID, inputName, buttonID, re){
+            let nameInput = document.getElementById(formID).elements[inputName].value;
+            if (nameInput === "") {
+                document.getElementById(formID).elements[buttonID].disabled = true;
+
+            }
+            else {
+                document.getElementById(formID).elements[buttonID].disabled = !re.test(nameInput)
+            }
+        }
+>>>>>>> 20cf273fe8985fc71df337055b4561970bdb59b8
+
+        $(document).ready(function() {
+          $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+              event.preventDefault();
+              return false;
+            }
+          });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
+<<<<<<< HEAD
 
 <section class="main">
+=======
+    <div class="slideshow-container">
+
+        <div class="mySlides">
+            <div style="padding: 40px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                <h1>
+                    What are you investing for?
+                </h1>
+                <p style="padding: 20px 0px 8px" class="text-center">
+                    Please choose one of the options below
+                </p>
+                <div style="padding: 8px 0px;">
+                    <button onclick="currentSlide(2)" type="button" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Building Wealth</button>
+                </div>
+                <div style="padding: 8px 0px;">
+                    <button onclick="currentSlide(4)" type="button" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Retirement</button>
+                </div>
+                <div style="padding: 8px 0px;">
+                    <button onclick="currentSlide(8)" type="button" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Large Purchase</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEALTH BUILDING -->
+        <form action="/portfolioview" method="get" id="wealth">
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
+                        How much would you like to invest?
+                    </div>
+                    <div style="padding: 30px 0px 0px;">
+                        <div class="form-label-group" >
+                            <input name="initialInvestment" type="text" id="initialInvestment" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}" onkeyup="nextButton('wealth','initialInvestment','next1',/^(\d+(\.\d{0,2})?|\.?\d{1,2})$/)">
+                            <label for="initialInvestment">$ Amount</label>
+                        </div>
+                    </div>
+                    <div style="padding: 40px 80px 0px; ">
+                        <button id="next1" type="button" onclick="currentSlide(3)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
+                    </div>
+                </div>
+                <div style="display: none"><input type="text" name="optionType" value="Wealth"></div>
+            </div>
+
+
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
+                        How much risk are you willing to have in your portfolio?
+                    </div>
+                    <div style="padding: 8px 0px;">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="High Risk">
+                    </div>
+                    <div style="padding: 8px 0px;">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Medium Risk">
+                    </div>
+                    <div style="padding: 8px 0px;">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Low Risk">
+                    </div>
+                </div>
+                <a class="prev" style="text-align:center" onclick="currentSlide(2)">&#10094;</a>
+            </div>
+        </form>
+
+
+        <!-- RETIREMENT -->
+        <form action="/portfolioview" method="get" id="retirement">
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
+                        How much would you like to invest?
+                    </div>
+                    <div style="padding: 30px 0px 0px;">
+                        <div class="form-label-group" >
+                            <input name="initialInvestment" type="text" id="initialInvestmentID" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}" onkeyup="nextButton('retirement','initialInvestment','next1',/^(\d+(\.\d{0,2})?|\.?\d{1,2})$/)">
+                            <label for="initialInvestmentID">$ Amount</label>
+                        </div>
+                    </div>
+                    <div style="padding: 40px 80px 0px; ">
+                        <button type="button" id="next1" onclick="currentSlide(5)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
+                    </div>
+                </div>
+                <div style="display: none"><input type="text" name="optionType" value="Retirement"></div>
+            </div>
+
+
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
+                        When are you planning to retire?
+                    </div>
+                    <div style="padding: 30px 0px 0px;">
+                        <div class="form-label-group" >
+                            <input name="retirementDate" type="text" id="retirementDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['retirementDate'] }}" onkeyup="nextButton('retirement','retirementDate','next2',/^((0[1-9])|(1[0-2]))\/(20[2-9][0-9]|21[0-9][0-9])$/)">
+                            <label for="retirementDate">MM/YYYY</label>
+                        </div>
+                    </div>
+                    <div style="padding: 40px 80px 0px; ">
+                        <button type="button" id="next2" onclick="currentSlide(6)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
+                    </div>
+                </div>
+                <a class="prev" style="text-align:center" onclick="currentSlide(4)">&#10094;</a>
+            </div>
+>>>>>>> 20cf273fe8985fc71df337055b4561970bdb59b8
 
     <br><br>
 
+<<<<<<< HEAD
     <div class="container">
         <div class="row">
             <div class="col-ld-12 center">
                 <h2> You are minutes away from building your own portfolio! </h2>
                 <h4 class="muted"> I am investing to ...</h4>
                 <br>
+=======
+
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
+                        How much do you need for retirement?
+                    </div>
+                    <div style="padding: 30px 0px 0px;">
+                        <div class="form-label-group" >
+                            <input name="retirementAmount" type="text" id="retirementAmount" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['retirementAmount'] }}" onkeyup="nextButton('retirement','retirementAmount','next3',/^(\d+(\.\d{0,2})?|\.?\d{1,2})$/)">
+                            <label for="retirementAmount">$ Amount</label>
+                        </div>
+                    </div>
+                    <div style="padding: 40px 80px 0px; ">
+                        <button type="button" id="next3" onclick="currentSlide(7)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
+                    </div>
+                </div>
+                <a class="prev" style="text-align:center" onclick="currentSlide(5)">&#10094;</a>
+            </div>
+
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
+                        How much risk are you willing to have in your retirement portfolio?
+                    </div>
+                    <div style="padding: 8px 0px;">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="High Risk">
+                    </div>
+                    <div style="padding: 8px 0px;">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Medium Risk">
+                    </div>
+                    <div style="padding: 8px 0px;">
+                        <input name="riskAppetite" type="submit" style="height: 100px;" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" value="Low Risk">
+                    </div>
+                </div>
+                <a class="prev" style="text-align:center" onclick="currentSlide(6)">&#10094;</a>
+>>>>>>> 20cf273fe8985fc71df337055b4561970bdb59b8
             </div>
         </div>
 
+<<<<<<< HEAD
         <div class="row">
             <div class="col-lg-12">
                 <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
@@ -470,6 +674,65 @@
                             </form> 
                         </div>
                     </div>
+=======
+        <!-- PURCHASE -->
+        <form action="/portfolioview" method="get" id="purchase">
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
+                        How much would you like to invest?
+                    </div>
+                    <div style="padding: 30px 0px 0px;">
+                        <div class="form-label-group" >
+                            <input name="initialInvestment" type="text" id="initialInvestment_id" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}" onkeyup="nextButton('purchase','initialInvestment','next1',/^(\d+(\.\d{0,2})?|\.?\d{1,2})$/)">
+                            <label for="initialInvestment_id">$ Amount</label>
+                        </div>
+                    </div>
+                    <div style="padding: 40px 80px 0px; ">
+                        <button type="button" id="next1" onclick="currentSlide(9)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
+                    </div>
+                </div>
+                <div style="display: none"><input type="text" name="optionType" value="Purchase"></div>
+            </div>
+
+
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
+                        When are you planning to make your purchase?
+                    </div>
+                    <div style="padding: 30px 0px 0px;">
+                        <div class="form-label-group" >
+                            <input name="purchaseDate" type="text" id="purchaseDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['purchaseDate'] }}" onkeyup="nextButton('purchase','purchaseDate','next2',/^((0[1-9])|(1[0-2]))\/(20[2-9][0-9]|21[0-9][0-9])$/)">
+                            <label for="purchaseDate">MM/YYYY</label>
+                        </div>
+                    </div>
+                    <div style="padding: 40px 80px 0px; ">
+                        <button type="button" id="next2" onclick="currentSlide(10)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
+                    </div>
+                </div>
+                <a class="prev" style="text-align:center" onclick="currentSlide(8)">&#10094;</a>
+            </div>
+
+
+
+            <div class="mySlides">
+                <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
+                    <div>
+                        How much do you need for your purchase?
+                    </div>
+                    <div style="padding: 30px 0px 0px;">
+                        <div class="form-label-group" >
+                            <input name="purchaseAmount" type="text" id="purchaseAmount" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['purchaseAmount'] }}" onkeyup="nextButton('purchase','purchaseAmount','next3',/^(\d+(\.\d{0,2})?|\.?\d{1,2})$/)">
+                            <label for="purchaseAmount">$ Amount</label>
+                        </div>
+                    </div>
+                    <div style="padding: 40px 80px 0px; ">
+                        <button type="button" id="next3" onclick="currentSlide(11)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
+                    </div>
+                </div>
+                <a class="prev" style="text-align:center" onclick="currentSlide(9)">&#10094;</a>
+>>>>>>> 20cf273fe8985fc71df337055b4561970bdb59b8
             </div>
         </div>
     </div>

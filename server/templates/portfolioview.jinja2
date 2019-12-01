@@ -52,23 +52,42 @@
 
     // Draw the chart and set the chart values
     function drawChart() {
-      var arr = (function () { /* {{ weightings }} */}).toString().split(",")[0].split('\n').slice(1,-1)
-      var table = new Array;
-    table.push(['Item', 'Number'])
-        for(var i = 0, len = arr.length; i < len; i++){
-            var cur = arr[i].trim().split(/\s+/);
-            table.push(new Array(cur[0], parseFloat(cur[1])));
-        }      
+        var arr = (function () { /* {{ weightings }} */}).toString().split(",")[0].split('\n').slice(1,-1)
+        var table = new Array;
+        table.push(['Item', 'Number'])
+            for(var i = 0, len = arr.length; i < len; i++){
+                var cur = arr[i].trim().split(/\s+/);
+                table.push(new Array(cur[0], parseFloat(cur[1])));
+            }
 
-      var data = google.visualization.arrayToDataTable(table);
+          var data = google.visualization.arrayToDataTable(table);
 
-  // Optional; add a title and set the width and height of the chart
-  var options = {'title':'Weightings', 'width':550, 'height':400};
+      // Optional; add a title and set the width and height of the chart
+      var options = {'title':'Weightings', 'width':550, 'height':400};
 
-  // Display the chart inside the <div> element with id="piechart"
-  var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-  chart.draw(data, options);
-}
+      // Display the chart inside the <div> element with id="piechart"
+      var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+      chart.draw(data, options);
+    }
+    function nextButton(inputName, buttonID, re){
+        let nameInput = document.getElementById(inputName).value;
+        if (nameInput === "") {
+            document.getElementById(buttonID).disabled = true;
+
+        }
+        else {
+            document.getElementById(buttonID).disabled = !re.test(nameInput)
+        }
+    }
+
+    $(document).ready(function() {
+      $(window).keydown(function(event){
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+        }
+      });
+    });
 </script>
 {% endblock %}
 
@@ -141,16 +160,6 @@
         </div>
     </section>
 
-    <script>
-        document.getElementById("portfolioName").addEventListener("keyup", function() {
-            var nameInput = document.getElementById('portfolioName').value;
-            if (nameInput != "") {
-                document.getElementById('submit').removeAttribute("disabled");
-            } else {
-                document.getElementById('submit').setAttribute("disabled", null);
-            }
-        });
-    </script>
     <center>
     <div>
     <!--<div id = "container" style = "width: 550px; height: 400px; margin: 0 auto; float:left"></div>
@@ -170,7 +179,7 @@
             <input type="text" name="optionType" value="{{ questionnaire["optionType"] }}">
         </div>
         <!-- Above is not displayed -->
-                <div class="row" >
+        <div class="row" >
         <div class="MultiCarousel" data-items="1,3,5,6" data-slide="1" id="MultiCarousel"  data-interval="1000">
             <div class="MultiCarousel-inner">
 
@@ -219,6 +228,6 @@
 
         <input type="text" name="portfolioName" id="portfolioName" placeholder="Portfolio Name...">
         <input type="submit" id="submit" value="Save">
-        <input type="submit" formaction="/editportfolio" value="Edit">
+        <input type="submit" id="edit" formaction="/editportfolio" value="Edit" disabled>
     </form>
 {% endblock %}

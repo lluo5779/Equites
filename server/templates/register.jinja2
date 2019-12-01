@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <script>
+        function check(input) {
+            if (input.value != document.getElementById('inputPassword').value) {
+                input.setCustomValidity('Password must be matching');
+            } else {
+                // input is valid -- reset the error message
+                input.setCustomValidity('');
+            }
+        }
+    </script>
   <div class="container-fluid">
     <div class="row no-gutter">
       <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image">    </div>
@@ -21,17 +31,17 @@
                 </div>
 
                 <div class="form-label-group">
-                  <input name="email" type="email" id="inputEmail" class="form-control" placeholder="Email" required size="64">
+                  <input name="email" type="email" id="inputEmail" class="form-control" placeholder="Email" required size="64" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Must be a valid email address">
                   <label for="inputEmail">Email</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required size="32" >
+                  <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required size="32" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
                   <label for="inputPassword">Password</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input name="password2" type="password" id="inputPassword2" class="form-control" placeholder="Password" required size="32">
+                  <input name="password2" type="password" id="inputPassword2" class="form-control" placeholder="Password" required size="32" oninput="check(this)">
                   <label for="inputPassword2">Repeated Password</label>
                 </div>
 
