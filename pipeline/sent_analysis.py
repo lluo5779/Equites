@@ -195,7 +195,7 @@ def re_train():
 		if epoch % sent_analysis.sf == 0:
 			name_model = 'rnn_{}.pkl'.format(epoch)
 			path_save_model = os.path.join('./', name_model)
-			joblib.dump(model.float(), path_save_model, compress = 2)
+			torch.save(model.state_dict(), path_save_model)
 
 def predict(prices):
 	sent_analysis = SentimentAnalysis()
