@@ -78,7 +78,7 @@ class Portfolio(object):
         print('prices: ', self.prices)
 
 
-        safe_soln, target_soln = optimize(mu=(self.mu_bl1.values.ravel(), self.mu_bl2.values.ravel()),
+        safe_soln, target_soln, num_shares = optimize(mu=(self.mu_bl1.values.ravel(), self.mu_bl2.values.ravel()),
                                           sigma=(self.cov_bl1.values, self.cov_bl2.values),
                                           alpha=alpha,
                                           return_target=(return_target, return_target),
@@ -91,8 +91,9 @@ class Portfolio(object):
 
         self.x1 = pd.DataFrame(soln.x[:int(len(self.mu_bl1))], index=self.mu_bl1.index, columns=['weight'])
         self.x2 = pd.DataFrame(soln.x[int(len(self.mu_bl2)):], index=self.mu_bl2.index, columns=['weight'])
+        self.num_shares = num_shares
 
-        return [self.x1, self.x2]
+        return [self.x1, self.x2, self.num_shares]
 
     def get_portfolio_return(self, x1=None, mu_bl2=None):
         if x1 is None:
@@ -148,6 +149,11 @@ class Portfolio(object):
         x1['uuid'] = self._id
         x1['active'] = 'Y'
 
+        num_shares = self.num_shares
+        num_shares['username'] = self.username
+        num_shares = num_shares.set_index('username', drop=True)
+        x1 = x1.merge(num_shares, on="username", suffixes=("", "2"), how="inner")
+
         # x1 = x1.set_index('uuid', drop=True)
         print('WHY NO WORK: ', x1.columns)
         print('Saving the following to database {}: '.format(COLLECTION), x1)
@@ -194,6 +200,9 @@ def getOptionTypeFromName(portfolioName):
         return None
 
     return df.to_numpy()[0][0]
+
+
+
 
 
 

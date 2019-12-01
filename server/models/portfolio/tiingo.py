@@ -10,25 +10,18 @@ TIINGO_KEY = '2e64578d69892c20fab750efe3ae9ed176f7c1af'  # '6d2d79e31c7c1b6bae9b
 TIINGO_EOD = 'https://api.tiingo.com/tiingo/daily/%s/prices?startDate=%s&endDate=%s'
 
 
-def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=True):
+def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=True, tore=False):
     data = pd.DataFrame()
     start = time.time()
 
     try:
-
-        for ticker in tickers:
-            # print('ticker: ', ticker)
-            ticker = ticker.upper()
-            if ticker not in SYMBOLS:
-                data[ticker] = tiingo(ticker, start_date, end_date)[
-                    data_point]  # Series with date as index and prices as values
-
-        preset_prices = fetchEodPrices()
-        data[preset_prices.columns] = preset_prices
-
-
-        # print("\n\nSUCCESS: retrieved new %s data ..." % data_point)
-        print('finished retrieving %s data in %f seconds.\n\n' % (data_point, time.time() - start))
+        if tore:
+            for ticker in tickers:
+                ticker = ticker.upper()
+                data[ticker] = tiingo(ticker, start_date, end_date)[data_point]  # Series with date as index and prices as values
+        else:
+            preset_prices = fetchEodPrices()
+            data[preset_prices.columns] = preset_prices
 
     except Exception as e:
         if fail_safe:

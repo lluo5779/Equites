@@ -1,9 +1,12 @@
 import time
 
 import numpy as np
+import pandas as pd
 
 from scipy.stats import norm, chi2
 from scipy.optimize import minimize
+
+from server.models.portfolio.config import SYMBOLS
 
 
 def portfolio_value(no_shares, prices):
@@ -16,11 +19,11 @@ def make_constraint(type, func, args):
 
 def optimize(mu, sigma, alpha, return_target, costs, prices, gamma, budget=1):
 
-    print("\n\nPERIOD ONE RETURNS {}".format(mu[0]))
-    print("\n\nPERIOD TWO RETURNS {}".format(mu[1]))
-
-    print("\n\nPERIOD ONE COV {}".format(sigma[1]))
-    print("\n\nPERIOD TWO COV {}".format(sigma[1]))
+    # print("\n\nPERIOD ONE RETURNS {}".format(mu[0]))
+    # print("\n\nPERIOD TWO RETURNS {}".format(mu[1]))
+    #
+    # print("\n\nPERIOD ONE COV {}".format(sigma[1]))
+    # print("\n\nPERIOD TWO COV {}".format(sigma[1]))
 
     start = time.time()
 
@@ -55,29 +58,28 @@ def optimize(mu, sigma, alpha, return_target, costs, prices, gamma, budget=1):
                     bounds=bounds,
                     constraints=[budget1, budget2, target1, target2])
 
-    if soln.success:
-        print("SUCCESS: optimization completed with the return goals met!")
-        print('finished optimization in %f seconds.\n\n' % (time.time() - start))
-
-        return soln, None
-    else:
-        print("\n\nWARNING: the return targets are too aggressive for the risk tolerance level ...")
+    if not soln.success:
+        # print("\n\nWARNING: the return targets are too aggressive for the risk tolerance level ...")
 
         # SAFE SOLUTION ... just try to get a positive return
         target1 = make_constraint('ineq', return_p1, (mu[0], 0,))
         target2 = make_constraint('ineq', return_p2, (mu[1], 0,))
 
-        safe_soln = minimize(objective, x0,
-                             args=(mu, sigma, gamma[0], alpha, costs, prices, gamma[3], budget),
-                             method='SLSQP',
-                             bounds=bounds,
-                             constraints=[budget1, budget2, target1, target2])
+        soln = minimize(objective, x0,
+                        args=(mu, sigma, gamma[0], alpha, costs, prices, gamma[3], budget),
+                        method='SLSQP',
+                        bounds=bounds,
+                        constraints=[budget1, budget2, target1, target2])
 
-        print("The safe portfolio is the closest to the target returns while respecting the risk exposure tolerance... \n")
+        # print("The safe portfolio is the closest to the target returns while respecting the risk exposure tolerance... \n")
+        #
+        # print('finished optimization in %f seconds.\n\n' % (time.time() - start))
 
-        print('finished optimization in %f seconds.\n\n' % (time.time() - start))
 
-        return safe_soln, None
+        shares = budget * np.divide(soln.x[:int(len(mu[0]))], np.divide(prices, 1 + mu[0]))
+        shares = pd.DataFrame(shares, index=SYMBOLS, columns=['shares'])
+
+        return soln, shares
 
 
 def objective(x, mu, sigma, gamma, alpha, costs, prices, risk_func, budget):
