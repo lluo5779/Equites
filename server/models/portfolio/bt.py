@@ -77,6 +77,7 @@ def back_test(portfolio, start_date, end_date=None, dollars=None):
     # prices['CASH'] = prices.apply(lambda x: (1 + cash) ** (prices.index.get_loc(x.name) / 250), axis=1)
 
     # get the number of shares
+    print(prices)
     shares = dollars * pd.Series(portfolio) / prices.iloc[0]
 
     # calculate portfolio value per share ... to recover portfolio value per day, do value.sum(axis=1)

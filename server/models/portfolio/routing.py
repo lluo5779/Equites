@@ -9,7 +9,6 @@ from server.common.database import Database
 from server.models.portfolio.rs import business_days
 from server.models.portfolio.risk import risk_prefs
 from server.models.portfolio.portfolio import Portfolio, getUuidFromPortfolioName, get_past_portfolios, getOptionTypeFromName
-from server.models.portfolio.bt import back_test
 from server.models.stock.stock import Stocks
 from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
 from server.models.portfolio.bt import back_test
