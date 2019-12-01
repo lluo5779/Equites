@@ -397,14 +397,12 @@ def portfoliosnapshot():
         print(portfolioInitialValue[index])
         histValues.append(portfolio_returns.apply(lambda x: x * portfolioInitialValue[index]).tolist())
         counter += 1
-    # histValues = [back_test(portfolio.to_dict(), start_date)[0].sum(axis=1) * portfolioInitialValue[index] for
-    #               index, portfolio in
-    #               all_past_p[0].iterrows()]  # [[100, 110, 120, 115, 118], [50, 60]]
+
     print('>>>> histValues: ', histValues)
 
     # initial portfolio value (wont be in list above if port is > 1yr old)
     returnSinceInception = []
-    percentCompleted= []
+    percentCompleted = []
     for i in range(len(histValues)):
         temp = round(((histValues[i][-1] / portfolioInitialValue[i]) - 1) * 100, 2)
         returnSinceInception.append(temp)
