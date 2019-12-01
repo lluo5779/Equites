@@ -155,67 +155,115 @@ def track():
         else:
             return render_template('Option1.jinja2', display=False, error=True)
 
+
 @login_required
 def enhance():
     if len(request.query_string) == 0:
-        return render_template('Option2.jinja2', display=False)
+        return render_template('Option2.jinja2',
+                               display=False,
+                               error=False)
     else:
-        args = list(request.args.values())
+        success = True
 
-        cardinal = int(args[0])
-        print("\n\n{}\n\n".format(cardinal))
+        try:
+            args = list(request.args.values())
 
-        portfolio_data = args[1:]
+            cardinal = int(args[0])
+            print("\n\n{}\n\n".format(cardinal))
 
-        tickers = portfolio_data[::2]
-        values = [abs(float(x)) for x in portfolio_data[1::2]]
+            portfolio_data = args[1:]
 
-        budget = sum(values)
-        weights = [x / budget for x in values]
-        portfolio = dict(zip(tickers, weights))
+            tickers = portfolio_data[::2]
+            values = [abs(float(x)) for x in portfolio_data[1::2]]
 
-        # always assign to past 6 months (ie rebalance the period)
-        start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
+            budget = sum(values)
+            weights = [x / budget for x in values]
+            portfolio = dict(zip(tickers, weights))
 
-        # get the number of days in the backtest period ... to determine target returns and variances later
-        days = business_days(start_date, datetime.now().strftime("%Y-%m-%d"))
+            # always assign to past 6 months (ie rebalance the period)
+            start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
 
-        # call backtest to get the value of the portfolio
-        portfolio_value = back_test(portfolio, start_date, end_date=None, dollars=None)[0].sum(axis=1)
+            # get the number of days in the backtest period ... to determine target returns and variances later
+            days = business_days(start_date, datetime.now().strftime("%Y-%m-%d"))
 
-        # calculate portfolio returns
-        portfolio_returns = (portfolio_value / portfolio_value.shift(1) - 1).dropna()
+            # call backtest to get the value of the portfolio
+            values, success, msg = back_test(portfolio, start_date, end_date=None, dollars=sum(values), tore=True)
+        except:
+            success, error = False, True
 
-        # assign the target return and variance
-        return_target = float(gmean(portfolio_returns + 1, axis=0) - 1) * days
+        if success:
+            portfolio_value = values.sum(axis=1)
 
-        # set the other parameters for a generalized maximization
-        horizon, aversion, l = 10, 1, 5
+            # calculate portfolio returns
+            portfolio_returns = (portfolio_value / portfolio_value.shift(1) - 1).dropna()
 
-        p = Portfolio(current_user.username, generate_new=True)
-        alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, cardinal, return_target, l, p.mu_bl1, p.mu_bl2, p.cov_bl1)
+            # assign the target return and variance
+            return_target = float(gmean(portfolio_returns + 1, axis=0) - 1) * days
 
-        # assign the risk tolerances
-        risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')
+            # set the other parameters for a generalized maximization
+            horizon, aversion, l = 10, 1, 5
 
-        weights = p.run_optimization(risk_tolerance=risk_tolerance,
-                                     alpha=alpha,
-                                     return_target=return_target,
-                                     budget=budget)[0]
+            # make the portfolio
+            p = Portfolio(current_user.username, generate_new=True)
+            alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, cardinal, return_target, l,
+                                                                    p.mu_bl1, p.mu_bl2, p.cov_bl1)
 
-        print("\n\nSOLUTION:{}\n\n".format(weights))
+            # assign the risk tolerances, specifying a SHARPE optimization
+            risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')
 
-        weights = weights.round(2).loc[weights['weight'] != 0]
+            # get the weights
+            weights = p.run_optimization(risk_tolerance=risk_tolerance,
+                                         alpha=alpha,
+                                         return_target=return_target,
+                                         budget=budget)[0]
 
-        fig = plotly.graph_objs.Figure(
-            data=[plotly.graph_objs.Pie(labels=weights.index, values=weights['weight'], hole=.1)])
-        pie = plotly.offline.plot({"data": fig},
-                                  output_type='div',
-                                  include_plotlyjs=False,
-                                  show_link=False,
-                                  config={"displayModeBar": False})
+            # round the weights to a nice number for display
+            weights = weights.round(2).loc[weights['weight'] != 0]
 
-        return render_template('Option2.jinja2', pie=pie, display=True)
+            # make the pie graph of recommended weights
+            fig = plotly.graph_objs.Figure(
+                data=[plotly.graph_objs.Pie(labels=weights.index, values=weights['weight'], hole=.1)])
+            pie = plotly.offline.plot({"data": fig},
+                                      output_type='div',
+                                      include_plotlyjs=False,
+                                      show_link=False,
+                                      config={"displayModeBar": False})
+
+            enhanced_values = \
+            back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(axis=1)
+
+            returns_data = []
+
+            ## COMPARE PORTFOLIO VALUES
+            benchmark = plotly.graph_objs.Scatter(x=list(portfolio_value.index),
+                                                  y=portfolio_value,
+                                                  mode='lines',
+                                                  name='benchmark',
+                                                  line=dict(color='#A7E66E'))
+
+            returns_data.append(benchmark)
+
+            enhanced = plotly.graph_objs.Scatter(x=list(enhanced_values.index),
+                                                 y=enhanced_values,
+                                                 mode='lines',
+                                                 name='enhanced',
+                                                 line=dict(color='#3B4F66'))
+
+            returns_data.append(enhanced)
+
+            plot = plotly.offline.plot({"data": returns_data},
+                                       output_type='div',
+                                       include_plotlyjs=False,
+                                       show_link=False,
+                                       config={"displayModeBar": False})
+
+            return render_template('Option2.jinja2',
+                                   display=True,
+                                   error=(not success),
+                                   pie=pie,
+                                   plot=plot)
+        else:
+            return render_template('Option2.jinja2', display=False, error=(not success))
 
 
 # @login_required
