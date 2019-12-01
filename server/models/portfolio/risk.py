@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 
 
-def risk_prefs(horizon, aversion, return_target, l, mu_bl1, mu_bl2, cov_bl1):
+def risk_prefs(horizon, aversion, cardinal, return_target, l, mu_bl1, mu_bl2, cov_bl1):
 
     if horizon is None:
         horizon = 10
 
-    exposures = (0.05, 0.20)
+    exposures = (0.04, 0.20)
 
     alpha = 0.05
 
@@ -20,21 +20,21 @@ def risk_prefs(horizon, aversion, return_target, l, mu_bl1, mu_bl2, cov_bl1):
 
     if horizon <= 1:
         # select the 12 assets with the lowest variances
-        cardinality = np.where(vars.rank(ascending=True) > len(mu_bl1) * 1/3, 1, 0).ravel()
+        cardinality = np.where(vars.rank(ascending=True) > len(mu_bl1) - cardinal, 1, 0).ravel()
         exposures = (0.05, 0.15)
         risk_mul *= 2
         turn_mul *= 0.25
         alpha = 0.20
 
     elif horizon <= 5:
-        cardinality = np.where(pd.DataFrame(np.divide(mu_bl1.values, vars.values).ravel()).rank() > len(mu_bl1) * 1 / 3, 1, 0).ravel()
+        cardinality = np.where(pd.DataFrame(np.divide(mu_bl1.values, vars.values).ravel()).rank() > len(mu_bl1) - cardinal, 1, 0).ravel()
         risk_mul *= 0.75
         turn_mul *= 1
         alpha = 0.10
 
     else:
-        cardinality = np.where(mu_bl1.rank() > len(mu_bl1) * 1 / 3, 1, 0).ravel()
-        exposures = (0.00, 0.30)
+        cardinality = np.where(mu_bl1.rank() > len(mu_bl1) - cardinal, 1, 0).ravel()
+        exposures = (0.02, 0.30)
         risk_mul *= 0.25
         turn_mul *= 2
 

@@ -78,7 +78,7 @@ class Portfolio(object):
         print('prices: ', self.prices)
 
 
-        safe_soln, target_soln, num_shares = optimize(mu=(self.mu_bl1.values.ravel(), self.mu_bl2.values.ravel()),
+        soln, num_shares = optimize(mu=(self.mu_bl1.values.ravel(), self.mu_bl2.values.ravel()),
                                           sigma=(self.cov_bl1.values, self.cov_bl2.values),
                                           alpha=alpha,
                                           return_target=(return_target, return_target),
@@ -86,8 +86,6 @@ class Portfolio(object):
                                           prices=self.prices.iloc[-2, :].values if self.prices.iloc[-1,:].isnull().values.any() else self.prices.iloc[-1,:].values,
                                           gamma=risk_tolerance,
                                           budget=budget)
-
-        soln = safe_soln
 
         self.x1 = pd.DataFrame(soln.x[:int(len(self.mu_bl1))], index=self.mu_bl1.index, columns=['weight'])
         self.x2 = pd.DataFrame(soln.x[int(len(self.mu_bl2)):], index=self.mu_bl2.index, columns=['weight'])
@@ -149,7 +147,7 @@ class Portfolio(object):
         x1['uuid'] = self._id
         x1['active'] = 'Y'
 
-        num_shares = self.num_shares
+        num_shares = self.num_shares.T
         num_shares['username'] = self.username
         num_shares = num_shares.set_index('username', drop=True)
         x1 = x1.merge(num_shares, on="username", suffixes=("", "2"), how="inner")

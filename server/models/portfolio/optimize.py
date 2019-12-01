@@ -75,9 +75,11 @@ def optimize(mu, sigma, alpha, return_target, costs, prices, gamma, budget=1):
         #
         # print('finished optimization in %f seconds.\n\n' % (time.time() - start))
 
-
+        holdings = [ticker + "_holdings" for ticker in SYMBOLS]
         shares = budget * np.divide(soln.x[:int(len(mu[0]))], np.divide(prices, 1 + mu[0]))
-        shares = pd.DataFrame(shares, index=SYMBOLS, columns=['shares'])
+        shares = pd.DataFrame(shares, index=holdings, columns=['shares'])
+
+        print("\n\n{}".format(shares))
 
         return soln, shares
 
