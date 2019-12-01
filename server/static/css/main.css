@@ -18,6 +18,10 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
     display: block;
 }
 
+section {
+	min-height: 100vh;
+}
+
 li:hover ul{
     display:block;
 }
