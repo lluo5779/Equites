@@ -77,7 +77,7 @@ def optimize(mu, sigma, alpha, return_target, costs, prices, gamma, budget=1):
 
         holdings = [ticker + "_holdings" for ticker in SYMBOLS]
         shares = budget * np.divide(soln.x[:int(len(mu[0]))], np.divide(prices, 1 + mu[0]))
-        shares = pd.DataFrame(shares, index=SYMBOLS, columns=['shares'])
+        shares = pd.DataFrame(shares, index=holdings, columns=['shares'])
 
         return soln, shares
 
