@@ -9,7 +9,6 @@ from server.common.database import Database
 from server.models.portfolio.rs import business_days
 from server.models.portfolio.risk import risk_prefs
 from server.models.portfolio.portfolio import Portfolio, getUuidFromPortfolioName, get_past_portfolios, getOptionTypeFromName
-from server.models.portfolio.bt import back_test
 from server.models.stock.stock import Stocks
 from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
 from server.models.portfolio.bt import back_test
@@ -275,7 +274,6 @@ def portfolioview():
                 title='Sign In', weightings=weightings, risk=risk,
                expectedRet=expectedReturn, expectedVol=expectedVol, histValues=histValues, long=None,
                short=None, portfolioName=portfolio_name
-
         Accessed from:
             options questionnaires upon save
             # edit button from portfoliodashboard
@@ -370,7 +368,6 @@ def portfoliosnapshot():
                 returnSinceInception=returnSinceInception,
                 histValues=histValues,
                 portfolioNames=portfolioNames
-
         Accessed from:
             menu
             portfolioview upon save
@@ -422,7 +419,6 @@ def portfoliosnapshot():
 def portfoliodashboard():
     """
     Displays a dashboard of the portfolio based on portfolio name
-
     Input:
         Header: portfolioName
     Output:
@@ -437,7 +433,6 @@ def portfoliodashboard():
             expectedReturn=expectedReturn
             expectedVol=expectedVol
             risk=risk
-
     Accessed from:
         portfoliosnapshot
     """
@@ -611,15 +606,11 @@ def build():
     '''
     portfolio_name = request.headers.get('portfolioName')
     _id = getUuidFromPortfolioName(portfolio_name)
-
     if portfolio_name == None:
         questionnaire = None
     else:
         option_type = getOptionTypeFromName(portfolio_name)
         questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
-
-
-
     return render_template('Build.jinja2', questionnaire=questionnaire)
     '''
 
