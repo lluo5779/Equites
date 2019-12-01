@@ -235,7 +235,7 @@ def enhance():
                                       config={"displayModeBar": False})
 
             enhanced_values = \
-            back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(axis=1)
+            back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=True)[0].sum(axis=1)
 
             returns_data = []
 
