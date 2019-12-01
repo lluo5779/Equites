@@ -174,7 +174,6 @@ def enhance():
             args = list(request.args.values())
 
             cardinal = int(args[0])
-            print("\n\n{}\n\n".format(cardinal))
 
             portfolio_data = args[1:]
 
@@ -371,21 +370,6 @@ def getRiskToleranceFromQuestionnaire(questionnaire):
 
 # @login_required
 def portfolioview():
-    """
-        Display tentative portfolio
-        Input:
-            portfolioName <for editing known portfolio; None if finishing new questionnaire>
-            option_type
-        Output:
-            Template
-            Params:
-                title='Sign In', weightings=weightings, risk=risk,
-               expectedRet=expectedReturn, expectedVol=expectedVol, histValues=histValues, long=None,
-               short=None, portfolioName=portfolio_name
-        Accessed from:
-            options questionnaires upon save
-            # edit button from portfoliodashboard
-    """
 
     # Updating questionnaire data
     portfolio_name = request.args.get('portfolioName')
@@ -417,10 +401,17 @@ def portfolioview():
                 month = int(raw_dates[0])
                 year = int(raw_dates[1])
             questionnaire[question] = datetime(year, month, 1)
+        elif 'riskAppetite' in question:
+            if float(request.args.get(question)) <= 5:
+                questionnaire[question] = "Low Risk"
+            elif float(request.args.get(question)) <= 15:
+                questionnaire[question] = "Med Risk"
+            else:
+                questionnaire[question] = "High Risk"
         else:
             questionnaire[question] = request.args.get(question)
 
-    print("questionnaire: ", questionnaire)
+    print("questionnaire \n{}\n\n".format(questionnaire))
 
     # populate rest of questionnaire with ""
     questionnaire = populateQuestionnaire(questionnaire, option_type)
@@ -731,6 +722,10 @@ def saveportfolio():
 
     # Updating the portfolio data
     p = Portfolio(username, _id=_id, generate_new=is_new_portfolio)
+
+    risk_prefs(horizon, aversion, cardinal, return_target, l, mu_bl1, mu_bl2, cov_bl1)
+
+
 
     p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
 

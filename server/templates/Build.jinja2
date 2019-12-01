@@ -4,6 +4,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker3.css" rel="stylesheet" id="bootstrap-css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+
+
     <style type="text/css">
         canvas {
               border-bottom: 1px solid #3B4F66;
@@ -87,6 +91,20 @@
 
         });
 
+        $('#purchase_date').datepicker({
+            format: "yyyy-mm",
+            autoclose: true,
+            todayHighlight: true,
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            autoclose: true,
+            changeMonth: true,
+            changeYear: true,
+            orientation: "button",
+            startDate: new Date()
+            // maxDate: '+30Y',
+
+        });
 
         $("#wealth_builder").validate({
             ignore: [],
@@ -291,10 +309,13 @@
                                                         When are you planning to make your purchase?
                                                     </h4>
 
-                                                    <div class="form-label-group" >
-                                                        <input name="purchaseDate" type="text" id="purchaseDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['purchaseDate'] }}">
-                                                        <label for="purchaseDate">MM/YYYY</label>
+                                                    <div class='input-group date' id='purchase_date'>
+                                                        <input type='text' id="purchaseDate" name="purchaseDate" class="form-control" min="2029-12-01" autofocus value="{{ questionnaire['purchaseDate'] }}" required/>
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
                                                     </div>
+
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
@@ -317,13 +338,13 @@
                                                     </h4>
 
                                                     <div class="form-check">
-                                                        <input type="radio" class="form-check-input" id="extend" name="riskAppetite" value="Low Risk"checked >
+                                                        <input type="radio" class="form-check-input" id="extend" name="riskAppetite" value="5"checked >
                                                         <label class="form-check-label" for="extend" style="color: #000000">I would wait until I eventually meet my targets, keeping my preferences the same.</label>
                                                         
-                                                        <input type="radio" class="form-check-input" id="riskier" name="riskAppetite" value="High Risk" checked>
+                                                        <input type="radio" class="form-check-input" id="riskier" name="riskAppetite" value="20" checked>
                                                         <label class="form-check-label" for="riskier" style="color: #000000">I would re-invest in riskier assets, expecting better returns.</label>
 
-                                                        <input type="radio" class="form-check-input" id="nothing" name="riskAppetite" value="Medium Risk" checked>
+                                                        <input type="radio" class="form-check-input" id="nothing" name="riskAppetite" value="10" checked>
                                                         <label class="form-check-label" for="nothing" style="color: #000000">Nothing, I need to make this purchase!</label>
                                                     </div>
                                                 </div>
@@ -438,13 +459,13 @@
                                                     </h4>
 
                                                     <div class="form-check">
-                                                        <input type="radio" class="form-check-input" id="flexible" name="riskAppetite" value="Med Risk"checked >
+                                                        <input type="radio" class="form-check-input" id="flexible" name="riskAppetite" value="10"checked >
                                                         <label class="form-check-label" for="flexible" style="color: #000000">Yes, I am fairly flexible when it comes to adjusting for retirement.</label>
                                                         
-                                                        <input type="radio" class="form-check-input" id="rigid" name="riskAppetite" value="Low Risk" checked>
+                                                        <input type="radio" class="form-check-input" id="rigid" name="riskAppetite" value="5" checked>
                                                         <label class="form-check-label" for="rigid" style="color: #000000">I am sure I could make it work, but I do not want to. </label>
 
-                                                        <input type="radio" class="form-check-input" id="riskiest" name="riskAppetite" value="High Risk" checked>
+                                                        <input type="radio" class="form-check-input" id="riskiest" name="riskAppetite" value="20" checked>
                                                         <label class="form-check-label" for="riskiest" style="color: #000000">Whatever will bring me to my retirement target.</label>
                                                     </div>
                                                 </div>
