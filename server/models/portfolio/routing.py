@@ -394,12 +394,18 @@ def portfolioview():
                 separator = '-'
                 raw_dates = raw_dates.split(separator)
                 year = int(raw_dates[0])
-                month = int(raw_dates[1])
+                try:
+                    month = int(raw_dates[1])
+                except:
+                    month = 1
             else:
                 separator = '/'
                 raw_dates = raw_dates.split(separator)
-                month = int(raw_dates[0])
-                year = int(raw_dates[1])
+                year = int(raw_dates[0])
+                try:
+                    month = int(raw_dates[1])
+                except:
+                    month = 1
             questionnaire[question] = datetime(year, month, 1)
         elif 'riskAppetite' in question:
             if float(request.args.get(question)) <= 5:
@@ -705,7 +711,10 @@ def saveportfolio():
         if 'Date' in question:
             print(request.args.get(question))
             raw_dates = request.args.get(question).split('-')
-            questionnaire[question] = datetime(int(raw_dates[0]), int(raw_dates[1]), 1)
+            try:
+                questionnaire[question] = datetime(int(raw_dates[0]), int(raw_dates[1]), 1)
+            except:
+                questionnaire[question] = datetime(int(raw_dates[0]), 1, 1)
         else:
             questionnaire[question] = request.args.get(question)
 
@@ -724,7 +733,6 @@ def saveportfolio():
     p = Portfolio(username, _id=_id, generate_new=is_new_portfolio)
 
     risk_prefs(horizon, aversion, cardinal, return_target, l, mu_bl1, mu_bl2, cov_bl1)
-
 
 
     p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))

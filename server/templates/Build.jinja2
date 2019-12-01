@@ -106,6 +106,20 @@
 
         });
 
+        $('#retire_date').datepicker({
+            format: "yyyy",
+            viewMode: "years", 
+            minViewMode: "years",
+            todayHighlight: true,
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            autoclose: true,
+            changeMonth: true,
+            changeYear: true,
+            orientation: "button",
+            startDate: new Date()
+        });
+
         $("#wealth_builder").validate({
             ignore: [],
             rules: {
@@ -432,9 +446,11 @@
                                                         When do you want to retire?
                                                     </h4>
 
-                                                    <div class="form-label-group" >
-                                                        <input name="retirementDate" type="text" id="retirementDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['retirementDate'] }}">
-                                                        <label for="retirementDate"> MM/YYYY </label>
+                                                    <div class='input-group date' id='retire_date'>
+                                                        <input type='text' id="retirementDate" name="retirementDate" class="form-control" autofocus value="{{ questionnaire['retirementDate'] }}" required/>
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
                                                     </div>
                                                 </div>
 
