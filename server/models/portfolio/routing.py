@@ -223,8 +223,7 @@ def enhance():
                                          budget=budget)[0]
 
             # hacky solution lol
-            enhanced_values = \
-            back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(axis=1)[-(len(portfolio_value)+1):]
+            enhanced_values = back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(axis=1)[-(len(portfolio_value)+1):]
             back_returns = (enhanced_values / enhanced_values.shift(1) - 1).dropna()
             enhanced_values = cum_returns(back_returns, budget)
 
