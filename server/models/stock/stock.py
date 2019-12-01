@@ -6,6 +6,14 @@ from server.models.stock.config import SYMBOLS, COLLECTION, START_DATE, END_DATE
 from server.models.stock.utils import TiingoDailyReader
 from server.models.stock.tiingo import get_data
 
+def fetchEodPrices():
+    query = """select * from {}""".format(COLLECTION)
+    df = pd.read_sql(query, con=Database.DATABASE.engine, index_col='date')
+    print('all prices: ', df)
+
+    return df
+
+
 class Stocks(object):
     # Stocks class creates portfolio instances for auth stock using stocks in Stock class
     def __init__(self, _id=None):
