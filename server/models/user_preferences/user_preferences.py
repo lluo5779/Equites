@@ -1,4 +1,5 @@
 from server.common.database import Database
+from server.models.portfolio.portfolio import get_past_portfolios
 import pandas as pd
 import datetime
 
@@ -89,3 +90,42 @@ def update_new_questionnaire(questionnaire, option_type, uuid):
 
     print("Successfully updated questionnaire database")
 
+
+def fetch_all_questionnaires(username):
+    portfolio_table = get_past_portfolios(username, get_all=True)[2]
+    wealth_ids = list(portfolio_table[portfolio_table['portfolio_type'] == 'Wealth'].index)
+    purchase_ids = list(portfolio_table[portfolio_table['portfolio_type'] == 'Purchase'].index)
+    retirement_ids = list(portfolio_table[portfolio_table['portfolio_type'] == 'Retirement'].index)
+
+    _ids = {'wealth_questionnaire': wealth_ids, 'purchase_questionnaire': purchase_ids,
+            'retirement_questionnaire': retirement_ids}
+
+    questionnaires = {}
+    for key, ids in _ids.items():
+        query = """select * from {} where "uuid" in {}""".format(key, "('" + "', '".join(ids) + "')")
+        questionnaires[key] = pd.read_sql(query, con=Database.DATABASE.engine, index_col='uuid')
+        questionnaires[key] = pd.concat([questionnaires[key], portfolio_table[portfolio_table.index.isin(ids)]['portfolio_name']], axis=1)
+
+    df_to_display = pd.DataFrame(columns = ['portfolioName', 'budget', 'target', 'end_date', 'optionType'])
+    for q_name, q_df in questionnaires.items():
+        if 'purchase' in q_name:
+            vals = ['portfolio_name', 'initialInvestment', 'purchaseAmount', 'purchaseDate']
+            df_ = q_df[vals]
+            df_['optionType'] = 'purchase'
+        elif 'retirement' in q_name:
+            vals = ['portfolio_name', 'initialInvestment', 'retirementAmount', 'retirementDate']
+            df_ = q_df[vals]
+            df_['optionType'] = 'retirement'
+        else:
+            vals = ['portfolio_name', 'initialInvestment']
+            df_ = q_df[vals]
+            df_['tmp1'] = ""
+            df_['tmp2'] = ""
+            df_['optionType'] = 'wealth'
+
+
+        df_.columns = ['portfolioName','budget', 'target', 'end_date', 'optionType']
+        df_to_display = pd.concat([df_to_display, df_], axis=0, join='outer', ignore_index=False, keys=None,
+                                  levels=None, names=None, verify_integrity=False, copy=True)
+
+    return df_to_display

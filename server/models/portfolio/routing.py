@@ -31,6 +31,11 @@ import urllib
 import base64
 import plotly.offline
 
+from server.models.user_preferences.user_preferences import fetch_latest_questionnaire_from_type, fetch_questionnaire_from_uuid_and_type, update_new_questionnaire, initialize_new_questionnaire, fetch_all_questionnaires
+from server.models.portfolio.tiingo import get_data
+from server.models.portfolio.bt import back_test
+from server.models.stock.stock import Stocks, fetchEodPrices
+
 trackSpecialCase = Blueprint("", __name__)
 s = Stocks()
 
@@ -442,46 +447,80 @@ def portfoliosnapshot():
     """
     username = current_user.username
 
+    username = current_user.username
+    df_to_display = fetch_all_questionnaires(username)
+    latest_prices = fetchEodPrices(get_latest=True)[SYMBOLS]
     all_past_p = get_past_portfolios(username=username, get_all=True)
-    print(">>> all_past_p: ", all_past_p)
+    initial_weights = all_past_p[0][SYMBOLS]
 
-    portfolioNames = all_past_p[2]['portfolio_name']
-    print('>>>> portfolioNames: ', portfolioNames)
+    investment_target = df_to_display['target']
 
-    portfolioInitialValue = all_past_p[2]['budget']
-    print('>>>> portfolioInitialValue: ', portfolioInitialValue)
+    holding_names = [x + "_holdings" for x in SYMBOLS]
+    latest_holdings = all_past_p[2][holding_names]
+    df_to_display['percentCompleted'] = np.nan
+    df_to_display['targetAmount'] = np.nan
+    df_to_display['start_date'] = np.nan
+    for _id, portfolio in latest_holdings.iterrows():
+        # iterating over each portfolio
+        if investment_target.loc[_id] == "":
+            # if wealth portfolio
+            continue
+        portfolio.index = SYMBOLS
+        start_date = all_past_p[2].loc[_id, 'timestamp'].to_pydatetime()
+        portfolio_value = latest_prices.mul(portfolio).sum(axis=1)
+        current_return = portfolio_value/investment_target.loc[_id]
+        df_to_display['start_date'] = start_date.strftime("%Y-%m")
 
-    start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
-    print(all_past_p[0])
+        df_to_display['targetAmount']= investment_target.loc[_id]
+        df_to_display.loc[_id, 'percentCompleted'] = current_return.values[0]
 
-    histValues = []
-    counter = 0
-    for index, portfolio in all_past_p[0].iterrows():
-        portfolio_returns = back_test(portfolio.to_dict(), start_date)[0].sum(axis=1)
-        print(portfolio_returns)
-        print(portfolioInitialValue[index])
-        histValues.append(portfolio_returns.apply(lambda x: x * portfolioInitialValue[index]).tolist())
-        counter += 1
+    return render_template('portfoliosnapshot.jinja2', title='optiondecision', budget=df_to_display['budget'],
+                           portfolioNames=df_to_display['portfolioName'], targetAmount=df_to_display['targetAmount'], percentCompleted=df_to_display['percentCompleted'],
+                           startDates=df_to_display['start_date'], endDates=df_to_display['end_date'])
 
-    print('>>>> histValues: ', histValues)
+        # start_date = pd.to_datetime(all_past_p[2]['timestamp'], unit='s', utc=True)
+        # df_to_display['start_date'] = start_date
 
-    # initial portfolio value (wont be in list above if port is > 1yr old)
-    returnSinceInception = []
-    percentCompleted = []
-    for i in range(len(histValues)):
-        temp = round(((histValues[i][-1] / portfolioInitialValue[i]) - 1) * 100, 2)
-        returnSinceInception.append(temp)
-        percentCompleted.append(1)
-    print('>>>> returnSinceInception: ', returnSinceInception)
-
-    targetAmount = 200
-
-    timeTilCompletion = 200#targetDate - today
-
-    return render_template('portfoliosnapshot.jinja2', title='optiondecision',
-                           returnSinceInception=returnSinceInception, histValues=histValues,
-                           portfolioNames=portfolioNames, targetAmount=targetAmount, percentCompleted=percentCompleted,
-                           timeTilCompletion=timeTilCompletion)
+    # all_past_p = get_past_portfolios(username=username, get_all=True)
+    # print(">>> all_past_p: ", all_past_p)
+    #
+    # portfolioNames = all_past_p[2]['portfolio_name']
+    # print('>>>> portfolioNames: ', portfolioNames)
+    #
+    # portfolioInitialValue = all_past_p[2]['budget']
+    # print('>>>> portfolioInitialValue: ', portfolioInitialValue)
+    #
+    # start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
+    # print(all_past_p[0])
+    #
+    # histValues = []
+    # counter = 0
+    # for index, portfolio in all_past_p[0].iterrows():
+    #     portfolio_returns = back_test(portfolio.to_dict(), start_date)[0].sum(axis=1)
+    #     print(portfolio_returns)
+    #     print(portfolioInitialValue[index])
+    #     histValues.append(portfolio_returns.apply(lambda x: x * portfolioInitialValue[index]).tolist())
+    #     counter += 1
+    #
+    # print('>>>> histValues: ', histValues)
+    #
+    # # initial portfolio value (wont be in list above if port is > 1yr old)
+    # returnSinceInception = []
+    # percentCompleted = []
+    # for i in range(len(histValues)):
+    #     temp = round(((histValues[i][-1] / portfolioInitialValue[i]) - 1) * 100, 2)
+    #     returnSinceInception.append(temp)
+    #     percentCompleted.append(1)
+    # print('>>>> returnSinceInception: ', returnSinceInception)
+    #
+    # targetAmount = 200
+    #
+    # timeTilCompletion = 200#targetDate - today
+    #
+    # return render_template('portfoliosnapshot.jinja2', title='optiondecision',
+    #                        returnSinceInception=returnSinceInception, histValues=histValues,
+    #                        portfolioNames=portfolioNames, targetAmount=targetAmount, percentCompleted=percentCompleted,
+    #                        timeTilCompletion=timeTilCompletion)
 
 
 def portfoliodashboard():
