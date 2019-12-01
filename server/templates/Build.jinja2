@@ -107,18 +107,18 @@
           .prev, .next,.text {font-size: 11px}
         }
 
-div label input {
-   margin-right:100px;
-}
-body {
-    font-family:sans-serif;
-}
+        div label input {
+           margin-right:100px;
+        }
+        body {
+            font-family:sans-serif;
+        }
 
 
-#ck-button input:checked + span {
-    background-color:#911;
-    color:#fff;
-}
+        #ck-button input:checked + span {
+            background-color:#911;
+            color:#fff;
+        }
 
     </style>
 
@@ -156,8 +156,26 @@ body {
           }
           slides[slideIndex-1].style.display = "block";
         }
-    </script>
+        function nextButton(formID, inputName, buttonID, re){
+            let nameInput = document.getElementById(formID).elements[inputName].value;
+            if (nameInput === "") {
+                document.getElementById(formID).elements[buttonID].disabled = true;
 
+            }
+            else {
+                document.getElementById(formID).elements[buttonID].disabled = !re.test(nameInput)
+            }
+        }
+
+        $(document).ready(function() {
+          $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+              event.preventDefault();
+              return false;
+            }
+          });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -184,7 +202,7 @@ body {
         </div>
 
         <!-- WEALTH BUILDING -->
-        <form action="/portfolioview" method="get">
+        <form action="/portfolioview" method="get" id="wealth">
             <div class="mySlides">
                 <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
                     <div>
@@ -192,12 +210,12 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="initialInvestment" type="text" id="initialInvestment" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}">
+                            <input name="initialInvestment" type="text" id="initialInvestment" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}" onkeyup="nextButton('wealth','initialInvestment','next1',/^(\d+(\.\d{0,2})?|\.?\d{1,2})$/)">
                             <label for="initialInvestment">$ Amount</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
-                        <button type="button" onclick="currentSlide(3)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                        <button id="next1" type="button" onclick="currentSlide(3)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
                     </div>
                 </div>
                 <div style="display: none"><input type="text" name="optionType" value="Wealth"></div>
@@ -225,7 +243,7 @@ body {
 
 
         <!-- RETIREMENT -->
-        <form action="/portfolioview" method="get">
+        <form action="/portfolioview" method="get" id="retirement">
             <div class="mySlides">
                 <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
                     <div>
@@ -233,12 +251,12 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="initialInvestment" type="text" id="initialInvestmentID" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}">
+                            <input name="initialInvestment" type="text" id="initialInvestmentID" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}" onkeyup="nextButton('retirement','initialInvestment','next1',/^(\d+(\.\d{0,2})?|\.?\d{1,2})$/)">
                             <label for="initialInvestmentID">$ Amount</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
-                        <button type="button" onclick="currentSlide(5)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                        <button type="button" id="next1" onclick="currentSlide(5)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
                     </div>
                 </div>
                 <div style="display: none"><input type="text" name="optionType" value="Retirement"></div>
@@ -252,12 +270,12 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="retirementDate" type="text" id="retirementDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['retirementDate'] }}">
+                            <input name="retirementDate" type="text" id="retirementDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['retirementDate'] }}" onkeyup="nextButton('retirement','retirementDate','next2',/^((0[1-9])|(1[0-2]))\/(20[2-9][0-9]|21[0-9][0-9])$/)">
                             <label for="retirementDate">MM/YYYY</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
-                        <button type="button" onclick="currentSlide(6)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                        <button type="button" id="next2" onclick="currentSlide(6)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
                     </div>
                 </div>
                 <a class="prev" style="text-align:center" onclick="currentSlide(4)">&#10094;</a>
@@ -272,12 +290,12 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="retirementAmount" type="text" id="retirementAmount" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['retirementAmount'] }}">
+                            <input name="retirementAmount" type="text" id="retirementAmount" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['retirementAmount'] }}" onkeyup="nextButton('retirement','retirementAmount','next3',/^(\d+(\.\d{0,2})?|\.?\d{1,2})$/)">
                             <label for="retirementAmount">$ Amount</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
-                        <button type="button" onclick="currentSlide(7)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                        <button type="button" id="next3" onclick="currentSlide(7)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
                     </div>
                 </div>
                 <a class="prev" style="text-align:center" onclick="currentSlide(5)">&#10094;</a>
@@ -304,7 +322,7 @@ body {
 
 
         <!-- PURCHASE -->
-        <form action="/portfolioview" method="get">
+        <form action="/portfolioview" method="get" id="purchase">
             <div class="mySlides">
                 <div style="padding: 100px 250px; justify-content: center;align-items: flex-start;margin: auto">
                     <div>
@@ -312,12 +330,12 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="initialInvestment" type="text" id="initialInvestment_id" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}">
+                            <input name="initialInvestment" type="text" id="initialInvestment_id" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}" onkeyup="nextButton('purchase','initialInvestment','next1',/^(\d+(\.\d{0,2})?|\.?\d{1,2})$/)">
                             <label for="initialInvestment_id">$ Amount</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
-                        <button type="button" onclick="currentSlide(9)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                        <button type="button" id="next1" onclick="currentSlide(9)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
                     </div>
                 </div>
                 <div style="display: none"><input type="text" name="optionType" value="Purchase"></div>
@@ -331,12 +349,12 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="purchaseDate" type="text" id="purchaseDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['purchaseDate'] }}">
+                            <input name="purchaseDate" type="text" id="purchaseDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['purchaseDate'] }}" onkeyup="nextButton('purchase','purchaseDate','next2',/^((0[1-9])|(1[0-2]))\/(20[2-9][0-9]|21[0-9][0-9])$/)">
                             <label for="purchaseDate">MM/YYYY</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
-                        <button type="button" onclick="currentSlide(10)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                        <button type="button" id="next2" onclick="currentSlide(10)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
                     </div>
                 </div>
                 <a class="prev" style="text-align:center" onclick="currentSlide(8)">&#10094;</a>
@@ -351,12 +369,12 @@ body {
                     </div>
                     <div style="padding: 30px 0px 0px;">
                         <div class="form-label-group" >
-                            <input name="purchaseAmount" type="text" id="purchaseAmount" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['purchaseAmount'] }}">
+                            <input name="purchaseAmount" type="text" id="purchaseAmount" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['purchaseAmount'] }}" onkeyup="nextButton('purchase','purchaseAmount','next3',/^(\d+(\.\d{0,2})?|\.?\d{1,2})$/)">
                             <label for="purchaseAmount">$ Amount</label>
                         </div>
                     </div>
                     <div style="padding: 40px 80px 0px; ">
-                        <button type="button" onclick="currentSlide(11)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Next</button>
+                        <button type="button" id="next3" onclick="currentSlide(11)" class="btn btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" disabled>Next</button>
                     </div>
                 </div>
                 <a class="prev" style="text-align:center" onclick="currentSlide(9)">&#10094;</a>
