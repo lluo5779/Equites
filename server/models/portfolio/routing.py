@@ -162,7 +162,8 @@ def enhance():
     else:
         args = list(request.args.values())
 
-        start_date = args[0]
+        cardinal = int(args[0])
+        print("\n\n{}\n\n".format(cardinal))
 
         portfolio_data = args[1:]
 
@@ -192,7 +193,7 @@ def enhance():
         horizon, aversion, l = 10, 1, 5
 
         p = Portfolio(current_user.username, generate_new=True)
-        alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, return_target, l, p.mu_bl1, p.mu_bl2, p.cov_bl1)
+        alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, cardinal, return_target, l, p.mu_bl1, p.mu_bl2, p.cov_bl1)
 
         # assign the risk tolerances
         risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')

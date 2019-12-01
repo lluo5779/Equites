@@ -78,14 +78,14 @@ class Portfolio(object):
         print('prices: ', self.prices)
 
 
-        safe_soln, target_soln, num_shares = optimize(mu=(self.mu_bl1.values.ravel(), self.mu_bl2.values.ravel()),
-                                          sigma=(self.cov_bl1.values, self.cov_bl2.values),
-                                          alpha=alpha,
-                                          return_target=(return_target, return_target),
-                                          costs=self.cost.T,
-                                          prices=self.prices.iloc[-2, :].values if self.prices.iloc[-1,:].isnull().values.any() else self.prices.iloc[-1,:].values,
-                                          gamma=risk_tolerance,
-                                          budget=budget)
+        safe_soln, num_shares = optimize(mu=(self.mu_bl1.values.ravel(), self.mu_bl2.values.ravel()),
+                                                      sigma=(self.cov_bl1.values, self.cov_bl2.values),
+                                                      alpha=alpha,
+                                                      return_target=(return_target, return_target),
+                                                      costs=self.cost.T,
+                                                      prices=self.prices.iloc[-2, :].values if self.prices.iloc[-1,:].isnull().values.any() else self.prices.iloc[-1,:].values,
+                                                      gamma=risk_tolerance,
+                                                      budget=budget)
 
         soln = safe_soln
 
