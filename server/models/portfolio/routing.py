@@ -38,21 +38,33 @@ s = Stocks()
 # @login_required
 def track():
     if len(request.query_string) == 0:
-        return render_template('Option1.jinja2', display=False)
+        return render_template('Option1.jinja2',
+                               display=False,
+                               error=False)
     else:
-        args = list(request.args.values())
+        error = False
+        success = True
 
-        start_date = args[0]
-        end_date = args[1]
+        try:
+            args = list(request.args.values())
 
-        portfolio_data = args[2:]
+            start_date = args[0]
+            end_date = args[1]
 
-        tickers = portfolio_data[::2]
-        values = [abs(float(x)) for x in portfolio_data[1::2]]
-        weights = [x / sum(values) for x in values]
-        portfolio = dict(zip(tickers, weights))
+            # rolling days assignment
+            bt_days = business_days(start_date, end_date)
+            rolling = 100 if bt_days > 1000 else max(int(bt_days/10), 1)
 
-        values, success, msg = back_test(portfolio, start_date, end_date, dollars=sum(values))
+            portfolio_data = args[2:]
+
+            tickers = portfolio_data[::2]
+            values = [abs(float(x)) for x in portfolio_data[1::2]]
+            weights = [(x / sum(values)) for x in values]
+            portfolio = dict(zip(tickers, weights))
+
+            values, success, msg = back_test(portfolio, start_date, end_date=None, dollars=sum(values), tore=True)
+        except:
+            succcess, error = False, True
 
         if success:
             port_values = values.sum(axis=1)
@@ -77,8 +89,8 @@ def track():
             port_returns = (port_values / port_values.shift(1) - 1).dropna()
 
             # ROLLING VOLATILITY
-            vols = rolling_volatility(port_returns, 100).dropna()
-            vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines')
+            vols = rolling_volatility(port_returns, rolling).dropna()
+            vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines', line = dict(color = '#3B4F66'))
             vols_plot = plotly.offline.plot({"data": vols_plot_data},
                                        output_type='div',
                                        include_plotlyjs=False,
@@ -86,8 +98,8 @@ def track():
                                        config={"displayModeBar": False})
 
             # ROLLING SHARPE
-            sharpe = rolling_sharpe(port_returns, 100).dropna()
-            sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines')
+            sharpe = rolling_sharpe(port_returns, rolling).dropna()
+            sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines', line = dict(color = '#3B4F66'))
             sharpe_plot = plotly.offline.plot({"data": sharpe_plot_data},
                                        output_type='div',
                                        include_plotlyjs=False,
@@ -96,7 +108,8 @@ def track():
 
             # detailed statistics
             underwater = drawdown_underwater(port_returns)
-            underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines')
+
+            underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines', line = dict(color = '#3B4F66'))
             underwater_plot = plotly.offline.plot({"data": underwater_data},
                                               output_type='div',
                                               include_plotlyjs=False,
@@ -125,7 +138,9 @@ def track():
             stats = [total_returns, min_value, max_value]
 
 
-            return render_template('Option1.jinja2', display=True,
+            return render_template('Option1.jinja2',
+                                   display=True,
+                                   error=False,
                                    tickers=tickers,
                                    weightings=values,
                                    pie=pie,
@@ -134,11 +149,11 @@ def track():
                                    sharpe_plot=sharpe_plot,
                                    underwater=underwater_plot,
                                    drawdown=drawdown,
-                                   stats=stats)
+                                   stats=stats,
+                                   rolling=rolling)
 
         else:
-            # TODO: ERROR CATCHING
-            pass
+            return render_template('Option1.jinja2', display=False, error=True)
 
 @login_required
 def enhance():

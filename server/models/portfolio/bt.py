@@ -37,13 +37,13 @@ from dateutil.relativedelta import relativedelta
 # portfolio = {'AAPL': 0.25, 'MSFT': 0.10, 'JPM': 0.25, 'NTIOF': 0.40}
 # start_date = (datetime.now() - relativedelta(years=6)).strftime("%Y-%m-%d")
 
-def back_test(portfolio, start_date, end_date=None, dollars=None):
+def back_test(portfolio, start_date, end_date=None, dollars=None, tore=False):
 
     print('portfolio, ', portfolio)
     if end_date is None: end_date = datetime.now().strftime("%Y-%m-%d")
     if dollars is None: dollars = 1
 
-    prices = get_data(portfolio.keys(), 'adjClose', start_date, end_date, save=False, fail_safe=False)
+    prices = get_data(portfolio.keys(), 'adjClose', start_date, end_date, save=False, fail_safe=False, tore=tore)
 
     if prices is None:
         msg = "ERROR: could not retrieve pricing data for one or more of the assets given."
@@ -71,13 +71,7 @@ def back_test(portfolio, start_date, end_date=None, dollars=None):
     else:
         msg += "\nSUCCESS: budget is fully utilized."
 
-    print("\n\n{}".format(msg))
-
-    # adding the cash asset to the price dataframe
-    # prices['CASH'] = prices.apply(lambda x: (1 + cash) ** (prices.index.get_loc(x.name) / 250), axis=1)
-
     # get the number of shares
-    print(prices)
     shares = dollars * pd.Series(portfolio) / prices.iloc[0]
 
     # calculate portfolio value per share ... to recover portfolio value per day, do value.sum(axis=1)
