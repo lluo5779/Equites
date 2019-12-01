@@ -89,6 +89,65 @@
             text-align: center;
             vertical-align: middle;
         }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 60px;
+          height: 34px;
+        }
+
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 26px;
+          width: 26px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        input:checked + .slider {
+          background-color: #3B4F66;
+        }
+
+        input:focus + .slider {
+          box-shadow: 0 0 1px #3B4F66;
+        }
+
+        input:checked + .slider:before {
+          -webkit-transform: translateX(26px);
+          -ms-transform: translateX(26px);
+          transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+          border-radius: 34px;
+        }
+
+        .slider.round:before {
+          border-radius: 50%;
+        }
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -100,14 +159,18 @@
 
     <script type="text/javascript">
         $(document).ready( function() {
-             function myFunction() {
-              var x = document.getElementById("details");
+            setTimeout(function(){
+                let x = document.getElementById("details");
+                x.style.display = "none";
+            }, 500);
+            $("#toggle").click(function() {
+              let x = document.getElementById("details");
               if (x.style.display === "none") {
                 x.style.display = "block";
-              } else {
+                } else {
                 x.style.display = "none";
               }
-            }
+            });
         });
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
@@ -192,6 +255,7 @@
                 $('#start_date').datepicker('setEndDate', minDate);
             });
         });
+
     </script>
 
 
@@ -347,8 +411,12 @@
 
                 <div class="col-md-12">
                     <h2> I would like to see more detailed statistics on this portfolio! </h2>
-                    
+
                     {% if rolling > 1%}
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round" id="toggle"></span>
+                        </label>
                         <p class="text-muted"> Rolling Volatility, Sharpe Performance, Waterfalls and Drawdowns </p>
                         <hr><br>
 
