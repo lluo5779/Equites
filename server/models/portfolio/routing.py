@@ -260,6 +260,7 @@ def enhance():
             return render_template('Option2.jinja2',
                                    display=True,
                                    error=(not success),
+                                   cardinal=cardinal,
                                    pie=pie,
                                    plot=plot)
         else:

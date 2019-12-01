@@ -98,13 +98,6 @@
 
 
     <script type="text/javascript">
-        // $(document).ready( function() {
-        //     $().click(function() {
-        //         $.ajax("{{ url_for('/.server_models_portfolio_routing_track') }}").done(function (reply) {
-        //             $('#plot').html(reply);
-        //         });
-        //     });
-        // });
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
             var actions = $("table td:last-child").html();
@@ -245,31 +238,48 @@
                     </div>
                 </div>
            </div>
-            <center><input type="submit" id="next" value="Submit"></center>
+            <center><input type="submit" id="next" value="Enhance"></center>
         </form>
-    </section>
-
-    {% if display == True %}
-    <section>
+    
+    {% if error == True %}
         <div class="container text-center">
 
             <div class="section-heading text-center">
                 <br>
-                <h2>Portfolio Allocation</h2>
-                    <p class="text-muted">Let's take a look at this portfolio</p>
+                <h2> We couldn't quite find those assets ... </h2>
+                    <p class="text-muted"> Please check to make sure the tickers you specified are correct </p>
+                <hr><br>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if display == True %}
+        <div class="container text-center">
+
+            <div class="section-heading text-center">
+                <br>
+                <h2> Let's view the enhanced portfolio </h2>
+                    <p class="text-muted"> And then we'll tell you why its optimized </p>
+                <hr><br>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h3> Portfolio Weight Allocation with {{ cardinal }} Assets</h3>
+                    <p class="text-muted"> We carefully curate these assets to ensure strong and robust returns </p>
+                    {{pie}}
+                </div>
                 <br>
             </div>
 
-            <hr>
-
-            <div class="row">
-                <div class="col-lg-8">
+            <div class="row">                    
+                <div class="col-md-12">
+                    <h3> Cumulative Returns Over the Last 6 Months </h3>
+                    <p class="text-muted"> See how the enhanced portfolio fares against the benchmark you gave </p>
                     {{plot}}
                 </div>
-
-                <div class="col-lg-4">
-                    {{pie}}
-                </div>
+                <br>
             </div>
         </div>
     </section>
