@@ -98,7 +98,6 @@ class UserPortfolio(db.DATABASE.Model):
     JNJ_holdings = db.DATABASE.Column(db.DATABASE.Float())
     ED_holdings = db.DATABASE.Column(db.DATABASE.Float())
 
-    print(">>> datetime.utcnow", datetime.utcnow())
     timestamp = db.DATABASE.Column(db.DATABASE.DateTime, index=True, default=datetime.utcnow)
     preferences = db.DATABASE.relationship('user_preferences', backref='author', lazy='dynamic')
     #

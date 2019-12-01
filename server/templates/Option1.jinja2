@@ -99,16 +99,13 @@
 
 
     <script type="text/javascript">
-        $(document).ready( function() {
-             function myFunction() {
-              var x = document.getElementById("details");
-              if (x.style.display === "none") {
-                x.style.display = "block";
-              } else {
-                x.style.display = "none";
-              }
-            }
-        });
+        // $(document).ready( function() {
+        //     $().click(function() {
+        //         $.ajax("{{ url_for('/.server_models_portfolio_routing_track') }}").done(function (reply) {
+        //             $('#plot').html(reply);
+        //         });
+        //     });
+        // });
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
             var actions = $("table td:last-child").html();
@@ -198,7 +195,7 @@
 {% endblock %}
 
 {% block content %}
-    <section id="main">
+    <section>
         <form action="/track" method="get" autocomplete="off">
         <!-- <form method="get"> -->
            <div class="container">
@@ -219,7 +216,7 @@
 
                                 <div class="col-lg-2">
                                     <div class='input-group date' id='start_date'>
-                                        <input type='text' id="start_date" name="start_date" class="form-control" max="2010-01-05" required/>
+                                        <input type='text' id="start_date" name="start_date" class="form-control" />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -232,7 +229,7 @@
 
                                 <div class="col-lg-2">
                                     <div class='input-group date' id='end_date'>
-                                        <input type='text' id="end_date" name="end_date" class="form-control" max="2010-01-05" required />
+                                        <input type='text' id="end_date" name="end_date" class="form-control" />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -268,127 +265,76 @@
 
             <center><input type="submit" id="next" value="Submit"></center>
         </form>
-
-    {% if error == True %}
-        <div class="container text-center">
-
-            <div class="section-heading text-center">
-                <br>
-                <h2> We couldn't quite find those assets ... </h2>
-                    <p class="text-muted"> Please check to make sure the tickers you specified are correct </p>
-                <hr><br>
-            </div>
-        </div>
-    {% endif %}
-
+    </section>
 
     {% if display == True %}
+    <section>
         <div class="container text-center">
 
             <div class="section-heading text-center">
                 <br>
-                <h2> Let's see how we can look at his portfolio</h2>
-                    <p class="text-muted"> A guided walk through of basic portfolio analysis </p>
-                <hr><br>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <h3> First off the bat, here is that portfolio in terms of weighting allocation </h3>
-                    <p class="text-muted"> Portfolio weights are nothing but the percentage of dollars allocated to the specific asset </p>
-                    {{pie}}
-                </div>
+                <h2>Portfolio Allocation</h2>
+                    <p class="text-muted">Let's take a look at this portfolio</p>
                 <br>
             </div>
 
-            <div class="row">                    
-                <div class="col-md-12">
-                    <h3> Next up, we look at the portfolio's performance </h3>
-                    <p class="text-muted"> The cumulative returns tell us how much the portfolio grew over the horizon </p>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="feature-item">
+                            <h3>{{ stats[0] }}&#37; </h3>
+                            <p class="text-muted"> Total Period Returns </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="feature-item">
+                        <h3> {{ '${:,.2f}'.format(stats[1]) }} </h3>
+                        <p class="text-muted"> Minimum Portfolio Value </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="feature-item">
+                        <h3> {{ '${:,.2f}'.format(stats[2]) }} </h3>
+                        <p class="text-muted"> Maximum Portfolio Value</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-lg-8">
                     {{plot}}
                 </div>
-                <br>
+
+                <div class="col-lg-4">
+                    {{pie}}
+                </div>
             </div>
 
+            <div class="row">
+                <div class="col-lg-12">
+                    {{vols_plot}}
+                </div>
+            </div>
 
             <div class="row">
-                    
-                    <div class="col-md-12">
-                        <h3> Some quick numbers at a glance further tell the performance story </h3>
-                        <p class="text-muted"> The cumulative returns tell us how much the portfolio grew over the horizon </p>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="feature-item">
-                                <h4>{{ stats[0] }}&#37; </h4>
-                                <p class="text-muted"> Total Period Returns </p>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="feature-item">
-                            <h4> {{ '${:,.2f}'.format(stats[1]) }} </h4>
-                            <p class="text-muted"> Minimum Portfolio Value </p>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="feature-item">
-                            <h4> {{ '${:,.2f}'.format(stats[2]) }} </h4>
-                            <p class="text-muted"> Maximum Portfolio Value</p>
-                        </div>
-                    </div>
-                    <br>
-            </div>  
-
-            <br><br><br>
+                <div class="col-lg-12">
+                    {{sharpe_plot}}
+                </div>
+            </div>
 
             <div class="row">
+                <div class="col-lg-12">
+                    {{underwater_plot}}
+                </div>
+            </div>
 
-                <div class="col-md-12">
-                    <h2> I would like to see more detailed statistics on this portfolio! </h2>
-                    
-                    {% if rolling > 1%}
-                        <p class="text-muted"> Rolling Volatility, Sharpe Performance, Waterfalls and Drawdowns </p>
-                        <hr><br>
-
-                        <div id="details">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3> {{rolling}}-day rolling Volatility </h3>
-                                    <p class="text-muted"> Giving us an indication as to how stable this portfolio is </p>
-                                    {{vols_plot}}
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3> {{rolling}}-day rolling Sharpe Ratio </h3>
-                                    <p class="text-muted"> Where a larger value means a bigger bang for your buck (greater risk-adjusted returns) </p>
-                                    {{sharpe_plot}}
-                                </div>
-                            </div>
-
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3> Portfolio Drawdowns</h3>
-                                    <p class="text-muted"> Showing how far the portfolio fell from it's highs</p>
-
-                                    {{underwater}}
-                                    {{drawdown}}
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                </div>
-                            </div>
-                        </div>  
-
-                    {% else %}
-                        <p class="text-muted"> Before we can do that, try backtesting over a longer period of time </p>
-                    {% endif %}
+            <div class="row">
+                <div class="col-lg-12">
+                    {{drawdown}}
                 </div>
             </div>
         </div>

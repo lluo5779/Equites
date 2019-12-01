@@ -5,12 +5,19 @@ from server.common.database import Database
 from server.models.stock.config import SYMBOLS, COLLECTION, START_DATE, END_DATE
 from server.models.stock.utils import TiingoDailyReader
 from server.models.stock.tiingo import get_data
-
-def fetchEodPrices():
+import datetime
+def fetchEodPrices(timestamp=None, get_latest=False):
     query = """select * from {}""".format(COLLECTION)
-    df = pd.read_sql(query, con=Database.DATABASE.engine, index_col='date')
-    print('all prices: ', df)
+    if get_latest:
+        query = query + """ order by date desc limit 1""" #select * from prices order by date desc limit 1
+    if timestamp is not None:
+        query = query + """ where date between '{}' and '{}' order by date desc limit 1;""".format(
+            (timestamp - datetime.timedelta(days=5)).strftime('%Y-%m-%d'),
+            (timestamp + datetime.timedelta(hours=1)).strftime('%Y-%m-%d'))
 
+    df = pd.read_sql(query, con=Database.DATABASE.engine, index_col='date')
+
+    print('all prices: ', df)
     return df
 
 

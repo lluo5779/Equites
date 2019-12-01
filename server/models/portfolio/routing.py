@@ -9,10 +9,13 @@ from server.common.database import Database
 from server.models.portfolio.rs import business_days
 from server.models.portfolio.risk import risk_prefs
 from server.models.portfolio.portfolio import Portfolio, getUuidFromPortfolioName, get_past_portfolios, getOptionTypeFromName
-from server.models.stock.stock import Stocks
+from server.models.portfolio.bt import back_test
+from server.models.stock.stock import Stocks, fetchEodPrices
 from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
 from server.models.portfolio.bt import back_test
-from server.models.user_preferences.user_preferences import fetch_latest_questionnaire_from_type, fetch_questionnaire_from_uuid_and_type, update_new_questionnaire, initialize_new_questionnaire
+from server.models.user_preferences.user_preferences import fetch_latest_questionnaire_from_type, fetch_questionnaire_from_uuid_and_type, update_new_questionnaire, initialize_new_questionnaire, fetch_all_questionnaires
+from server.models.portfolio.tiingo import get_data
+
 import urllib
 from datetime import datetime
 from scipy.stats.mstats import gmean
@@ -38,33 +41,21 @@ s = Stocks()
 # @login_required
 def track():
     if len(request.query_string) == 0:
-        return render_template('Option1.jinja2',
-                               display=False,
-                               error=False)
+        return render_template('Option1.jinja2', display=False)
     else:
-        error = False
-        success = True
+        args = list(request.args.values())
 
-        try:
-            args = list(request.args.values())
+        start_date = args[0]
+        end_date = args[1]
 
-            start_date = args[0]
-            end_date = args[1]
+        portfolio_data = args[2:]
 
-            # rolling days assignment
-            bt_days = business_days(start_date, end_date)
-            rolling = 100 if bt_days > 1000 else max(int(bt_days/10), 1)
+        tickers = portfolio_data[::2]
+        values = [abs(float(x)) for x in portfolio_data[1::2]]
+        weights = [x / sum(values) for x in values]
+        portfolio = dict(zip(tickers, weights))
 
-            portfolio_data = args[2:]
-
-            tickers = portfolio_data[::2]
-            values = [abs(float(x)) for x in portfolio_data[1::2]]
-            weights = [(x / sum(values)) for x in values]
-            portfolio = dict(zip(tickers, weights))
-
-            values, success, msg = back_test(portfolio, start_date, end_date=None, dollars=sum(values), tore=True)
-        except:
-            succcess, error = False, True
+        values, success, msg = back_test(portfolio, start_date, end_date, dollars=sum(values))
 
         if success:
             port_values = values.sum(axis=1)
@@ -89,8 +80,8 @@ def track():
             port_returns = (port_values / port_values.shift(1) - 1).dropna()
 
             # ROLLING VOLATILITY
-            vols = rolling_volatility(port_returns, rolling).dropna()
-            vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines', line = dict(color = '#3B4F66'))
+            vols = rolling_volatility(port_returns, 100).dropna()
+            vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines')
             vols_plot = plotly.offline.plot({"data": vols_plot_data},
                                        output_type='div',
                                        include_plotlyjs=False,
@@ -98,8 +89,8 @@ def track():
                                        config={"displayModeBar": False})
 
             # ROLLING SHARPE
-            sharpe = rolling_sharpe(port_returns, rolling).dropna()
-            sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines', line = dict(color = '#3B4F66'))
+            sharpe = rolling_sharpe(port_returns, 100).dropna()
+            sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines')
             sharpe_plot = plotly.offline.plot({"data": sharpe_plot_data},
                                        output_type='div',
                                        include_plotlyjs=False,
@@ -108,8 +99,7 @@ def track():
 
             # detailed statistics
             underwater = drawdown_underwater(port_returns)
-
-            underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines', line = dict(color = '#3B4F66'))
+            underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines')
             underwater_plot = plotly.offline.plot({"data": underwater_data},
                                               output_type='div',
                                               include_plotlyjs=False,
@@ -138,9 +128,7 @@ def track():
             stats = [total_returns, min_value, max_value]
 
 
-            return render_template('Option1.jinja2',
-                                   display=True,
-                                   error=False,
+            return render_template('Option1.jinja2', display=True,
                                    tickers=tickers,
                                    weightings=values,
                                    pie=pie,
@@ -149,11 +137,11 @@ def track():
                                    sharpe_plot=sharpe_plot,
                                    underwater=underwater_plot,
                                    drawdown=drawdown,
-                                   stats=stats,
-                                   rolling=rolling)
+                                   stats=stats)
 
         else:
-            return render_template('Option1.jinja2', display=False, error=True)
+            # TODO: ERROR CATCHING
+            pass
 
 @login_required
 def enhance():
@@ -213,18 +201,10 @@ def enhance():
 
         return render_template('Option2.jinja2', pie=pie, display=True)
 
-
-# @login_required
-def option2():
-    weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    timeHorizon = 50
-    return render_template('Option2.jinja2', tickers=s.tickers, weightings=weightings, timeHorizon=timeHorizon)
-
-
 op_to_q_map = {
-    'Retirement': ['initialInvestment', 'retirementAmount', 'retirementDate', 'riskAppetite'],
-    'Purchase': ['initialInvestment', 'purchaseAmount', 'purchaseDate', 'riskAppetite'],
-    'Wealth': ['initialInvestment', 'riskAppetite']
+    'retirement_questionnaire': ['initialInvestment', 'retirementAmount', 'retirementDate', 'riskAppetite'],
+    'purchase_questionnaire': ['initialInvestment', 'purchaseAmount', 'purchaseDate', 'riskAppetite'],
+    'wealth_questionnaire': ['initialInvestment', 'riskAppetite']
 }
 
 
@@ -298,11 +278,11 @@ def portfolioview():
     # Updating questionnaire data
     portfolio_name = request.args.get('portfolioName')
     if 'purchaseAmount' in request.query_string.decode("utf-8"):
-        option_type = 'Purchase'
+        option_type = 'purchase_questionnaire'
     elif 'retirementAmount' in request.query_string.decode("utf-8"):
-        option_type = 'Retirement'
+        option_type = 'retirement_questionnaire'
     elif 'initialInvestment' in request.query_string.decode("utf-8"):
-        option_type = 'Wealth'
+        option_type = 'wealth_questionnaire'
     else:
         print(request.query_string.decode("utf-8"))
         raise ValueError('Bad query parameters. No such option type.')
@@ -389,48 +369,82 @@ def portfoliosnapshot():
             menu
             portfolioview upon save
     """
+
+# Need portfoliovalues id date value
+# prct allocation and # shares
+
+    # questionnaire -> optimize portfolio -> do you want to save this portfolio -> if saves, create a portfolio object (name, username, weightings ), tickers x (weight and num of shares)
+    #-> new table for portfolio statistics (run daily -> update via last rows with shares
+    #
+    # Update price routine, update portfolio routine, check rebalance portfolio
+    #->
+
     username = current_user.username
-
+    df_to_display = fetch_all_questionnaires(username)
+    latest_prices = fetchEodPrices(get_latest=True)[SYMBOLS]
     all_past_p = get_past_portfolios(username=username, get_all=True)
-    print(">>> all_past_p: ", all_past_p)
+    initial_weights = all_past_p[0][SYMBOLS]
 
-    portfolioNames = all_past_p[2]['portfolio_name']
-    print('>>>> portfolioNames: ', portfolioNames)
+    for index in all_past_p[0].index:
+        start_date = all_past_p[2].loc[index, 'timestamp'].to_pydatetime()
+        initial_prices = fetchEodPrices(timestamp=start_date)[SYMBOLS]
+        current_return = latest_prices.div(initial_prices)
 
-    portfolioInitialValue = all_past_p[2]['budget']
-    print('>>>> portfolioInitialValue: ', portfolioInitialValue)
 
-    start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
-    print(all_past_p[0])
 
-    histValues = []
-    counter = 0
-    for index, portfolio in all_past_p[0].iterrows():
-        portfolio_returns = back_test(portfolio.to_dict(), start_date)[0].sum(axis=1)
-        print(portfolio_returns)
-        print(portfolioInitialValue[index])
-        histValues.append(portfolio_returns.apply(lambda x: x * portfolioInitialValue[index]).tolist())
-        counter += 1
+    #get_data(SYMBOLS, 'adjClose', start_date, end_date, save=True, fail_safe=True):
 
-    print('>>>> histValues: ', histValues)
+    # all_past_p[2]['timestamp']
 
-    # initial portfolio value (wont be in list above if port is > 1yr old)
-    returnSinceInception = []
-    percentCompleted = []
-    for i in range(len(histValues)):
-        temp = round(((histValues[i][-1] / portfolioInitialValue[i]) - 1) * 100, 2)
-        returnSinceInception.append(temp)
-        percentCompleted.append(1)
-    print('>>>> returnSinceInception: ', returnSinceInception)
 
-    targetAmount = 200
 
-    timeTilCompletion = 200#targetDate - today
+    start_date = pd.to_datetime(all_past_p[2]['timestamp'], unit='s', utc=True)
+    df_to_display['start_date'] = start_date
+    # returns = latest_prices.to_numpy() *
 
-    return render_template('portfoliosnapshot.jinja2', title='optiondecision',
-                           returnSinceInception=returnSinceInception, histValues=histValues,
-                           portfolioNames=portfolioNames, targetAmount=targetAmount, percentCompleted=percentCompleted,
-                           timeTilCompletion=timeTilCompletion)
+
+
+    #
+    # all_past_p = get_past_portfolios(username=username, get_all=True)
+    # print(">>> all_past_p: ", all_past_p)
+    #
+    # portfolioNames = all_past_p[2]['portfolio_name']
+    # print('>>>> portfolioNames: ', portfolioNames)
+    #
+    # portfolioInitialValue = all_past_p[2]['budget']
+    # print('>>>> portfolioInitialValue: ', portfolioInitialValue)
+    #
+    # start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
+    # print(all_past_p[0])
+    #
+    # histValues = []
+    # counter = 0
+    # for index, portfolio in all_past_p[0].iterrows():
+    #     portfolio_returns = back_test(portfolio.to_dict(), start_date)[0].sum(axis=1)
+    #     print(portfolio_returns)
+    #     print(portfolioInitialValue[index])
+    #     histValues.append(portfolio_returns.apply(lambda x: x * portfolioInitialValue[index]).tolist())
+    #     counter += 1
+    #
+    # print('>>>> histValues: ', histValues)
+    #
+    # # initial portfolio value (wont be in list above if port is > 1yr old)
+    # returnSinceInception = []
+    # percentCompleted = []
+    # for i in range(len(histValues)):
+    #     temp = round(((histValues[i][-1] / portfolioInitialValue[i]) - 1) * 100, 2)
+    #     returnSinceInception.append(temp)
+    #     percentCompleted.append(1)
+    # print('>>>> returnSinceInception: ', returnSinceInception)
+    #
+    # targetAmount = 200
+    #
+    # timeTilCompletion = 200#targetDate - today
+    #
+    # return render_template('portfoliosnapshot.jinja2', title='optiondecision',
+    #                        returnSinceInception=returnSinceInception, histValues=histValues,
+    #                        portfolioNames=portfolioNames, targetAmount=targetAmount, percentCompleted=percentCompleted,
+    #                        timeTilCompletion=timeTilCompletion)
 
 
 def portfoliodashboard():
@@ -539,11 +553,11 @@ def editportfolio():
 
     if portfolio_name is None:
         if 'purchaseAmount' in request.query_string.decode("utf-8"):
-            option_type = 'Purchase'
+            option_type = 'purchase_questionnaire'
         elif 'retirementAmount' in request.query_string.decode("utf-8"):
-            option_type = 'Retirement'
+            option_type = 'retirement_questionnaire'
         elif 'initialInvestment' in request.query_string.decode("utf-8"):
-            option_type = 'Wealth'
+            option_type = 'wealth_questionnaire'
         else:
             raise ValueError('Bad query parameters. No such option type.')
 
