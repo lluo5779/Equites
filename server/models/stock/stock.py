@@ -9,10 +9,17 @@ from server.models.stock.tiingo import get_data
 import datetime
 
 
-def fetchEodPrices(timestamp=None, get_latest=False):
+def fetchEodPrices(fromtimeon=None, timestamp=None, get_latest=False):
     query = """select * from {}""".format(COLLECTION)
     if get_latest:
         query = query + """ order by date desc limit 1"""  # select * from prices order by date desc limit 1
+
+    if fromtimeon is not None:
+        print("<><><><><><><> fromtimeon: ", fromtimeon)
+        query = query + """ where date between '{}' and '{}' order by date desc limit 1;""".format(
+            fromtimeon.strftime('%Y-%m-%d'),
+            datetime.datetime.utcnow().strftime('%Y-%m-%d'))
+
     if timestamp is not None:
         query = query + """ where date between '{}' and '{}' order by date desc limit 1;""".format(
             (timestamp - datetime.timedelta(days=5)).strftime('%Y-%m-%d'),
