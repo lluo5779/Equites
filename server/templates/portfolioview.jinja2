@@ -22,8 +22,8 @@
             data.addColumn('number', 'Value');
             var table = new Array;
             for(var i = 0, len = arr.length; i < len; i++){
-                var cur = arr[i].trim().split(" ");
-                table.push(new Array(cur[0], parseFloat(cur[5])));
+                var cur = arr[i].trim().split(/\s+/);
+                table.push(new Array(cur[0], parseFloat(cur[2])));
             }               
             data.addRows(table);
                
