@@ -265,7 +265,6 @@ input[type=range]::-moz-range-thumb:active {
             document.getElementById(buttonID).style['pointer-events'] = "none";
         }
         else if(re.test(nameInput)){
-
             document.getElementById(buttonID).style['pointer-events'] = "auto";
 
         }
@@ -413,22 +412,6 @@ input[type=range]::-moz-range-thumb:active {
                                                     <br>
 
                                                 </div>
-
-                                                <!--
-                                                <input type="radio" class="form-check-input" id="materialUnchecked" name="materialExampleRadios">
-                                                <br>
-                                                   -->
-                                                <!-- Controls
-
-                                                <a class="carousel-control-prev" href="#wealth_questions" role="button" style="left: -10px;" data-slide="prev">
-                                                    <span class="carousel-control-prev-icon" aria-hidden="false"></span>
-                                                    <span class="sr-only">Previous</span>
-                                                </a>
-
-                                                <a class="carousel-control-next" href="#wealth_questions" role="button" data-slide="next">
-                                                    <span class="carousel-control-next-icon" aria-hidden="false"></span>
-                                                    <span class="sr-only">Next</span>
-                                                </a>-->
                                             </div>
                                         </div>
                                     </div>
@@ -531,8 +514,8 @@ input[type=range]::-moz-range-thumb:active {
                                                         </h4>
 
                                                         <div class='input-group date' id='purchase_date'>
-                                                            <input type='text' id="purchaseDate" name="purchaseDate" class="form-control" min="2029-12-01" autofocus value="{{ questionnaire['purchaseDate'] }}" required onchange="nextButton('purchaseDate','next6',/^((20[2-9][0-9]|21[0-9][0-9])-(0[1-9])|(1[0-2]))$/)">
-                                                            <span class="input-group-addon">
+                                                            <input type='text' id="purchaseDate" name="purchaseDate" class="form-control"min="2019-12-01" autofocus value="{{ questionnaire['purchaseDate'] }}" required                                                             onchange="nextButton('purchaseDate','next6',/^((20[2-9][0-9]|21[0-9][0-9])-(0[1-9])|(1[0-2]))$/)">
+                                                          <span class="input-group-addon">
                                                                 <span class="glyphicon glyphicon-calendar"></span>
                                                             </span>
                                                         </div>
