@@ -14,7 +14,7 @@ class TextClassDataLoader(object):
 		#self.word_to_index = word_to_index
 		self.scaler = MinMaxScaler()
 		
-		df = pd.read_csv('server/models/portfolio/data/test.csv')
+		df = pd.read_csv('test.csv')
 		df = df[['prices', 'return2']]
 		df.prices = df.prices.apply(lambda x: ast.literal_eval(x))
 		#df['body'] = df['body'].apply(ut._tokenize)

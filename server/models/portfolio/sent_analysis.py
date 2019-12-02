@@ -73,8 +73,8 @@ class SentimentAnalysis(object):
 
 	def get_trainer(self):
 		print('Creating dataloaders...')
-		train_loader = TextClassDataLoader('server/models/portfolio/data/test.csv', batch_size = self.batch_size)
-		val_loader = TextClassDataLoader('server/models/portfolio/data/test.csv', batch_size = self.batch_size)
+		train_loader = TextClassDataLoader('server/models/portfolio/test.csv', batch_size = self.batch_size)
+		val_loader = TextClassDataLoader('server/models/portfolio/test.csv', batch_size = self.batch_size)
 		return train_loader, val_loader
 
 	def get_model(self):

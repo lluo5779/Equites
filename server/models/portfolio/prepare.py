@@ -147,13 +147,13 @@ def prepare():
     print('********************************************************************')
 
     # temp mu_ml
-    mu_ml = mu_bl1.mul(
-        pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=mu_bl1.index, columns=mu_bl1.columns))
-    #df = pd.DataFrame()
-    #df['prices'] = prices.apply(lambda x: ','.join(x.astype(str)), axis=1)
-    #df['prices'] = df.prices.apply(lambda x: [float(y) for y in x.split(',')])
+    #mu_ml = mu_bl1.mul(
+    #    pd.DataFrame(1 + np.random.uniform(-0.05, 0.1, len(tickers)), index=mu_bl1.index, columns=mu_bl1.columns))
+    df = pd.DataFrame()
+    df['prices'] = prices.apply(lambda x: ','.join(x.astype(str)), axis=1)
+    df['prices'] = df.prices.apply(lambda x: [float(y) for y in x.split(',')])
     #df.prices = df.prices.apply(lambda x: ast.literal_eval(x))
-    #mu_ml = predict(torch.FloatTensor(df['prices'].iloc[-1:].values.tolist()).transpose(0, 1), check_ml=mu_bl1, tickers = tickers)
+    mu_ml = predict(torch.FloatTensor(df['prices'].iloc[-1:].values.tolist()).transpose(0, 1), check_ml=mu_bl1, tickers = tickers)
     ## *********************************************************************************************************************
     #  black litterman for period two returns
     ## *********************************************************************************************************************

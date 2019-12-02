@@ -176,7 +176,11 @@
             <input type="text" name="retirementAmount" value="{{ questionnaire["retirementAmount"] }}">
             <input type="text" name="retirementDate" value="{{ questionnaire["retirementDate"] }}">
             <input type="text" name="riskAppetite" value="{{ questionnaire["riskAppetite"] }}">
-            <input type="text" name="optionType" value="{{ questionnaire["optionType"] }}">
+            <input type="text" name="weightings_1" value="{{weightings_1.to_dict()}}">
+            <input type="text" name="weightings_2" value="{{weightings_2.to_dict()}}">
+            <input type="text" name="num_shares" value="{{num_shares.to_dict()}}">
+
+
         </div>
         <!-- Above is not displayed -->
         <div class="row" >

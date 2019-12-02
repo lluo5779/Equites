@@ -1,5 +1,5 @@
 import uuid
-
+import ast
 from flask import Blueprint, request, session, redirect, url_for, render_template
 from flask_login import login_required, current_user
 from server.models.auth.schema import User
@@ -169,7 +169,6 @@ def track():
             return render_template('Option1.jinja2', display=False, error=True)
 
 
-
 @login_required
 def enhance():
     if len(request.query_string) == 0:
@@ -231,7 +230,9 @@ def enhance():
                                          budget=budget)[0]
 
             # hacky solution lol
-            enhanced_values = back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(axis=1)[-(len(portfolio_value)+1):]
+            enhanced_values = \
+            back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(
+                axis=1)[-(len(portfolio_value) + 1):]
             back_returns = (enhanced_values / enhanced_values.shift(1) - 1).dropna()
             enhanced_values = cum_returns(back_returns, budget)
 
@@ -314,6 +315,7 @@ def enhance():
         else:
             return render_template('Option2.jinja2', display=False, error=(not success))
 
+
 # @login_required
 def option2():
     weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -378,7 +380,6 @@ def getRiskToleranceFromQuestionnaire(questionnaire):
 
 # @login_required
 def portfolioview():
-
     # Updating questionnaire data
     portfolio_name = request.args.get('portfolioName')
     if 'purchaseAmount' in request.query_string.decode("utf-8"):
@@ -440,21 +441,25 @@ def portfolioview():
     #     update_new_questionnaire(questionnaire, option_type, uuid=_id)
 
     # Updating the portfolio data
-    # TODO: current_user.username
-    p = Portfolio('test1', _id=_id, generate_new=is_new_portfolio)
+    p = Portfolio(current_user.username, _id=_id, generate_new=is_new_portfolio)
 
     if option_type == "Wealth":
         horizon, return_target = 10, 0.15
     elif option_type == "Retirement":
         horizon = relativedelta(questionnaire["retirementDate"], datetime.today()).years
-        total_target =  float(questionnaire["retirementAmount"]) / float(questionnaire["initialInvestment"])
+        horizon = 1 if horizon == 0 else horizon
+        total_target = float(questionnaire["retirementAmount"]) / float(questionnaire["initialInvestment"])
         return_target = total_target / (2 * horizon)
     else:
         horizon = relativedelta(questionnaire["purchaseDate"], datetime.today()).years
+        horizon = 1 if horizon == 0 else horizon
         total_target = float(questionnaire["purchaseAmount"]) / float(questionnaire["initialInvestment"])
         return_target = total_target / (2 * horizon)
 
-    aversion = 1 if questionnaire['riskAppetite'] == 'High Risk' else (1 if questionnaire['riskAppetite'] == 'Med Risk' else 3)
+
+
+    aversion = 1 if questionnaire['riskAppetite'] == 'High Risk' else (
+        1 if questionnaire['riskAppetite'] == 'Med Risk' else 3)
 
     alpha, multipliers, exposures, cardinality = risk_prefs(horizon,
                                                             aversion,
@@ -468,17 +473,18 @@ def portfolioview():
     # assign the risk tolerances, specifying a SHARPE optimization
     risk_tolerance = (multipliers, exposures, cardinality, 'MCVAR')
 
-    if is_new_portfolio:
-        p.run_optimization(risk_tolerance=risk_tolerance,
-                           alpha=alpha,
-                           return_target=return_target,
-                           budget=float(questionnaire["initialInvestment"]))[0]
+    p.run_optimization(risk_tolerance=risk_tolerance,
+                       alpha=alpha,
+                       return_target=return_target,
+                       budget=float(questionnaire["initialInvestment"]))
 
     weightings = [p.x1, p.x2]
+    num_shares = p.num_shares.T
 
-    expectedReturn = p.get_portfolio_return()
-    expectedVol = p.get_portfolio_volatility()
-    risk = p.get_portfolio_cvar()
+    # expectedReturn = p.get_portfolio_return()
+    # expectedVol = p.get_portfolio_volatility()
+    # risk = p.get_portfolio_cvar()
+
     start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
 
     print(p.x1.to_dict())
@@ -490,10 +496,10 @@ def portfolioview():
     #     print(p.x1.to_dict())
     #     p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
     print('FINISHED')
-
-    return render_template('portfolioview.jinja2', title='Sign In', weightings=weightings, risk=risk,
-                           expectedRet=expectedReturn, expectedVol=expectedVol, histValues=histValues, long=None,
-                           short=None, portfolioName=portfolio_name, questionnaire=questionnaire)
+    #risk=risk,
+    #  expectedRet=expectedReturn, expectedVol=expectedVol,
+    return render_template('portfolioview.jinja2', title='Sign In', weightings_1=weightings[0], weightings_2=weightings[1], histValues=histValues, long=None,
+                           short=None, portfolioName=portfolio_name, questionnaire=questionnaire, num_shares=num_shares)
     # except:
     #     return render_template('OptionDecision.jinja2')
 
@@ -543,10 +549,10 @@ def portfoliosnapshot():
             continue
         current_return = portfolio_value / investment_target.loc[_id]
 
-        df_to_display.loc[_id, 'returns'] = round(current_return.values[0],2)
+        df_to_display.loc[_id, 'returns'] = round(current_return.values[0], 2)
         df_to_display.loc[_id, 'end_date'] = df_to_display.loc[_id, 'end_date'].strftime("%Y-%m")
-        df_to_display.loc[_id, 'targetAmount'] = round(investment_target.loc[_id],2)
-        df_to_display.loc[_id, 'percentCompleted'] = str(round(current_return.values[0],2)) + "%"
+        df_to_display.loc[_id, 'targetAmount'] = round(investment_target.loc[_id], 2)
+        df_to_display.loc[_id, 'percentCompleted'] = str(round(current_return.values[0], 2)) + "%"
 
     return render_template('portfoliosnapshot.jinja2', title='optiondecision',
                            purchase=df_to_display[df_to_display['optionType'] == "purchase"],
@@ -742,11 +748,21 @@ def editportfolio():
 
 
 def saveportfolio():
+
+
     username = current_user.username
 
     # Updating questionnaire data
     portfolio_name = request.args.get('portfolioName')
     option_type = request.args.get("optionType")
+    weightings_1 = request.args.get('weightings_1')
+    weightings_1 = ast.literal_eval(weightings_1)
+    weightings_2 = request.args.get('weightings_2')
+    weightings_2 = ast.literal_eval(weightings_2)
+    num_shares = request.args.get('num_shares')
+    num_shares = ast.literal_eval(num_shares)
+
+
     questionnaire = {}
     is_new_portfolio = False
 
@@ -778,7 +794,7 @@ def saveportfolio():
 
     # Updating the portfolio data
     p = Portfolio(username, _id=_id, generate_new=is_new_portfolio)
-    p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
+    p.set_parameters(weightings_1, weightings_2, num_shares) #run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
 
     if is_new_portfolio:
         p.make_new_portfolios(questionnaire['initialInvestment'], option_type, portfolio_name)
