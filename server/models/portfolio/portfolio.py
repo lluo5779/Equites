@@ -30,9 +30,11 @@ class Portfolio(object):
         self.cost = None
         self.prices = None
 
-        p = self.get_portfolio(_id=_id) if not generate_new else [None, None]
+        p = self.get_portfolio(_id=_id) if not generate_new else [None, None, None]
         self.x1 = p[0]
         self.x2 = p[1]
+        self.num_shares = p[2]
+
 
         self.fetch_parameters()
 
@@ -49,13 +51,14 @@ class Portfolio(object):
         p1 = df[SYMBOLS]
         p2 = df[[c + "2" for c in SYMBOLS]]
         p2.columns = SYMBOLS
+        num_shares = df[[c + "_holdings" for c in SYMBOLS]]
 
         self.budget = df['budget']
 
         if p2.isnull().all().all():
             p2 = p1
 
-        return [p1.T, p2.T]
+        return [p1.T, p2.T, num_shares.T]
 
     def fetch_parameters(self):
         self.mu_bl1 = self.fetch_parameter('mu_bl1')#.T
