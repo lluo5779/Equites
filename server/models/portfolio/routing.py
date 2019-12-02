@@ -598,9 +598,9 @@ def portfoliosnapshot():
     df_to_display['targetAmount'] = ""
     df_to_display['start_date'] = ""
     df_to_display['returns'] = 0
+
     for _id, portfolio in latest_holdings.iterrows():
         # iterating over each portfolio
-
         portfolio.index = SYMBOLS
         start_date = all_past_p[2].loc[_id, 'timestamp'].to_pydatetime()
         portfolio_value = latest_prices.dot(portfolio)
@@ -609,11 +609,17 @@ def portfoliosnapshot():
         if investment_target.loc[_id] == "":
             # if wealth portfolio
             continue
-        current_return = portfolio_value / investment_target.loc[_id]
+
+        try:
+            current_return = portfolio_value / investment_target.loc[_id]
+        except:
+            current_return = portfolio_value * 0
 
         df_to_display.loc[_id, 'returns'] = round(current_return.values[0], 2)
         df_to_display.loc[_id, 'end_date'] = df_to_display.loc[_id, 'end_date'].strftime("%Y-%m")
-        df_to_display.loc[_id, 'targetAmount'] = round(investment_target.loc[_id], 2)
+
+        print(investment_target.loc[_id])
+        df_to_display.loc[_id, 'targetAmount'] = round(float(investment_target.loc[_id]), 2)
         df_to_display.loc[_id, 'percentCompleted'] = str(round(current_return.values[0], 2)) + "%"
 
     return render_template('portfoliosnapshot.jinja2', title='optiondecision',

@@ -5,7 +5,7 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-        {% block content %}
+{% block content %}
 
 <section id="main">
 
@@ -19,8 +19,50 @@
             {% if wealth['portfolioName']| length == 0 %}
             <p >You dont have any wealth accounts with us right now. <a href="/build"><span onMouseOver="this.style.color='#a6e66e'" onMouseOut="this.style.color='#000'">Click here to make that
                 first step towards having a sustainable investment income!</span></a></p>
+            
             {% else %}
             <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Portfolio Name</th>
+                            <th>Initial Investment</th>
+                            <th>Portfolio Growth</th>
+                            <th>Inception date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for i in range(wealth['portfolioName']|length) %}
+                                <tr onclick=
+                                {{"location.href='/portfoliodashboard?portfolioName="+wealth['portfolioName'][i]|urlencode+"'"}} style="cursor:
+                                pointer;">
+<!--                             <a href="{{'/portfoliodashboard?portfolioName=%s' % wealth.portfolioName[i]|urlencode }}">
+                                <tr>  --> 
+                                    <td style="text-align:center">{{i + 1}}</td>
+                                    <td style="text-align:center">{{wealth.portfolioName[i]}}</td>
+                                    <td style="text-align:center">{{wealth.budget[i]}}</td>
+                                    <td style="text-align:center">{{wealth.returns[i]}}</td>
+                                    <td style="text-align:center">{{wealth.start_date[i] if wealth.start_date[i] else 'n/a'}}</td>
+                                </tr>
+                            <!-- </a> -->
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+        <hr>
+
+        <div class="fadeIn d-block">
+            <h2>Purchase Accounts</h2>
+            {% if purchase['portfolioName']| length == 0 %}
+            <p>You dont have any purchase accounts with us right now. <a href="/build"><span onMouseOver="this.style.color='#a6e66e'" onMouseOut="this.style.color='#000'">Click here to make that
+                first step towards your dream purchase!</span></a></p>
+            {% else %}
+            <div class="table-responsive">
+
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -28,23 +70,80 @@
                         <th>Portfolio Name</th>
                         <th>Initial Investment</th>
                         <th>Portfolio Growth</th>
+                        <th>Investment Target</th>
+                        <th>Percentage Reached</th>
                         <th>Inception date</th>
+                        <th>Maturation</th>
 
                     </tr>
                     </thead>
-                    {% for i in range(wealth['portfolioName']| length) %}
+
+                    {% for i in range(purchase['portfolioName']| length) %}
 
                     <tbody>
                     <tr onclick=
-                    {{"location.href='/portfoliodashboard?portfolioName="+wealth['portfolioName'][i]+"'"}}
-                    style="cursor:
+                    {{"location.href='/portfoliodashboard?portfolioName="+purchase['portfolioName'][i]|urlencode+"'"}} style="cursor:
                     pointer;">
-                    <td style="text-align:center">{{i}}</td>
-                    <td style="text-align:center">{{wealth.portfolioName[i]}}</td>
-                    <td style="text-align:center">{{wealth.budget[i]}}</td>
-                    <td style="text-align:center">{{wealth.returns[i]}}</td>
-                    <td style="text-align:center">{{wealth.start_date[i] if wealth.start_date[i] else 'n/a'}}</td>
+                    <!-- <tr> -->
+                        <!-- <a href="href="{{ '//portfoliodashboard?portfolioName=%s' % purchase['portfolioName'][i]|urlencode }}"> -->
+                            <td style="text-align:center">{{i + 1}}</td>
+                            <td style="text-align:center">{{purchase.portfolioName[i]}}</td>
+                            <td style="text-align:center">{{purchase.budget[i]}}</td>
+                            <td style="text-align:center">{{purchase.returns[i]}}</td>
+                            <td style="text-align:center">{{purchase.targetAmount[i]}}</td>
+                            <td style="text-align:center">{{purchase.percentCompleted[i]}}</td>
+                            <td style="text-align:center">{{purchase.start_date[i] if purchase.start_date[i] else 'n/a'}}</td>
+                            <td style="text-align:center">{{purchase.end_date[i] if purchase.end_date[i] else 'n/a'}}</td>
+                        <!-- </a> -->
                     </tr>
+                </tbody>
+
+                {% endfor %}
+
+            </table>
+        </div>
+        {% endif %}
+        </div>
+
+        <hr>
+        <div class="fadeIn d-block">
+            <h2>Retirement Accounts</h2>
+            {% if retirement['portfolioName']| length == 0 %}
+            <p>You dont have any retirement accounts with us right now. <a href="/build"><span onMouseOver="this.style.color='#a6e66e'" onMouseOut="this.style.color='#000'">Click here to make that
+                first step towards your dream retirement!</span></a></p>
+            {% else %}
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Portfolio Name</th>
+                        <th>Initial Investment</th>
+                        <th>Portfolio Growth</th>
+                        <th>Investment Target</th>
+                        <th>Percentage Reached</th>
+                        <th>Inception date</th>
+                        <th>Maturation</th>
+
+                    </tr>
+                    </thead>
+                    {% for i in range(retirement['portfolioName']| length) %}
+
+                    <tbody>
+                        <tr onclick=
+                        {{"location.href='/portfoliodashboard?portfolioName="+retirement['portfolioName'][i]|urlencode+"'"}}
+                        style="cursor:
+                        pointer;">
+                        <td style="text-align:center">{{i + 1}}</td>
+                        <td style="text-align:center">{{retirement.portfolioName[i]}}</td>
+                        <td style="text-align:center">{{retirement.budget[i]}}</td>
+                        <td style="text-align:center">{{retirement.returns[i]}}</td>
+                        <td style="text-align:center">{{retirement.targetAmount[i]}}</td>
+                        <td style="text-align:center">{{retirement.percentCompleted[i]}}</td>
+                        <td style="text-align:center">{{retirement.start_date[i] if retirement.start_date[i] else 'n/a'}}</td>
+                        <td style="text-align:center">{{retirement.end_date[i] if retirement.end_date[i] else 'n/a'}}</td>
+                        </tr>
                 </tbody>
 
                 {% endfor %}
@@ -54,104 +153,6 @@
         </div>
         {% endif %}
     </div>
-    <hr>
-
-    <div class="fadeIn d-block">
-        <h2>Purchase Accounts</h2>
-        {% if purchase['portfolioName']| length == 0 %}
-        <p>You dont have any purchase accounts with us right now. <a href="/build"><span onMouseOver="this.style.color='#a6e66e'" onMouseOut="this.style.color='#000'">Click here to make that
-            first step towards your dream purchase!</span></a></p>
-        {% else %}
-        <div class="table-responsive">
-
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Portfolio Name</th>
-                    <th>Initial Investment</th>
-                    <th>Portfolio Growth</th>
-                    <th>Investment Target</th>
-                    <th>Percentage Reached</th>
-                    <th>Inception date</th>
-                    <th>Maturation</th>
-
-                </tr>
-                </thead>
-
-                {% for i in range(purchase['portfolioName']| length) %}
-
-                <tbody>
-                <tr onclick=
-                {{"location.href='/portfoliodashboard?portfolioName="+purchase['portfolioName'][i]+"'"}} style="cursor:
-                pointer;">
-                <td style="text-align:center">{{i}}</td>
-                <td style="text-align:center">{{purchase.portfolioName[i]}}</td>
-                <td style="text-align:center">{{purchase.budget[i]}}</td>
-                <td style="text-align:center">{{purchase.returns[i]}}</td>
-                <td style="text-align:center">{{purchase.targetAmount[i]}}</td>
-                <td style="text-align:center">{{purchase.percentCompleted[i]}}</td>
-                <td style="text-align:center">{{purchase.start_date[i] if purchase.start_date[i] else 'n/a'}}</td>
-                <td style="text-align:center">{{purchase.end_date[i] if purchase.end_date[i] else 'n/a'}}</td>
-                </tr>
-            </tbody>
-
-            {% endfor %}
-
-        </table>
-
-
-    </div>
-    {% endif %}
-</div>
-<hr>
-    <div class="fadeIn d-block">
-        <h2>Retirement Accounts</h2>
-        {% if retirement['portfolioName']| length == 0 %}
-        <p>You dont have any retirement accounts with us right now. <a href="/build"><span onMouseOver="this.style.color='#a6e66e'" onMouseOut="this.style.color='#000'">Click here to make that
-            first step towards your dream retirement!</span></a></p>
-        {% else %}
-        <div class="table-responsive">
-
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Portfolio Name</th>
-                    <th>Initial Investment</th>
-                    <th>Portfolio Growth</th>
-                    <th>Investment Target</th>
-                    <th>Percentage Reached</th>
-                    <th>Inception date</th>
-                    <th>Maturation</th>
-
-                </tr>
-                </thead>
-                {% for i in range(retirement['portfolioName']| length) %}
-
-                <tbody>
-                <tr onclick=
-                {{"location.href='/portfoliodashboard?portfolioName="+retirement['portfolioName'][i]+"'"}}
-                style="cursor:
-                pointer;">
-                <td style="text-align:center">{{i}}</td>
-                <td style="text-align:center">{{retirement.portfolioName[i]}}</td>
-                <td style="text-align:center">{{retirement.budget[i]}}</td>
-                <td style="text-align:center">{{retirement.returns[i]}}</td>
-                <td style="text-align:center">{{retirement.targetAmount[i]}}</td>
-                <td style="text-align:center">{{retirement.percentCompleted[i]}}</td>
-                <td style="text-align:center">{{retirement.start_date[i] if retirement.start_date[i] else 'n/a'}}</td>
-                <td style="text-align:center">{{retirement.end_date[i] if retirement.end_date[i] else 'n/a'}}</td>
-                </tr>
-            </tbody>
-
-            {% endfor %}
-
-
-        </table>
-    </div>
-    {% endif %}
-</div>
 </div>
 
 
