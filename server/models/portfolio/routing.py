@@ -498,7 +498,7 @@ def portfolioview():
     print('FINISHED')
     #risk=risk,
     #  expectedRet=expectedReturn, expectedVol=expectedVol,
-    return render_template('portfolioview.jinja2', title='Sign In', weightings=weightings[0], histValues=histValues, long=None,
+    return render_template('portfolioview.jinja2', title='Sign In', weightings_1=weightings[0], weightings_2=weightings[1], histValues=histValues, long=None,
                            short=None, portfolioName=portfolio_name, questionnaire=questionnaire, num_shares=num_shares)
     # except:
     #     return render_template('OptionDecision.jinja2')
@@ -755,8 +755,10 @@ def saveportfolio():
     # Updating questionnaire data
     portfolio_name = request.args.get('portfolioName')
     option_type = request.args.get("optionType")
-    weightings = request.args.get('weightings')
-    weightings = ast.literal_eval(weightings)
+    weightings_1 = request.args.get('weightings_1')
+    weightings_1 = ast.literal_eval(weightings_1)
+    weightings_2 = request.args.get('weightings_2')
+    weightings_2 = ast.literal_eval(weightings_2)
     num_shares = request.args.get('num_shares')
     num_shares = ast.literal_eval(num_shares)
 
@@ -792,7 +794,7 @@ def saveportfolio():
 
     # Updating the portfolio data
     p = Portfolio(username, _id=_id, generate_new=is_new_portfolio)
-    p.set_parameters(x1, x2, num_shares) #run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
+    p.set_parameters(weightings_1, weightings_2, num_shares) #run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
 
     if is_new_portfolio:
         p.make_new_portfolios(questionnaire['initialInvestment'], option_type, portfolio_name)
