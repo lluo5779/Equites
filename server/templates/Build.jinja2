@@ -16,6 +16,11 @@
                 filter: invert(100%);
                 align-self: flex-end;
             }
+        .questionBlock{padding: 0px 200px;}
+
+        a[disabled] {
+            pointer-events: none;
+        }
     </style>
 
     <script type="text/javascript">
@@ -101,7 +106,31 @@
                 form.submit(); // <-- this is default
             }
         });
-    });  
+        $(document).ready(function() {
+          $(window).keydown(function(event){
+            if(event.keyCode === 13) {
+              event.preventDefault();
+              return false;
+            }
+          });
+        });
+    });
+    function nextButton(elementID, buttonID, re){
+
+        let nameInput = document.getElementById(elementID).value
+
+        if (nameInput == "") {
+            document.getElementById(buttonID).style['pointer-events'] = "none";
+        }
+        else if(re.test(nameInput)){
+
+            document.getElementById(buttonID).style['pointer-events'] = "auto";
+
+        }
+        else {
+        document.getElementById(buttonID).style['pointer-events'] = "none";
+        }
+    }
     </script>
 
 {% endblock %}
@@ -150,65 +179,102 @@
                                     <div id="wealth_questions" class="carousel slide" data-ride="carousel" data-wrap="false" data-interval="false">
                                         <div class="carousel-inner">
                                             
-                                            <div style="padding: 100px 250px;">
+                                            <div style="padding: 100px 40px;">
                                                 
                                                 <div class="carousel-item active" style="width:100%; height:100%;">
                                                     <br>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            How much are you going to invest?
+                                                        </h4>
 
-                                                    <h4>
-                                                        How much are you going to invest?
-                                                    </h4>
-
-                                                    <div class="form-label-group" >
-                                                        <input name="initialInvestment" type="text" id="initialInvestmentID" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}" pattern="\d*" required>
-                                                        <label for="initialInvestmentID">$ Amount </label>
+                                                        <div class="form-label-group" >
+                                                            <input name="initialInvestment" type="text" id="initialInvestment" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['initialInvestment'] }}" required onkeyup="nextButton('initialInvestment','next1',/^\d+(?:\.\d{0,2})?$/)">
+                                                            <label for="initialInvestment">$ Amount </label>
+                                                        </div>
                                                     </div>
+
+                                                    <a id="next1" style="pointer-events: none" class="carousel-control-next" href="#wealth_questions" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
                                                     <br>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            What is your current annual income?
+                                                        </h4>
 
-                                                    <h4>
-                                                        What is your current annual income?
-                                                    </h4>
-
-                                                    <div class="form-label-group" >
-                                                        <input name="annualIncome" type="text" id="annualIncome" class="form-control" placeholder="$ Amount" size="32"  pattern="\d*" required autofocus>
-                                                        <label for="annualIncome">$ Amount </label>
+                                                        <div class="form-label-group" >
+                                                            <input name="annualIncome" type="text" id="annualIncome" class="form-control" placeholder="$ Amount" size="32"  required autofocus onkeyup="nextButton('annualIncome','next2',/^\d+(?:\.\d{0,2})?$/)">
+                                                            <label for="annualIncome">$ Amount </label>
+                                                        </div>
                                                     </div>
+
+                                                    <a class="carousel-control-prev" href="#wealth_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <a id="next2" style="pointer-events: none" class="carousel-control-next" href="#wealth_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
 
-                                                    <h4>
-                                                        Use the slider to show what returns over time you are comfortable with.
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            Use the slider to show what returns over time you are comfortable with.
+                                                        </h4>
 
-                                                    <canvas width="600px" heigth="600px"></canvas> <br>
-                                                    <input name="riskAppetite" type="range" id="riskAppetite" min="0" max="20" value="1" step="0.5">
+                                                        <canvas width="600px" heigth="600px"></canvas> <br>
+                                                        <input name="riskAppetite" type="range" id="riskAppetite" min="0" max="20" value="1" step="0.5">
+                                                    </div>
+
+                                                    <a class="carousel-control-prev" href="#wealth_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <a class="carousel-control-next" href="#wealth_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
 
-                                                    <h4>
-                                                        If you could choose between the following payment options, which would you prefer?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            If you could choose between the following payment options, which would you prefer?
+                                                        </h4>
 
-                                                    <div class="form-check">
-                                                        <input type="radio" class="form-check-input" id="certain" name="variance" checked>
-                                                        <label class="form-check-label" for="certain" style="color: #000000">$10, no questions asked</label>
+                                                        <div class="form-check">
+                                                            <input type="radio" class="form-check-input" id="certain" name="variance" checked>
+                                                            <label class="form-check-label" for="certain" style="color: #000000">$10, no questions asked</label>
 
-                                                        <input type="radio" class="form-check-input" id="uncertain" name="variance">
-                                                        <label class="form-check-label" for="uncertain" style="color: #000000">$20, but only if a flipped coin lands heads</label>
+                                                            <input type="radio" class="form-check-input" id="uncertain" name="variance">
+                                                            <label class="form-check-label" for="uncertain" style="color: #000000">$20, but only if a flipped coin lands heads</label>
+                                                        </div>
                                                     </div>
 
+                                                    <a class="carousel-control-prev" href="#wealth_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <button type="submit" class="shadow btn btn-primary float-right " id="btnValidate"> Build! </button>
 
                                                 </div>
 
                                                 <input type="radio" class="form-check-input" id="materialUnchecked" name="materialExampleRadios">
 
 
-                                                <!-- Controls -->
+                                                <!-- Controls
                                         
                                                 <a class="carousel-control-prev" href="#wealth_questions" role="button" style="left: -10px;" data-slide="prev">
                                                     <span class="carousel-control-prev-icon" aria-hidden="false"></span>
@@ -218,13 +284,12 @@
                                                 <a class="carousel-control-next" href="#wealth_questions" role="button" data-slide="next">
                                                     <span class="carousel-control-next-icon" aria-hidden="false"></span>
                                                     <span class="sr-only">Next</span>
-                                                </a>
+                                                </a>-->
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <button type="submit" class="shadow btn btn-primary float-right " id="btnValidate"> Build! </button>
 
                             </form> 
                         </div>
@@ -243,93 +308,158 @@
                                     <div id="purchase_questions" class="carousel slide" data-ride="carousel" data-wrap="false" data-interval="false">
                                         <div class="carousel-inner">
                                             
-                                            <div style="padding: 100px 250px;">
+                                            <div style="padding: 100px 40px;">
                                                 
                                                 <div class="carousel-item active" style="width:100%; height:100%;">
                                                     <br>
 
-                                                    <h4>
-                                                        What do you want to purchase?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            What do you want to purchase?
+                                                        </h4>
 
-                                                    <div class="form-label-group" >
-                                                        <input name="purchaseName" type="text" id="purchaseName" class="form-control" placeholder="Description" size="32" autofocus required>
-                                                        <label for="purchaseName"> Description </label>
+                                                        <div class="form-label-group" >
+                                                            <input name="purchaseName" type="text" id="purchaseName" class="form-control" placeholder="Description" size="32" autofocus required onkeyup="nextButton('purchaseName','next3',/.*/)">
+                                                            <label for="purchaseName"> Description </label>
+                                                        </div>
                                                     </div>
+
+                                                    <a id="next3" style="pointer-events: none" class="carousel-control-next" href="#purchase_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
                                                     <br>
-
-                                                    <h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
                                                         How much can you contribute today?
-                                                    </h4>
-                                                    
-                                                    <div class="form-label-group" >
-                                                        <input name="initialInvestment" type="text" id="initialInvestmentPurchase" class="form-control" placeholder="$ Amount" size="32" autofocus pattern="\d*" value="{{ questionnaire['initialInvestment'] }}">
-                                                        <label for="initialInvestmentPurchase">$ Amount</label>
+                                                        </h4>
+
+                                                        <div class="form-label-group" >
+                                                            <input name="initialInvestment" type="text" id="initialInvestmentPurchase" class="form-control" placeholder="$ Amount" size="32" autofocus pattern="\d*" value="{{ questionnaire['initialInvestment'] }}" required onkeyup="nextButton('initialInvestmentPurchase','next4',/^\d+(?:\.\d{0,2})?$/)">
+                                                            <label for="initialInvestmentPurchase">$ Amount</label>
+                                                        </div>
                                                     </div>
+
+
+                                                    <a class="carousel-control-prev" href="#purchase_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <a id="next4" style="pointer-events: none" class="carousel-control-next" href="#purchase_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
                                                     <br>
 
-                                                    <h4>
-                                                        How much do you require?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            How much do you require?
+                                                        </h4>
 
-                                                    <div class="form-label-group" >
-                                                        <input name="purchaseAmount" type="text" id="purchaseAmount" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['purchaseAmount'] }}" pattern="\d*" required>
-                                                        <label for="purchaseAmount">$ Amount </label>
+                                                        <div class="form-label-group" >
+                                                            <input name="purchaseAmount" type="text" id="purchaseAmount" class="form-control" placeholder="$ Amount" size="32" autofocus value="{{ questionnaire['purchaseAmount'] }}" required onkeyup="nextButton('purchaseAmount','next5',/^\d+(?:\.\d{0,2})?$/)">
+                                                            <label for="purchaseAmount">$ Amount </label>
+                                                        </div>
                                                     </div>
+
+                                                    <a class="carousel-control-prev" href="#purchase_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <a id="next5" style="pointer-events: none" class="carousel-control-next" href="#purchase_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
                                                     <br>
 
-                                                    <h4>
-                                                        When are you planning to make your purchase?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            When are you planning to make your purchase?
+                                                        </h4>
 
-                                                    <div class="form-label-group" >
-                                                        <input name="purchaseDate" type="text" id="purchaseDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['purchaseDate'] }}">
-                                                        <label for="purchaseDate">MM/YYYY</label>
+                                                        <div class="form-label-group" >
+                                                            <input name="purchaseDate" type="text" id="purchaseDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['purchaseDate'] }}" onkeyup="nextButton('purchaseDate','next6',/^((0[1-9])|(1[0-2]))\/(20[2-9][0-9]|21[0-9][0-9])$/)">
+                                                            <label for="purchaseDate">MM/YYYY</label>
+                                                        </div>
                                                     </div>
+
+                                                    <a class="carousel-control-prev" href="#purchase_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <a id="next6" style="pointer-events: none" class="carousel-control-next" href="#purchase_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
                                                     <br>
 
-                                                    <h4>
-                                                        What is your current annual income?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            What is your current annual income?
+                                                        </h4>
 
-                                                    <div class="form-label-group" >
-                                                        <input name="annualIncome" type="text" id="annualIncomePurchase" class="form-control" placeholder="$ Amount" size="32"  pattern="\d*" required autofocus>
-                                                        <label for="annualIncomePurchase">$ Amount </label>
+                                                        <div class="form-label-group" >
+                                                            <input name="annualIncome" type="text" id="annualIncomePurchase" class="form-control" placeholder="$ Amount" size="32"  pattern="\d*" required autofocus onkeyup="nextButton('annualIncomePurchase','next7',/^\d+(?:\.\d{0,2})?$/)">
+                                                            <label for="annualIncomePurchase">$ Amount </label>
+                                                        </div>
                                                     </div>
+
+                                                    <a class="carousel-control-prev" href="#purchase_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <a id="next7" style="pointer-events: none" class="carousel-control-next" href="#purchase_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
 
-                                                    <h4>
-                                                        If you fell short of your purchase, what would you do?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            If you fell short of your purchase, what would you do?
+                                                        </h4>
 
-                                                    <div class="form-check">
-                                                        <input type="radio" class="form-check-input" id="extend" name="riskAppetite" value="Low Risk"checked >
-                                                        <label class="form-check-label" for="extend" style="color: #000000">I would wait until I eventually meet my targets, keeping my preferences the same.</label>
-                                                        
-                                                        <input type="radio" class="form-check-input" id="riskier" name="riskAppetite" value="High Risk" checked>
-                                                        <label class="form-check-label" for="riskier" style="color: #000000">I would re-invest in riskier assets, expecting better returns.</label>
+                                                        <div class="form-check">
+                                                            <input type="radio" class="form-check-input" id="extend" name="riskAppetite" value="Low Risk"checked >
+                                                            <label class="form-check-label" for="extend" style="color: #000000">I would wait until I eventually meet my targets, keeping my preferences the same.</label>
 
-                                                        <input type="radio" class="form-check-input" id="nothing" name="riskAppetite" value="Medium Risk" checked>
-                                                        <label class="form-check-label" for="nothing" style="color: #000000">Nothing, I need to make this purchase!</label>
+                                                            <input type="radio" class="form-check-input" id="riskier" name="riskAppetite" value="High Risk" checked>
+                                                            <label class="form-check-label" for="riskier" style="color: #000000">I would re-invest in riskier assets, expecting better returns.</label>
+
+                                                            <input type="radio" class="form-check-input" id="nothing" name="riskAppetite" value="Medium Risk" checked>
+                                                            <label class="form-check-label" for="nothing" style="color: #000000">Nothing, I need to make this purchase!</label>
+                                                        </div>
                                                     </div>
+
+                                                    <a class="carousel-control-prev" href="#purchase_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <button type="submit" class="shadow btn btn-primary float-right " id="btnValidate"> Build! </button>
+
                                                 </div>
 
-                                                <!-- Controls -->
-                                        
+                                                <!-- Controls
+
                                                 <a class="carousel-control-prev" href="#purchase_questions" role="button" style="left: -10px;" data-slide="prev">
                                                     <span class="carousel-control-prev-icon" aria-hidden="false"></span>
                                                     <span class="sr-only">Previous</span>
@@ -338,13 +468,12 @@
                                                 <a class="carousel-control-next" href="#purchase_questions" role="button" data-slide="next">
                                                     <span class="carousel-control-next-icon" aria-hidden="false"></span>
                                                     <span class="sr-only">Next</span>
-                                                </a>
+                                                </a>-->
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <button type="submit" class="shadow btn btn-primary float-right " id="btnValidate"> Build! </button>
 
                             </form> 
                         </div>
@@ -363,93 +492,160 @@
                                     <div id="retire_questions" class="carousel slide" data-ride="carousel" data-wrap="false" data-interval="false">
                                         <div class="carousel-inner">
                                             
-                                            <div style="padding: 100px 250px;">
+                                            <div style="padding: 100px 40px;">
 
                                                 <div class="carousel-item active" style="width:100%; height:100%;">
                                                     <br>
 
-                                                    <h4>
-                                                        How much would you like to put down today?
-                                                    </h4>
-                                                    
-                                                    <div class="form-label-group" >
-                                                        <input name="initialInvestment" type="text" id="initialInvestmentRetire" class="form-control" placeholder="$ Amount" size="32" autofocus pattern="\d*" value="{{ questionnaire['initialInvestment'] }}">
-                                                        <label for="initialInvestmentRetire">$ Amount</label>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            How much would you like to put down today?
+                                                        </h4>
+
+                                                        <div class="form-label-group" >
+                                                            <input name="initialInvestment" type="text" id="initialInvestmentRetire" class="form-control" placeholder="$ Amount" size="32" autofocus pattern="\d*" value="{{ questionnaire['initialInvestment'] }}" onkeyup="nextButton('initialInvestmentRetire','next8',/^\d+(?:\.\d{0,2})?$/)">
+                                                            <label for="initialInvestmentRetire">$ Amount</label>
+                                                        </div>
                                                     </div>
+
+                                                    <a id="next8" style="pointer-events: none" class="carousel-control-next" href="#retire_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
                                                     <br>
 
-                                                    <h4>
-                                                        What is your current annual income?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            What is your current annual income?
+                                                        </h4>
 
-                                                    <div class="form-label-group" >
-                                                        <input name="annualIncome" type="text" id="annualIncomeRetire" class="form-control" placeholder="$ Amount" size="32"  pattern="\d*" required autofocus>
-                                                        <label for="annualIncomeRetire">$ Amount </label>
+                                                        <div class="form-label-group" >
+                                                            <input name="annualIncome" type="text" id="annualIncomeRetire" class="form-control" placeholder="$ Amount" size="32"  pattern="\d*" required autofocus onkeyup="nextButton('annualIncomeRetire','next9',/^\d+(?:\.\d{0,2})?$/)">
+                                                            <label for="annualIncomeRetire">$ Amount </label>
+                                                        </div>
                                                     </div>
+
+                                                    <a class="carousel-control-prev" href="#retire_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <a id="next9" style="pointer-events: none" class="carousel-control-next" href="#retire_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
                                                     <br>
 
-                                                    <h4>
-                                                        How old are you today?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            How old are you today?
+                                                        </h4>
 
-                                                    <div class="form-label-group" >
-                                                        <input name="age" type="text" id="age" class="form-control" placeholder="$ Amount" size="32" autofocus pattern="\d*" required>
-                                                        <label for="age"> Ages in years </label>
+                                                        <div class="form-label-group" >
+                                                            <input name="age" type="text" id="age" class="form-control" placeholder="$ Amount" size="32" autofocus required onkeyup="nextButton('age','next10',/^((1[0-9][0-9])|([1-9][1-9])|([0-9]))$/)">
+                                                            <label for="age"> Age in years </label>
+                                                        </div>
                                                     </div>
+
+                                                    <a class="carousel-control-prev" href="#retire_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <a id="next10" style="pointer-events: none" class="carousel-control-next" href="#retire_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
                                                     <br>
 
-                                                    <h4>
-                                                        When do you want to retire?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            When do you want to retire?
+                                                        </h4>
 
-                                                    <div class="form-label-group" >
-                                                        <input name="retirementDate" type="text" id="retirementDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['retirementDate'] }}">
-                                                        <label for="retirementDate"> MM/YYYY </label>
+                                                        <div class="form-label-group" >
+                                                            <input name="retirementDate" type="text" id="retirementDate" class="form-control" placeholder="MM/YYYY" size="32" autofocus value="{{ questionnaire['retirementDate'] }}" onkeyup="nextButton('retirementDate','next11',/^((0[1-9])|(1[0-2]))\/(20[2-9][0-9]|21[0-9][0-9])$/)">
+                                                            <label for="retirementDate"> MM/YYYY </label>
+                                                        </div>
                                                     </div>
+
+                                                    <a class="carousel-control-prev" href="#retire_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <a id="next11" style="pointer-events: none" class="carousel-control-next" href="#retire_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
                                                     <br>
 
-                                                    <h4>
-                                                        How much do you need for retirement?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            How much do you need for retirement?
+                                                        </h4>
 
-                                                    <div class="form-label-group" >
-                                                        <input name="retirementAmount" type="text" id="retirementAmount" class="form-control" placeholder="$ Amount" size="32" pattern="\d*" autofocus value="{{ questionnaire['retirementAmount'] }}">
-                                                        <label for="retirementAmount">$ Amount</label>
+                                                        <div class="form-label-group" >
+                                                            <input name="retirementAmount" type="text" id="retirementAmount" class="form-control" placeholder="$ Amount" size="32" pattern="\d*" autofocus value="{{ questionnaire['retirementAmount'] }}" onkeyup="nextButton('retirementAmount','next12',/^\d+(?:\.\d{0,2})?$/)">
+                                                            <label for="retirementAmount">$ Amount</label>
+                                                        </div>
                                                     </div>
+
+                                                    <a class="carousel-control-prev" href="#retire_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+
+                                                    <a id="next12" style="pointer-events: none" class="carousel-control-next" href="#retire_questions" role="button" data-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
                                                 </div>
 
                                                 <div class="carousel-item" style="width:100%; height:100%;">
 
-                                                    <h4>
-                                                        Are you able to adjust your retirement plans in 5 years? What about 10 years?
-                                                    </h4>
+                                                    <div class="questionBlock">
+                                                        <h4>
+                                                            Are you able to adjust your retirement plans in 5 years? What about 10 years?
+                                                        </h4>
 
-                                                    <div class="form-check">
-                                                        <input type="radio" class="form-check-input" id="flexible" name="riskAppetite" value="Med Risk"checked >
-                                                        <label class="form-check-label" for="flexible" style="color: #000000">Yes, I am fairly flexible when it comes to adjusting for retirement.</label>
-                                                        
-                                                        <input type="radio" class="form-check-input" id="rigid" name="riskAppetite" value="Low Risk" checked>
-                                                        <label class="form-check-label" for="rigid" style="color: #000000">I am sure I could make it work, but I do not want to. </label>
+                                                        <div class="form-check">
+                                                            <input type="radio" class="form-check-input" id="flexible" name="riskAppetite" value="Med Risk"checked >
+                                                            <label class="form-check-label" for="flexible" style="color: #000000">Yes, I am fairly flexible when it comes to adjusting for retirement.</label>
 
-                                                        <input type="radio" class="form-check-input" id="riskiest" name="riskAppetite" value="High Risk" checked>
-                                                        <label class="form-check-label" for="riskiest" style="color: #000000">Whatever will bring me to my retirement target.</label>
+                                                            <input type="radio" class="form-check-input" id="rigid" name="riskAppetite" value="Low Risk" checked>
+                                                            <label class="form-check-label" for="rigid" style="color: #000000">I am sure I could make it work, but I do not want to. </label>
+
+                                                            <input type="radio" class="form-check-input" id="riskiest" name="riskAppetite" value="High Risk" checked>
+                                                            <label class="form-check-label" for="riskiest" style="color: #000000">Whatever will bring me to my retirement target.</label>
+                                                        </div>
                                                     </div>
+
+                                                    <a class="carousel-control-prev" href="#retire_questions" role="button" style="left: -10px;" data-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+                                                    <br>
+
+                                                    <button type="submit" class="shadow btn btn-primary float-right " id="btnValidate"> Build! </button>
+
+
                                                 </div>
 
-                                                <!-- Controls -->
+                                                <!-- Controls
                                         
                                                 <a class="carousel-control-prev" href="#retire_questions" role="button" style="left: -10px;" data-slide="prev">
                                                     <span class="carousel-control-prev-icon" aria-hidden="false"></span>
@@ -459,13 +655,12 @@
                                                 <a class="carousel-control-next" href="#retire_questions" role="button" data-slide="next">
                                                     <span class="carousel-control-next-icon" aria-hidden="false"></span>
                                                     <span class="sr-only">Next</span>
-                                                </a>
+                                                </a>-->
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <button type="submit" class="shadow btn btn-primary float-right " id="btnValidate"> Build! </button>
 
                             </form> 
                         </div>
