@@ -27,7 +27,7 @@ def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=Tru
         if fail_safe:
             print(e)
 
-            data = pd.read_csv(os.getcwd() + r'/data/%s.csv' % data_point, index_col=0)
+            data = pd.read_csv(os.getcwd() + r'./%s.csv' % data_point, index_col=0)
             data.index = pd.to_datetime(data.index)
 
             print("\n\nERROR: could not retrieve new %s data ... retrieved old data" % data_point)
