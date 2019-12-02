@@ -52,7 +52,7 @@ class RNN(nn.Module):
 	def forward(self, x):
 		#x_embed = self.drop_en(x)
 		#x_embed = nn.functional.dropout(x)
-		x_embed = x.view(18, x.shape[1], -1)
+		x_embed = x.view(28, x.shape[1], -1)
 		#packed_input = pack_padded_sequence(x_embed, seq_lengths.cpu().numpy(), batch_first = True)
 		x_embed = x_embed.type(torch.FloatTensor)
 		packed_output, ht = self.rnn(x_embed, None)
