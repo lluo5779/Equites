@@ -15,7 +15,6 @@ def fetchEodPrices(fromtimeon=None, timestamp=None, get_latest=False):
         query = query + """ order by date desc limit 1"""  # select * from prices order by date desc limit 1
 
     if fromtimeon is not None:
-        print("<><><><><><><> fromtimeon: ", fromtimeon)
         query = query + """ where date between '{}' and '{}' order by date desc limit 1;""".format(
             fromtimeon.strftime('%Y-%m-%d'),
             datetime.datetime.utcnow().strftime('%Y-%m-%d'))
@@ -26,7 +25,6 @@ def fetchEodPrices(fromtimeon=None, timestamp=None, get_latest=False):
             (timestamp + datetime.timedelta(hours=1)).strftime('%Y-%m-%d'))
 
     df = pd.read_sql(query, con=Database.DATABASE.engine, index_col='date')
-    print('all prices: ', df)
 
     return df
 
@@ -41,8 +39,6 @@ class Stocks(object):
 
     def update_database(self):
         eod_prices = get_data(SYMBOLS, 'adjClose', start_date, end_date, save=True)
-        print(Database)
-        print(Database.DATABASE)
         eod_prices.to_sql(COLLECTION, con=Database.DATABASE.engine, if_exists="replace", index=True)
 
     @classmethod

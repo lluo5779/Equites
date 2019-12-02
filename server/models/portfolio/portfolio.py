@@ -156,16 +156,12 @@ class Portfolio(object):
         x1 = x1.merge(num_shares, on="username", suffixes=("", "2"), how="inner")
 
         # x1 = x1.set_index('uuid', drop=True)
-        print('WHY NO WORK: ', x1.columns)
-        print('Saving the following to database {}: '.format(COLLECTION), x1)
         x1.to_sql(COLLECTION, con=Database.DATABASE.engine, if_exists="append", index=True)
 
     def update_existing_portfolio(self, uuid, new_values={}):
         portfolio_df = pd.read_sql('select * from {}'.format(COLLECTION), con=Database.DATABASE.engine, index_col='uuid')
-        print('before: ', portfolio_df)
 
         portfolio_df.loc[uuid, list(new_values.keys())] = list(new_values.values())
-        print('after: ', portfolio_df)
         portfolio_df.to_sql(COLLECTION, con=Database.DATABASE.engine, if_exists="replace", index=True)
 
 def get_past_portfolios(username, get_all=False):
@@ -175,7 +171,6 @@ def get_past_portfolios(username, get_all=False):
         df = pd.read_sql(query,
                          Database.DATABASE.engine, index_col='uuid')
 
-        print(">>> query df: ", df)
         if not get_all:
             df = df.iloc[0]
         p1 = df[SYMBOLS]
@@ -185,11 +180,8 @@ def get_past_portfolios(username, get_all=False):
         if p2.isnull().all().all():
             p2 = p1
 
-        print("period 1: ", p1)
-        print("period 2: ", p2)
         return [p1, p2, df]
     except:
-        print("Error in fetching past portfolio from database {}".format(COLLECTION))
         p1, p2 = None, None
         return [None, None, None]
 
@@ -197,7 +189,6 @@ def getOptionTypeFromName(portfolioName):
     df= pd.read_sql(
         """select "portfolio_type" from {} where "portfolio_name" like '{}';""".format(COLLECTION, portfolioName), con=Database.DATABASE.engine)
     if len(df) == 0:
-        print(df)
         return None
 
     return df.to_numpy()[0][0]
@@ -292,9 +283,7 @@ def getOptionTypeFromName(portfolioName):
 def getUuidFromPortfolioName(portfolio_name):
     query = """select uuid from {} where "portfolio_name" like '{}';""".format(COLLECTION, portfolio_name)
     id = pd.read_sql(query, con=Database.DATABASE.engine)
-    print('id: ', id)
     if len(id) != 0:
-        print(id.values[0][0])
         return id.values[0][0]
     else:
         return None
