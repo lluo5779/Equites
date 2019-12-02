@@ -6,7 +6,7 @@ import pandas as pd
 from server.models.portfolio.config import SYMBOLS
 from server.models.stock.stock import fetchEodPrices
 
-TIINGO_KEY = '2e64578d69892c20fab750efe3ae9ed176f7c1af'  # '6d2d79e31c7c1b6bae9be7e8986b4a5fe3ce5111'
+TIINGO_KEY = '6d2d79e31c7c1b6bae9be7e8986b4a5fe3ce5111'
 TIINGO_EOD = 'https://api.tiingo.com/tiingo/daily/%s/prices?startDate=%s&endDate=%s'
 
 
