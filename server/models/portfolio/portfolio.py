@@ -39,6 +39,9 @@ class Portfolio(object):
     def __repr__(self):
         return "<Portfolio for auth {}>".format(self.username)
 
+    def set_parameters(self, x1, x2, num_shares):
+        self.x1, self.x2, self.num_shares = x1, x2, num_shares
+
     def get_portfolio(self, _id):
         query = """select * from {} where "uuid" like '{}';""".format(COLLECTION, _id)
         df = pd.read_sql(query, con=Database.DATABASE.engine)
