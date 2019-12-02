@@ -1,237 +1,144 @@
 {% extends "base.html" %}
 
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/snippet.css') }}">
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 {% endblock %}
 
 {% block script %}
-<script src="{{ url_for('static', filename='js/snippet.js') }}"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
- <script language = "JavaScript">
-        google.charts.load("current", {packages:['corechart', 'line']});
-        google.charts.setOnLoadCallback(drawChart);
-         function drawChart() {
-            var arr = (function () { /* {{ histValues }} */}).toString().split('\n').slice(1,-1).join('\n').split('...').join(" ").split("\n")
-
-            // Define the chart to be drawn.
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Month');
-            data.addColumn('number', 'Value');
-            var table = new Array;
-            for(var i = 0, len = arr.length; i < len; i++){
-                var cur = arr[i].trim().split(/\s+/);
-                table.push(new Array(cur[0], parseFloat(cur[2])));
-            }               
-            data.addRows(table);
-               
-            // Set chart options
-            var options = {'title' : 'histValues',
-               hAxis: {
-                  title: 'Date'
-               },
-               vAxis: {
-                  title: 'Value'
-               },   
-               'width':550,
-               'height':400   
-            };
-
-            // Instantiate and draw the chart.
-            var chart = new google.visualization.LineChart(document.getElementById('container'));
-            chart.draw(data, options);
-         }
-         google.charts.setOnLoadCallback(drawChart);
-      </script>
-      <script type="text/javascript">
-    // Load google charts
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    // Draw the chart and set the chart values
-    function drawChart() {
-        var arr = (function () { /* {{ weightings }} */}).toString().split(",")[0].split('\n').slice(1,-1)
-        var table = new Array;
-        table.push(['Item', 'Number'])
-            for(var i = 0, len = arr.length; i < len; i++){
-                var cur = arr[i].trim().split(/\s+/);
-                table.push(new Array(cur[0], parseFloat(cur[1])));
-            }
-
-          var data = google.visualization.arrayToDataTable(table);
-
-      // Optional; add a title and set the width and height of the chart
-      var options = {'title':'Weightings', 'width':550, 'height':400};
-
-      // Display the chart inside the <div> element with id="piechart"
-      var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-      chart.draw(data, options);
-    }
-    function nextButton(inputName, buttonID, re){
-        let nameInput = document.getElementById(inputName).value;
-        if (nameInput === "") {
-            document.getElementById(buttonID).disabled = true;
-
-        }
-        else {
-            document.getElementById(buttonID).disabled = !re.test(nameInput)
-        }
-    }
-
-    $(document).ready(function() {
-      $(window).keydown(function(event){
-        if(event.keyCode == 13) {
-          event.preventDefault();
-          return false;
-        }
-      });
-    });
-</script>
 {% endblock %}
 
 {% block content %}
-    <section>
+    <section id="main">
         <div class="container text-center">
 
             <div class="section-heading text-center">
                 <br>
-                <h2>Portfolio View</h2>
-                    <p class="text-muted">Let's take a look at this portfolio</p>
+                <h2> Portfolio View </h2>
+                    <p class="text-muted"> Click to save or edit your custom built portfolio </p>
                 <br>
             </div>
 
-
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="feature-item">
-                            <h3><script language = "JavaScript">
-                            var num = {{ histValues[-1] }};
-                            num = num.toFixed(2);
-                            document.write(num);
-                            </script></h3>
-                            <p class="text-muted"> histValues </p>
+            <div class="col-lg-12">
+                <form action="/saveportfolio" method="get">
+                    <!-- Not Displayed -->
+                    <div style="display: none;">
+                        <input type="text" name="initialInvestment" value="{{ questionnaire["initialInvestment"] }}">
+                        <input type="text" name="purchaseAmount" value="{{ questionnaire["purchaseAmount"] }}">
+                        <input type="text" name="purchaseDate" value="{{ questionnaire["purchaseDate"] }}">
+                        <input type="text" name="retirementAmount" value="{{ questionnaire["retirementAmount"] }}">
+                        <input type="text" name="retirementDate" value="{{ questionnaire["retirementDate"] }}">
+                        <input type="text" name="riskAppetite" value="{{ questionnaire["riskAppetite"] }}">
+                        <input type="text" name="weightings_1" value="{{weightings_1.to_dict()}}">
+                        <input type="text" name="weightings_2" value="{{weightings_2.to_dict()}}">
+                        <input type="text" name="num_shares" value="{{num_shares.to_dict()}}">
                     </div>
-                </div>
+                    <!-- Above is not displayed -->
+                    
+                    <div class="row">
 
-                <div class="col-lg-4">
-                    <div class="feature-item">
-                        <h3><script language = "JavaScript">
-                            var num = {{ expectedVol }};
-                            num = num.toFixed(2);
-                            document.write(num);
-                            </script> </h3>
-                        <p class="text-muted"> expectedVol </p>
-                    </div>
-                </div>
+                        <div class="col-sm-3">
+                        </div>
 
-                <div class="col-lg-4">
-                    <div class="feature-item">
-                        <h3> <script language = "JavaScript">
-                            var num = {{ risk }};
-                            num = num.toFixed(2);
-                            document.write(num);
-                            </script> </h3>
-                        <p class="text-muted"> risk </p>
+                        <div class="col-sm-6">
+                            <input type="text" name="portfolioName" id="portfolioName" placeholder="Portfolio Name..." required>
+                            <label for="portfolioName"> Name your portfolio </label>
+                        </div>
+
+                        <div class="col-sm-3">
+                        </div>
                     </div>
-                </div>
+
+                    <div class="row">
+
+                        <div class="col-sm-3">
+                        </div>
+
+                        <div class="col-sm-3">
+                            <input type="submit" class="btn" id="submit" value="Save">
+                        </div>
+                        
+                        <div class="col-sm-3">
+                            <input type="submit" class="btn" id="edit" formaction="/editportfolio" value="Edit">
+                        </div>
+
+                        <div class="col-sm-3">
+                        </div>
+
+                    </div>
+
+                </form>
             </div>
 
-            <hr>
 
-            <div class="row">
-                <div class="col-lg-8">
-                    <div>
-        
-        
-            <div id="container" class="plotly-graph-div" style="height:100%; width:100%;"></div>
-        </div>
+            <div class="col-lg-12">
+                <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="overview-tab" data-toggle="tab" href="#overview" role="tab" aria-controls="overview-tab" aria-selected="true"> Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="risk-tab" data-toggle="tab" href="#purchase" role="tab" aria-controls="risk-tab" aria-selected="false"> Risk Profile </a>
+                    </li>
+                </ul>
+
+
+                <div class="tab-content col-lg-12 justify-content: center;align-items: flex-start;margin: auto" id="myTabContent">
+                    <div class="tab-pane fade show active" id="overview-tab" role="tabpanel" aria-labelledby="overview-tab">
+                    <br>
+                    <br>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                            <h3> Asset Allocations </h3>
+                                <p class="text-muted"> Here's how the portfolio is split </p>
+                                {{pie}}
+                            </div>
+                            <br>
+                        </div>
+
+                        <div class="row">                    
+                            <div class="col-md-12">
+                                <h3> Backtested Portfolio Performance </h3>
+                                <p class="text-muted"> Review what your returns could have been over the last few months </p>
+                                {{plot}}
+                            </div>
+                            <br>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col-lg-4">
-                    <div>
-        
-        
-            <div id="piechart" class="plotly-graph-div" style="height:100%; width:100%;"></div>
-        </div>
+                <div class="tab-content col-lg-12 justify-content: center;align-items: flex-start;margin: auto" id="myTabContent">
+                    <div class="tab-pane fade show" id="risk-tab" role="tabpanel" aria-labelledby="risk-tab">
+                        <br>
+                        <br>
+                        <div class="row">                    
+                            <div class="col-md-12">
+                                <h3> Portfolio Volatility </h3>
+                                <p class="text-muted"> Here is how stable returns are </p>
+                                {{vol_plot}}
+                            </div>
+                            <br>
+                        </div>
+
+
+                        <div class="row">                    
+                            <div class="col-md-12">
+                                <h3> Portfolio Sharpe Ratio </h3>
+                                <p class="text-muted"> Here is how well the portfolio performed on a risk-adjusted basis </p>
+                                {{ sharpe_plot }}
+                            </div>
+                            <br>
+                        </div>  
+
+                        <div class="row">                    
+                            <div class="col-md-12">
+                                <h3> Portfolio Drawdowns </h3>
+                                <p class="text-muted"> Here were the bad days </p>
+                                {{ drawdown_plot}}
+                            </div>
+                            <br>
+                        </div>  
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <center>
-    <div>
-    <!--<div id = "container" style = "width: 550px; height: 400px; margin: 0 auto; float:left"></div>
-    <div id = "piechart" style = "width: 550px; height: 400px; margin: 0 auto"></div>-->
-    </div>
-    </center>
-    <form action="/saveportfolio" method="get">
-
-        <!-- Not Displayed -->
-        <div style="display: none;">
-            <input type="text" name="initialInvestment" value="{{ questionnaire["initialInvestment"] }}">
-            <input type="text" name="purchaseAmount" value="{{ questionnaire["purchaseAmount"] }}">
-            <input type="text" name="purchaseDate" value="{{ questionnaire["purchaseDate"] }}">
-            <input type="text" name="retirementAmount" value="{{ questionnaire["retirementAmount"] }}">
-            <input type="text" name="retirementDate" value="{{ questionnaire["retirementDate"] }}">
-            <input type="text" name="riskAppetite" value="{{ questionnaire["riskAppetite"] }}">
-            <input type="text" name="weightings_1" value="{{weightings_1.to_dict()}}">
-            <input type="text" name="weightings_2" value="{{weightings_2.to_dict()}}">
-            <input type="text" name="num_shares" value="{{num_shares.to_dict()}}">
-
-
-        </div>
-        <!-- Above is not displayed -->
-        <div class="row" >
-        <div class="MultiCarousel" data-items="1,3,5,6" data-slide="1" id="MultiCarousel"  data-interval="1000">
-            <div class="MultiCarousel-inner">
-
-                <div class="item">
-                    <div class="pad15">
-                        <p class="lead">expectedReturn</p>
-                        <p>{{ expectedReturn }}</p>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="pad15">
-                        <p class="lead">histValues</p>
-                        <p>{{ histValues[-1] }}</p>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="pad15">
-                        <p class="lead">expectedVol</p>
-                        <p>{{ expectedVol }}</p>
-                    </div>
-                </div>
-                                <div class="item">
-                    <div class="pad15">
-                        <p class="lead">risk</p>
-                        <p>{{ risk }}</p>
-                    </div>
-                </div>
-                                <div class="item">
-                    <div class="pad15">
-                        <p class="lead">long</p>
-                        <p>{{ long }}</p>
-                    </div>
-                </div>
-                                <div class="item">
-                    <div class="pad15">
-                        <p class="lead">short</p>
-                        <p>{{ short }}</p>
-                    </div>
-                </div>
-            </div>
-            <button class="btn btn-primary leftLst"><</button>
-            <button class="btn btn-primary rightLst">></button>
-        </div>
-    </div>
-</div>
-
-        <input type="text" name="portfolioName" id="portfolioName" placeholder="Portfolio Name...">
-        <input type="submit" id="submit" value="Save">
-        <input type="submit" id="edit" formaction="/editportfolio" value="Edit" disabled>
-    </form>
 {% endblock %}

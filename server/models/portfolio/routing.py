@@ -456,8 +456,6 @@ def portfolioview():
         total_target = float(questionnaire["purchaseAmount"]) / float(questionnaire["initialInvestment"])
         return_target = total_target / (2 * horizon)
 
-
-
     aversion = 1 if questionnaire['riskAppetite'] == 'High Risk' else (
         1 if questionnaire['riskAppetite'] == 'Med Risk' else 3)
 
@@ -478,6 +476,71 @@ def portfolioview():
                        return_target=return_target,
                        budget=float(questionnaire["initialInvestment"]))
 
+    # backtest over the previous 6 months
+    values = back_test(p.x1.to_dict()['weight'],
+                                start_date=None,
+                                end_date=None,
+                                dollars=float(questionnaire["initialInvestment"]),
+                                tore=False)[0].sum(axis=1)[-132:]
+
+    back_returns = (values / values.shift(1) - 1).dropna()
+    port_values = cum_returns(back_returns, float(questionnaire["initialInvestment"]))
+
+    # PORTFOLIO HOLDINGS
+    pie_weights = p.x1.loc[p.x1['weight'] != 0]
+    pie = plotly.offline.plot({"data": [Pie(labels=pie_weights.index, values=pie_weights['weight'].round(2), hole=.1)]},
+                              output_type='div',
+                              include_plotlyjs=False,
+                              show_link=False,
+                              config={"displayModeBar": False})
+
+    # CUMULATIVE RETURNS
+    plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines',
+                                          line=dict(color='#3B4F66'))
+    plot = plotly.offline.plot({"data": plot_data},
+                               output_type='div',
+                               include_plotlyjs=False,
+                               show_link=False,
+                               config={"displayModeBar": False})
+
+    # calculate returns from the portfolio
+    port_returns = (port_values / port_values.shift(1) - 1).dropna()
+
+    # ROLLING VOLATILITY
+    vols = rolling_volatility(port_returns, 10).dropna()
+    vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines',
+                                               line=dict(color='#3B4F66'))
+    vols_plot = plotly.offline.plot({"data": vols_plot_data},
+                                    output_type='div',
+                                    include_plotlyjs=False,
+                                    show_link=False,
+                                    config={"displayModeBar": False})
+
+    # ROLLING SHARPE
+    sharpe = rolling_sharpe(port_returns, 10).dropna()
+    sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines',
+                                                 line=dict(color='#3B4F66'))
+    sharpe_plot = plotly.offline.plot({"data": sharpe_plot_data},
+                                      output_type='div',
+                                      include_plotlyjs=False,
+                                      show_link=False,
+                                      config={"displayModeBar": False})
+
+    # detailed statistics
+    underwater = drawdown_underwater(port_returns)
+    underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines',
+                                                line=dict(color='#3B4F66'))
+    underwater_plot = plotly.offline.plot({"data": underwater_data},
+                                          output_type='div',
+                                          include_plotlyjs=False,
+                                          show_link=False,
+                                          config={"displayModeBar": False})
+
+    total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
+    min_value = round(min(port_values), 2)
+    max_value = round(max(port_values), 2)
+    stats = [total_returns, min_value, max_value]
+
     weightings = [p.x1, p.x2]
     num_shares = p.num_shares.T
 
@@ -487,7 +550,6 @@ def portfolioview():
 
     start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
 
-    print(p.x1.to_dict())
     histValues = back_test(p.x1.to_dict()[list(p.x1.to_dict().keys())[0]], start_date)[0].sum(axis=1) \
                  * float(questionnaire['initialInvestment'])
     # if is_new_portfolio:
@@ -495,14 +557,10 @@ def portfolioview():
     # else:
     #     print(p.x1.to_dict())
     #     p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
-    print('FINISHED')
     #risk=risk,
     #  expectedRet=expectedReturn, expectedVol=expectedVol,
     return render_template('portfolioview.jinja2', title='Sign In', weightings_1=weightings[0], weightings_2=weightings[1], histValues=histValues, long=None,
-                           short=None, portfolioName=portfolio_name, questionnaire=questionnaire, num_shares=num_shares)
-    # except:
-    #     return render_template('OptionDecision.jinja2')
-
+                           short=None, portfolioName=portfolio_name, questionnaire=questionnaire, num_shares=num_shares, pie=pie, plot=plot, vols_plot=vols_plot, sharpe_plot=sharpe_plot, underwater_plot=underwater_plot, stats=stats)
 
 def portfoliosnapshot():
     """
@@ -630,8 +688,6 @@ def portfoliodashboard():
     """
 
     portfolio_name = request.args.get('portfolioName')
-    username = 'test1'  # current_user.username
-    print('username: ', username)
 
     _id = getUuidFromPortfolioName(portfolio_name)
     if _id is None:
@@ -639,15 +695,12 @@ def portfoliodashboard():
     p = Portfolio(username=username, _id=_id, generate_new=False)
 
     start_date = (datetime.now() - relativedelta(months=6)).strftime("%Y-%m-%d")
-    print('p.x1.to_dict(): ', p.x1.to_dict())
     histValues = back_test(p.x1.to_dict()[list(p.x1.to_dict().keys())[0]], start_date)[0].sum(axis=1)
-    print('port hist: ', histValues)
 
     returnSinceInception = histValues.apply(lambda x: round((x - 1) * 100, 2))
 
     portfolioInitialValue = p.budget
     histValues = histValues.apply(lambda x: x * portfolioInitialValue)
-    print('port hist: ', histValues)
 
     # initial portfolio value (wont be in list above if port is > 1yr old)
     # for i in range(len(histValues)):
@@ -658,7 +711,6 @@ def portfoliodashboard():
     weightings = p.x1.to_numpy().flatten()
     tickers = p.x1.columns
 
-    print(weightings)
     short = []
     long = []
     for i in range(len(weightings)):
@@ -675,7 +727,6 @@ def portfoliodashboard():
     risk = questionnaire['riskAppetite']
     # populate rest of questionnaire with ""
     questionnaire = populateQuestionnaire(questionnaire, option_type)
-    print(">>> questionnaire: ", questionnaire)
 
     # regime? bull/bear
     if 'purchase' in option_type.lower():
@@ -723,7 +774,6 @@ def editportfolio():
         for question in op_to_q_map[option_type]:
             questionnaire[question] = request.args.get(question)
 
-        print("questionnaire: ", questionnaire)
 
     # populate rest of questionnaire with ""
     questionnaire = populateQuestionnaire(questionnaire, option_type)
@@ -748,8 +798,6 @@ def editportfolio():
 
 
 def saveportfolio():
-
-
     username = current_user.username
 
     # Updating questionnaire data
@@ -767,12 +815,10 @@ def saveportfolio():
     is_new_portfolio = False
 
     if option_type not in op_to_q_map:
-        print(option_type)
         raise ValueError("Bad option type. Something went terribly wrong.")
 
     for question in op_to_q_map[option_type]:
         if 'Date' in question:
-            print(request.args.get(question))
             raw_dates = request.args.get(question).split('-')
             try:
                 questionnaire[question] = datetime(int(raw_dates[0]), int(raw_dates[1]), 1)
@@ -780,8 +826,6 @@ def saveportfolio():
                 questionnaire[question] = datetime(int(raw_dates[0]), 1, 1)
         else:
             questionnaire[question] = request.args.get(question)
-
-    print("questionnaire: ", questionnaire)
 
     _id = getUuidFromPortfolioName(portfolio_name)
     # need to check if request no uuid, will create uuid
@@ -799,9 +843,7 @@ def saveportfolio():
     if is_new_portfolio:
         p.make_new_portfolios(questionnaire['initialInvestment'], option_type, portfolio_name)
     else:
-        print(p.x1.to_dict())
         p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
-    print('FINISHED')
     return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
 
 

@@ -39,7 +39,6 @@ from dateutil.relativedelta import relativedelta
 
 def back_test(portfolio, start_date, end_date=None, dollars=None, tore=False):
 
-    print('portfolio, ', portfolio)
     if end_date is None: end_date = datetime.now().strftime("%Y-%m-%d")
     if dollars is None: dollars = 1
 
@@ -58,7 +57,6 @@ def back_test(portfolio, start_date, end_date=None, dollars=None, tore=False):
     # check if any prices are missing ... if so drop the row
     if prices.isnull().values.any():
         msg += "\nWARNING: there are %f missing price entries ... truncating to a common base."
-        print("\n\n{}".format(msg))
 
         prices.dropna(inplace=True)
 

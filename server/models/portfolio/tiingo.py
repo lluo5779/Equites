@@ -25,18 +25,11 @@ def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=Tru
 
     except Exception as e:
         if fail_safe:
-            print(e)
 
             data = pd.read_csv(os.getcwd() + r'./%s.csv' % data_point, index_col=0)
             data.index = pd.to_datetime(data.index)
-
-            print("\n\nERROR: could not retrieve new %s data ... retrieved old data" % data_point)
-            print('finished retrieving %s data in %f seconds.\n' % (data_point, time.time() - start))
-
             return data
         else:
-            print("\n\nERROR: could not retrieve new %s data." % data_point)
-
             return None
 
     data.index = pd.to_datetime(data.index, utc=True)
