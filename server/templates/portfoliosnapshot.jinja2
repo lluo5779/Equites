@@ -7,12 +7,12 @@
 
         {% block content %}
 
-<body>
+<section id="main">
 
 <br><br>
     <div class="container">
-        <h1>My Portfolios</h1>
-        <p>You can view your portfolios here. Click a portfolio to view its details, or edit its contents.</p>
+        <h1 class="text-center">My Portfolios</h1>
+        <p class="text-center">You can view your portfolios here. Click a portfolio to view its details, or edit its contents.</p>
 
         <div class="fadeIn d-block">
             <h2>Wealth Accounts</h2>
@@ -106,7 +106,7 @@
 </div>
 <hr>
     <div class="fadeIn d-block">
-        <h2>Retirements Accounts</h2>
+        <h2>Retirement Accounts</h2>
         {% if retirement['portfolioName']| length == 0 %}
         <p>You dont have any retirement accounts with us right now. <a href="/build"><span onMouseOver="this.style.color='#a6e66e'" onMouseOut="this.style.color='#000'">Click here to make that
             first step towards your dream retirement!</span></a></p>
@@ -156,5 +156,5 @@
 
 
 <br><br>
-</body>
+</section>
 {% endblock %}
