@@ -748,8 +748,6 @@ def editportfolio():
 
 
 def saveportfolio():
-
-
     username = current_user.username
 
     # Updating questionnaire data
