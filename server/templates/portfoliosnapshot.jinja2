@@ -1,70 +1,160 @@
 {% extends "base.html" %}
 
-{% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/snippet.css') }}">
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-{% endblock %}
-
-{% block script %}
 <script src="{{ url_for('static', filename='js/snippet.js') }}"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
- 
-{% endblock %}
 
-{% block content %}
-    {% for i in range(portfolioNames| length) %}
-      <script language = "JavaScript">
+        {% block content %}
 
-      </script>
-        <section>
-        <div class="container text-center">
+<body>
 
-            <div class="section-heading text-center">
-                <br>
-                <h2>{{ portfolioNames[i] }}</h2>
-                    <p class="text-muted">Portfolio Names</p>
-                <br>
-            </div>
+<br><br>
+    <div class="container">
+        <h1>My Portfolios</h1>
+        <p>You can view your portfolios here. Click a portfolio to view its details, or edit its contents.</p>
+
+        <div class="fadeIn d-block">
+            <h2>Wealth Accounts</h2>
+            {% if wealth['portfolioName']| length == 0 %}
+            <p >You dont have any wealth accounts with us right now. <a href="/build"><span onMouseOver="this.style.color='#a6e66e'" onMouseOut="this.style.color='#000'">Click here to make that
+                first step towards having a sustainable investment income!</span></a></p>
+            {% else %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Portfolio Name</th>
+                        <th>Initial Investment</th>
+                        <th>Portfolio Growth</th>
+                        <th>Inception date</th>
+
+                    </tr>
+                    </thead>
+                    {% for i in range(wealth['portfolioName']| length) %}
+
+                    <tbody>
+                    <tr onclick=
+                    {{"location.href='/portfoliodashboard?portfolioName="+wealth['portfolioName'][i]+"'"}}
+                    style="cursor:
+                    pointer;">
+                    <td style="text-align:center">{{i}}</td>
+                    <td style="text-align:center">{{wealth.portfolioName[i]}}</td>
+                    <td style="text-align:center">{{wealth.budget[i]}}</td>
+                    <td style="text-align:center">{{wealth.returns[i]}}</td>
+                    <td style="text-align:center">{{wealth.start_date[i] if wealth.start_date[i] else 'n/a'}}</td>
+                    </tr>
+                </tbody>
+
+                {% endfor %}
 
 
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="feature-item">
-<!--
-                            <p class="text-muted"> histValues </p>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="feature-item">
-                        <h3>  </h3>
-                        <p class="text-muted"> </p>
-                    </div>
-                </div>
-
-                <
-            </div>
-
-            <hr>
-
-            <div class="row">
-                <div class="col-lg-8">
-                    <div>
-        
-        
-            <div id="container" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+            </table>
         </div>
-                </div>
-            </div>
-        </div>
-    </section>
-        <!--<center><div id = "container" style = "width: 550px; height: 400px; margin: 0 auto"></div></center>-->
-        <form action="/portfoliodashboard" method="get">
+        {% endif %}
+    </div>
+    <hr>
 
-            <input type="submit" value="See Portofolio">
-         </form>
+    <div class="fadeIn d-block">
+        <h2>Purchase Accounts</h2>
+        {% if purchase['portfolioName']| length == 0 %}
+        <p>You dont have any purchase accounts with us right now. <a href="/build"><span onMouseOver="this.style.color='#a6e66e'" onMouseOut="this.style.color='#000'">Click here to make that
+            first step towards your dream purchase!</span></a></p>
+        {% else %}
+        <div class="table-responsive">
 
-    {% endfor %}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Portfolio Name</th>
+                    <th>Initial Investment</th>
+                    <th>Portfolio Growth</th>
+                    <th>Investment Target</th>
+                    <th>Percentage Reached</th>
+                    <th>Inception date</th>
+                    <th>Maturation</th>
+
+                </tr>
+                </thead>
+
+                {% for i in range(purchase['portfolioName']| length) %}
+
+                <tbody>
+                <tr onclick=
+                {{"location.href='/portfoliodashboard?portfolioName="+purchase['portfolioName'][i]+"'"}} style="cursor:
+                pointer;">
+                <td style="text-align:center">{{i}}</td>
+                <td style="text-align:center">{{purchase.portfolioName[i]}}</td>
+                <td style="text-align:center">{{purchase.budget[i]}}</td>
+                <td style="text-align:center">{{purchase.returns[i]}}</td>
+                <td style="text-align:center">{{purchase.targetAmount[i]}}</td>
+                <td style="text-align:center">{{purchase.percentCompleted[i]}}</td>
+                <td style="text-align:center">{{purchase.start_date[i] if purchase.start_date[i] else 'n/a'}}</td>
+                <td style="text-align:center">{{purchase.end_date[i] if purchase.end_date[i] else 'n/a'}}</td>
+                </tr>
+            </tbody>
+
+            {% endfor %}
+
+        </table>
+
+
+    </div>
+    {% endif %}
+</div>
+<hr>
+    <div class="fadeIn d-block">
+        <h2>Retirements Accounts</h2>
+        {% if retirement['portfolioName']| length == 0 %}
+        <p>You dont have any retirement accounts with us right now. <a href="/build"><span onMouseOver="this.style.color='#a6e66e'" onMouseOut="this.style.color='#000'">Click here to make that
+            first step towards your dream retirement!</span></a></p>
+        {% else %}
+        <div class="table-responsive">
+
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Portfolio Name</th>
+                    <th>Initial Investment</th>
+                    <th>Portfolio Growth</th>
+                    <th>Investment Target</th>
+                    <th>Percentage Reached</th>
+                    <th>Inception date</th>
+                    <th>Maturation</th>
+
+                </tr>
+                </thead>
+                {% for i in range(retirement['portfolioName']| length) %}
+
+                <tbody>
+                <tr onclick=
+                {{"location.href='/portfoliodashboard?portfolioName="+retirement['portfolioName'][i]+"'"}}
+                style="cursor:
+                pointer;">
+                <td style="text-align:center">{{i}}</td>
+                <td style="text-align:center">{{retirement.portfolioName[i]}}</td>
+                <td style="text-align:center">{{retirement.budget[i]}}</td>
+                <td style="text-align:center">{{retirement.returns[i]}}</td>
+                <td style="text-align:center">{{retirement.targetAmount[i]}}</td>
+                <td style="text-align:center">{{retirement.percentCompleted[i]}}</td>
+                <td style="text-align:center">{{retirement.start_date[i] if retirement.start_date[i] else 'n/a'}}</td>
+                <td style="text-align:center">{{retirement.end_date[i] if retirement.end_date[i] else 'n/a'}}</td>
+                </tr>
+            </tbody>
+
+            {% endfor %}
+
+
+        </table>
+    </div>
+    {% endif %}
+</div>
+</div>
+
+
+<br><br>
+</body>
 {% endblock %}
