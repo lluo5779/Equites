@@ -704,6 +704,7 @@ def portfoliodashboard():
     _id = getUuidFromPortfolioName(portfolio_name)
     if _id is None:
         return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
+
     p = Portfolio(username=username, _id=_id, generate_new=False)
 
     df_to_display = fetch_all_questionnaires(username)
@@ -1048,7 +1049,39 @@ def saveportfolio():
 
     # Updating the portfolio data
     p = Portfolio(username, _id=_id, generate_new=is_new_portfolio)
-    p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
+
+    if option_type == "Wealth":
+        horizon, return_target = 10, 0.15
+    elif option_type == "Retirement":
+        horizon = relativedelta(questionnaire["retirementDate"], datetime.today()).years
+        horizon = 1 if horizon == 0 else horizon
+        total_target = float(questionnaire["retirementAmount"]) / float(questionnaire["initialInvestment"])
+        return_target = total_target / (2 * horizon)
+    else:
+        horizon = relativedelta(questionnaire["purchaseDate"], datetime.today()).years
+        horizon = 1 if horizon == 0 else horizon
+        total_target = float(questionnaire["purchaseAmount"]) / float(questionnaire["initialInvestment"])
+        return_target = total_target / (2 * horizon)
+
+    aversion = 1 if questionnaire['riskAppetite'] == 'High Risk' else (
+        1 if questionnaire['riskAppetite'] == 'Med Risk' else 3)
+
+    alpha, multipliers, exposures, cardinality = risk_prefs(horizon,
+                                                            aversion,
+                                                            cardinal=15,
+                                                            return_target=return_target,
+                                                            l=5,
+                                                            mu_bl1=p.mu_bl1,
+                                                            mu_bl2=p.mu_bl2,
+                                                            cov_bl1=p.cov_bl1)
+
+    # assign the risk tolerances, specifying a SHARPE optimization
+    risk_tolerance = (multipliers, exposures, cardinality, 'MCVAR')
+
+    p.run_optimization(risk_tolerance=risk_tolerance,
+                       alpha=alpha,
+                       return_target=return_target,
+                       budget=float(questionnaire["initialInvestment"]))
 
     if is_new_portfolio:
         p.make_new_portfolios(questionnaire['initialInvestment'], option_type, portfolio_name)
