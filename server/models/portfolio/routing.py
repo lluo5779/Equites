@@ -8,11 +8,13 @@ from server.models.auth.schema import User
 from server.common.database import Database
 from server.models.portfolio.rs import business_days
 from server.models.portfolio.risk import risk_prefs
-from server.models.portfolio.portfolio import Portfolio, getUuidFromPortfolioName, get_past_portfolios, getOptionTypeFromName
+from server.models.portfolio.portfolio import Portfolio, getUuidFromPortfolioName, get_past_portfolios, \
+    getOptionTypeFromName
 from server.models.stock.stock import Stocks
 from server.models.portfolio.config import COLLECTION, START_DATE, END_DATE, SYMBOLS
 from server.models.portfolio.bt import back_test
-from server.models.user_preferences.user_preferences import fetch_latest_questionnaire_from_type, fetch_questionnaire_from_uuid_and_type, update_new_questionnaire, initialize_new_questionnaire
+from server.models.user_preferences.user_preferences import fetch_latest_questionnaire_from_type, \
+    fetch_questionnaire_from_uuid_and_type, update_new_questionnaire, initialize_new_questionnaire
 import urllib
 from datetime import datetime
 from scipy.stats.mstats import gmean
@@ -25,13 +27,17 @@ import flask
 from plotly.graph_objs import Scatter, Pie, Layout
 import plotly.graph_objects as go
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 from io import BytesIO
 from flask import Blueprint
 import urllib
 import base64
 import plotly.offline
 
-from server.models.user_preferences.user_preferences import fetch_latest_questionnaire_from_type, fetch_questionnaire_from_uuid_and_type, update_new_questionnaire, initialize_new_questionnaire, fetch_all_questionnaires
+from server.models.user_preferences.user_preferences import fetch_latest_questionnaire_from_type, \
+    fetch_questionnaire_from_uuid_and_type, update_new_questionnaire, initialize_new_questionnaire, \
+    fetch_all_questionnaires
 from server.models.portfolio.tiingo import get_data
 from server.models.portfolio.bt import back_test
 from server.models.stock.stock import Stocks, fetchEodPrices
@@ -58,7 +64,7 @@ def track():
 
             # rolling days assignment
             bt_days = business_days(start_date, end_date)
-            rolling = 100 if bt_days > 1000 else max(int(bt_days/10), 1)
+            rolling = 100 if bt_days > 1000 else max(int(bt_days / 10), 1)
 
             portfolio_data = args[2:]
 
@@ -83,7 +89,8 @@ def track():
                                       config={"displayModeBar": False})
 
             # CUMULATIVE RETURNS
-            plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines', line = dict(color = '#3B4F66'))
+            plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines',
+                                                  line=dict(color='#3B4F66'))
             plot = plotly.offline.plot({"data": plot_data},
                                        output_type='div',
                                        include_plotlyjs=False,
@@ -95,31 +102,34 @@ def track():
 
             # ROLLING VOLATILITY
             vols = rolling_volatility(port_returns, rolling).dropna()
-            vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines', line = dict(color = '#3B4F66'))
+            vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines',
+                                                       line=dict(color='#3B4F66'))
             vols_plot = plotly.offline.plot({"data": vols_plot_data},
-                                       output_type='div',
-                                       include_plotlyjs=False,
-                                       show_link=False,
-                                       config={"displayModeBar": False})
+                                            output_type='div',
+                                            include_plotlyjs=False,
+                                            show_link=False,
+                                            config={"displayModeBar": False})
 
             # ROLLING SHARPE
             sharpe = rolling_sharpe(port_returns, rolling).dropna()
-            sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines', line = dict(color = '#3B4F66'))
+            sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines',
+                                                         line=dict(color='#3B4F66'))
             sharpe_plot = plotly.offline.plot({"data": sharpe_plot_data},
-                                       output_type='div',
-                                       include_plotlyjs=False,
-                                       show_link=False,
-                                       config={"displayModeBar": False})
-
-            # detailed statistics
-            underwater = drawdown_underwater(port_returns)
-
-            underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines', line = dict(color = '#3B4F66'))
-            underwater_plot = plotly.offline.plot({"data": underwater_data},
                                               output_type='div',
                                               include_plotlyjs=False,
                                               show_link=False,
                                               config={"displayModeBar": False})
+
+            # detailed statistics
+            underwater = drawdown_underwater(port_returns)
+
+            underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines',
+                                                        line=dict(color='#3B4F66'))
+            underwater_plot = plotly.offline.plot({"data": underwater_data},
+                                                  output_type='div',
+                                                  include_plotlyjs=False,
+                                                  show_link=False,
+                                                  config={"displayModeBar": False})
 
             # DRAWDOWN
             drawdown = drawdown_table(port_returns)
@@ -136,12 +146,10 @@ def track():
                                            show_link=False,
                                            config={"displayModeBar": False})
 
-
             total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
             min_value = round(min(port_values), 2)
             max_value = round(max(port_values), 2)
             stats = [total_returns, min_value, max_value]
-
 
             return render_template('Option1.jinja2',
                                    display=True,
@@ -159,6 +167,7 @@ def track():
 
         else:
             return render_template('Option1.jinja2', display=False, error=True)
+
 
 
 @login_required
@@ -305,7 +314,6 @@ def enhance():
         else:
             return render_template('Option2.jinja2', display=False, error=(not success))
 
-
 # @login_required
 def option2():
     weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -435,10 +443,39 @@ def portfolioview():
     # TODO: current_user.username
     p = Portfolio('test1', _id=_id, generate_new=is_new_portfolio)
 
+    if option_type == "Wealth":
+        horizon, return_target = 10, 0.15
+    elif option_type == "Retirement":
+        horizon = relativedelta(questionnaire["retirementDate"], datetime.today()).years
+        total_target =  float(questionnaire["retirementAmount"]) / float(questionnaire["initialInvestment"])
+        return_target = total_target / (2 * horizon)
+    else:
+        horizon = relativedelta(questionnaire["purchaseDate"], datetime.today()).years
+        total_target = float(questionnaire["purchaseAmount"]) / float(questionnaire["initialInvestment"])
+        return_target = total_target / (2 * horizon)
+
+    aversion = 1 if questionnaire['riskAppetite'] == 'High Risk' else (1 if questionnaire['riskAppetite'] == 'Med Risk' else 3)
+
+    alpha, multipliers, exposures, cardinality = risk_prefs(horizon,
+                                                            aversion,
+                                                            cardinal=15,
+                                                            return_target=return_target,
+                                                            l=5,
+                                                            mu_bl1=p.mu_bl1,
+                                                            mu_bl2=p.mu_bl2,
+                                                            cov_bl1=p.cov_bl1)
+
+    # assign the risk tolerances, specifying a SHARPE optimization
+    risk_tolerance = (multipliers, exposures, cardinality, 'MCVAR')
+
     if is_new_portfolio:
-        p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
+        p.run_optimization(risk_tolerance=risk_tolerance,
+                           alpha=alpha,
+                           return_target=return_target,
+                           budget=float(questionnaire["initialInvestment"]))[0]
 
     weightings = [p.x1, p.x2]
+
     expectedReturn = p.get_portfolio_return()
     expectedVol = p.get_portfolio_volatility()
     risk = p.get_portfolio_cvar()
@@ -489,29 +526,39 @@ def portfoliosnapshot():
 
     holding_names = [x + "_holdings" for x in SYMBOLS]
     latest_holdings = all_past_p[2][holding_names]
-    df_to_display['percentCompleted'] = np.nan
-    df_to_display['targetAmount'] = np.nan
-    df_to_display['start_date'] = np.nan
+    df_to_display['percentCompleted'] = ""
+    df_to_display['targetAmount'] = ""
+    df_to_display['start_date'] = ""
+    df_to_display['returns'] = 0
     for _id, portfolio in latest_holdings.iterrows():
         # iterating over each portfolio
+
+        portfolio.index = SYMBOLS
+        start_date = all_past_p[2].loc[_id, 'timestamp'].to_pydatetime()
+        portfolio_value = latest_prices.dot(portfolio)
+        df_to_display.loc[_id, 'start_date'] = start_date.strftime("%Y-%m")
+
         if investment_target.loc[_id] == "":
             # if wealth portfolio
             continue
-        portfolio.index = SYMBOLS
-        start_date = all_past_p[2].loc[_id, 'timestamp'].to_pydatetime()
-        portfolio_value = latest_prices.mul(portfolio).sum(axis=1)
-        current_return = portfolio_value/investment_target.loc[_id]
-        df_to_display['start_date'] = start_date.strftime("%Y-%m")
+        current_return = portfolio_value / investment_target.loc[_id]
 
-        df_to_display['targetAmount']= investment_target.loc[_id]
-        df_to_display.loc[_id, 'percentCompleted'] = current_return.values[0]
+        df_to_display.loc[_id, 'returns'] = round(current_return.values[0],2)
+        df_to_display.loc[_id, 'end_date'] = df_to_display.loc[_id, 'end_date'].strftime("%Y-%m")
+        df_to_display.loc[_id, 'targetAmount'] = round(investment_target.loc[_id],2)
+        df_to_display.loc[_id, 'percentCompleted'] = str(round(current_return.values[0],2)) + "%"
 
-    return render_template('portfoliosnapshot.jinja2', title='optiondecision', budget=df_to_display['budget'],
-                           portfolioNames=df_to_display['portfolioName'], targetAmount=df_to_display['targetAmount'], percentCompleted=df_to_display['percentCompleted'],
-                           startDates=df_to_display['start_date'], endDates=df_to_display['end_date'])
+    return render_template('portfoliosnapshot.jinja2', title='optiondecision',
+                           purchase=df_to_display[df_to_display['optionType'] == "purchase"],
+                           retirement=df_to_display[df_to_display['optionType'] == "retirement"],
+                           wealth=df_to_display[df_to_display['optionType'] == "wealth"])
 
-        # start_date = pd.to_datetime(all_past_p[2]['timestamp'], unit='s', utc=True)
-        # df_to_display['start_date'] = start_date
+    # return render_template('portfoliosnapshot.jinja2', title='optiondecision', budget=df_to_display['budget'],
+    #                        portfolioNames=df_to_display['portfolioName'], targetAmount=df_to_display['targetAmount'], percentCompleted=df_to_display['percentCompleted'],
+    #                        startDates=df_to_display['start_date'], endDates=df_to_display['end_date'], optionTypes=df_to_display['optionType'])
+
+    # start_date = pd.to_datetime(all_past_p[2]['timestamp'], unit='s', utc=True)
+    # df_to_display['start_date'] = start_date
 
     # all_past_p = get_past_portfolios(username=username, get_all=True)
     # print(">>> all_past_p: ", all_past_p)
@@ -731,10 +778,6 @@ def saveportfolio():
 
     # Updating the portfolio data
     p = Portfolio(username, _id=_id, generate_new=is_new_portfolio)
-
-    risk_prefs(horizon, aversion, cardinal, return_target, l, mu_bl1, mu_bl2, cov_bl1)
-
-
     p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
 
     if is_new_portfolio:
