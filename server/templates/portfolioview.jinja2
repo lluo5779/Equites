@@ -69,20 +69,19 @@
                 </form>
             </div>
 
+<!--            <div class="col-lg-12">-->
+<!--                <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link active" id="overview-tab-selector" data-toggle="tab" href="#overview-tab" role="tab" aria-controls="overview-tab" aria-selected="true"> Overview</a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" id="risk-tab-selector" data-toggle="tab" href="#risk-tab" role="tab" aria-controls="risk-tab" aria-selected="false"> Risk Profile </a>-->
+<!--                    </li>-->
+<!--                </ul>-->
 
-            <div class="col-lg-12">
-                <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="overview-tab-selector" data-toggle="tab" href="#overview-tab" role="tab" aria-controls="overview-tab" aria-selected="true"> Overview</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="risk-tab-selector" data-toggle="tab" href="#risk-tab" role="tab" aria-controls="risk-tab" aria-selected="false"> Risk Profile </a>
-                    </li>
-                </ul>
 
-
-                <div class="tab-content col-lg-12 justify-content: center;align-items: flex-start;margin: auto" id="myTabContent">
-                    <div class="tab-pane active" id="overview-tab" role="tabpanel" aria-labelledby="overview-tab">
+                <div class="col-lg-12 justify-content: center;align-items: flex-start;margin: auto" id="myTabContent">
+                    <h2>Overview</h2>
                         <br>
                         <br>
 
@@ -95,7 +94,7 @@
                             <br>
                         </div>
 
-                        <div class="row">                    
+                        <div class="row">
                             <div class="col-md-12">
                                 <h3> Backtested Portfolio Performance </h3>
                                 <p class="text-muted"> Review what your returns could have been over the last few months </p>
@@ -105,10 +104,12 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="risk-tab" role="tabpanel" aria-labelledby="risk-tab">
+                    <h2>Risk Profile</h2>
+                    <div class="" id="risk-tab" role="tabpanel" aria-labelledby="risk-tab">
+
                         <br>
                         <br>
-                        <div class="row">                    
+                        <div class="row">
                             <div class="col-md-12">
                                 <h3> Portfolio Volatility </h3>
                                 <p class="text-muted"> Here is how stable returns are </p>
@@ -118,26 +119,96 @@
                         </div>
 
 
-                        <div class="row">                    
+                        <div class="row">
                             <div class="col-md-12">
                                 <h3> Portfolio Sharpe Ratio </h3>
                                 <p class="text-muted"> Here is how well the portfolio performed on a risk-adjusted basis </p>
                                 {{ sharpe_plot }}
                             </div>
                             <br>
-                        </div>  
+                        </div>
 
-                        <div class="row">                    
+                        <div class="row">
                             <div class="col-md-12">
                                 <h3> Portfolio Drawdowns </h3>
                                 <p class="text-muted"> Here were the bad days </p>
                                 {{ underwater_plot }}
                             </div>
                             <br>
-                        </div>  
+                        </div>
                     </div>
                 </div>
             </div>
+
+
+<!--            <div class="col-lg-12">-->
+<!--                <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link active" id="overview-tab-selector" data-toggle="tab" href="#overview-tab" role="tab" aria-controls="overview-tab" aria-selected="true"> Overview</a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" id="risk-tab-selector" data-toggle="tab" href="#risk-tab" role="tab" aria-controls="risk-tab" aria-selected="false"> Risk Profile </a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+
+
+<!--                <div class="tab-content col-lg-12 justify-content: center;align-items: flex-start;margin: auto" id="myTabContent">-->
+<!--                    <div class="tab-pane active" id="overview-tab" role="tabpanel" aria-labelledby="overview-tab">-->
+<!--                        <br>-->
+<!--                        <br>-->
+
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-12">-->
+<!--                            <h3> Asset Allocations </h3>-->
+<!--                                <p class="text-muted"> Here's how the portfolio is split </p>-->
+<!--                                {{pie}}-->
+<!--                            </div>-->
+<!--                            <br>-->
+<!--                        </div>-->
+
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-12">-->
+<!--                                <h3> Backtested Portfolio Performance </h3>-->
+<!--                                <p class="text-muted"> Review what your returns could have been over the last few months </p>-->
+<!--                                {{plot}}-->
+<!--                            </div>-->
+<!--                            <br>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <div class="tab-pane" id="risk-tab" role="tabpanel" aria-labelledby="risk-tab">-->
+<!--                        <br>-->
+<!--                        <br>-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-12">-->
+<!--                                <h3> Portfolio Volatility </h3>-->
+<!--                                <p class="text-muted"> Here is how stable returns are </p>-->
+<!--                                {{vols_plot}}-->
+<!--                            </div>-->
+<!--                            <br>-->
+<!--                        </div>-->
+
+
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-12">-->
+<!--                                <h3> Portfolio Sharpe Ratio </h3>-->
+<!--                                <p class="text-muted"> Here is how well the portfolio performed on a risk-adjusted basis </p>-->
+<!--                                {{ sharpe_plot }}-->
+<!--                            </div>-->
+<!--                            <br>-->
+<!--                        </div>-->
+
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-12">-->
+<!--                                <h3> Portfolio Drawdowns </h3>-->
+<!--                                <p class="text-muted"> Here were the bad days </p>-->
+<!--                                {{ underwater_plot }}-->
+<!--                            </div>-->
+<!--                            <br>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     </section>
 {% endblock %}
