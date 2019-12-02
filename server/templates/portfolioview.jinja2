@@ -4,10 +4,96 @@
 {% endblock %}
 
 {% block script %}
+<<<<<<< HEAD
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+=======
+<script src="{{ url_for('static', filename='js/snippet.js') }}"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+ <script language = "JavaScript">
+        google.charts.load("current", {packages:['corechart', 'line']});
+        google.charts.setOnLoadCallback(drawChart);
+         function drawChart() {
+            var arr = (function () { /* {{ histValues }} */}).toString().split('\n').slice(1,-1).join('\n').split('...').join(" ").split("\n")
+
+            // Define the chart to be drawn.
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Month');
+            data.addColumn('number', 'Value');
+            var table = new Array;
+            for(var i = 0, len = arr.length; i < len; i++){
+                var cur = arr[i].trim().split(/\s+/);
+                table.push(new Array(cur[0], parseFloat(cur[2])));
+            }               
+            data.addRows(table);
+               
+            // Set chart options
+            var options = {'title' : 'histValues',
+               hAxis: {
+                  title: 'Date'
+               },
+               vAxis: {
+                  title: 'Value'
+               },   
+               'width':550,
+               'height':400   
+            };
+
+            // Instantiate and draw the chart.
+            var chart = new google.visualization.LineChart(document.getElementById('container'));
+            chart.draw(data, options);
+         }
+         google.charts.setOnLoadCallback(drawChart);
+      </script>
+      <script type="text/javascript">
+    // Load google charts
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    // Draw the chart and set the chart values
+    function drawChart() {
+        var arr = (function () { /* {{ weightings }} */}).toString().split(",")[0].split('\n').slice(1,-1)
+        var table = new Array;
+        table.push(['Item', 'Number'])
+            for(var i = 0, len = arr.length; i < len; i++){
+                var cur = arr[i].trim().split(/\s+/);
+                table.push(new Array(cur[0], parseFloat(cur[1])));
+            }
+
+          var data = google.visualization.arrayToDataTable(table);
+
+      // Optional; add a title and set the width and height of the chart
+      var options = {'title':'Weightings', 'width':550, 'height':400};
+
+      // Display the chart inside the <div> element with id="piechart"
+      var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+      chart.draw(data, options);
+    }
+    function nextButton(inputName, buttonID, re){
+        let nameInput = document.getElementById(inputName).value;
+        if (nameInput === "") {
+            document.getElementById(buttonID).disabled = true;
+
+        }
+        else {
+            document.getElementById(buttonID).disabled = !re.test(nameInput)
+        }
+    }
+
+    $(document).ready(function() {
+      $(window).keydown(function(event){
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+        }
+      });
+    });
+</script>
+>>>>>>> 3e950a5dd85153e38bfae0ed029828d3ca62096c
 {% endblock %}
 
 {% block content %}
