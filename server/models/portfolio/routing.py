@@ -46,7 +46,7 @@ trackSpecialCase = Blueprint("", __name__)
 s = Stocks()
 
 
-# @login_required
+@login_required
 def track():
     if len(request.query_string) == 0:
         return render_template('Option1.jinja2',
@@ -167,7 +167,6 @@ def track():
 
         else:
             return render_template('Option1.jinja2', display=False, error=True)
-
 
 @login_required
 def enhance():
@@ -316,7 +315,7 @@ def enhance():
             return render_template('Option2.jinja2', display=False, error=(not success))
 
 
-# @login_required
+@login_required
 def option2():
     weightings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     timeHorizon = 50
@@ -378,7 +377,7 @@ def getRiskToleranceFromQuestionnaire(questionnaire):
         return ((1, 10), (0, 0.10), cardinality, 'SHARPE')
 
 
-# @login_required
+@login_required
 def portfolioview():
     # Updating questionnaire data
     portfolio_name = request.args.get('portfolioName')
@@ -565,7 +564,7 @@ def portfolioview():
                            pie=pie, plot=plot, vols_plot=vols_plot, sharpe_plot=sharpe_plot,
                            underwater_plot=underwater_plot, stats=stats)
 
-
+@login_required
 def portfoliosnapshot():
     """
         Displays all user portfolio
@@ -675,7 +674,7 @@ def portfoliosnapshot():
     #                        portfolioNames=portfolioNames, targetAmount=targetAmount, percentCompleted=percentCompleted,
     #                        timeTilCompletion=timeTilCompletion)
 
-
+@login_required
 def portfoliodashboard():
     """
     Displays a dashboard of the portfolio based on portfolio name
@@ -857,7 +856,8 @@ def portfoliodashboard():
     #                        percentCompleted=percentCompleted, timeTilCompletion=timeTilCompletion)
 
 
-# @login_required
+
+@login_required
 def editportfolio():
     # pull most recent questionnaire data if portfolioName==""
     # if portfolio is option 1
@@ -953,6 +953,7 @@ def editportfolio():
 #     return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
 
 
+@login_required
 def saveportfolio():
     username = current_user.username
 
@@ -1033,7 +1034,8 @@ def saveportfolio():
     return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
 
 
-#@login_required
+
+@login_required
 def build():
     '''
     portfolio_name = request.headers.get('portfolioName')
