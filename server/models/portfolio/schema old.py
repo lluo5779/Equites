@@ -5,7 +5,7 @@ from datetime import datetime
 
 class UserPortfolio(db.DATABASE.Model):
     username = db.DATABASE.Column(db.DATABASE.String(80))
-    uuid = db.DATABASE.Column(db.DATABASE.String(80), primary_key=True)
+    uuid = db.DATABASE.Column(db.DATABASE.String(80))
     active = db.DATABASE.Column(db.DATABASE.String(10))
     budget = db.DATABASE.Column(db.DATABASE.Float())
     period = db.DATABASE.Column(db.DATABASE.Float())

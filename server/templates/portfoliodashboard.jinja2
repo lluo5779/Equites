@@ -10,109 +10,8 @@
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script type="text/javascript">
-    google.charts.load("current", {packages:['corechart', 'line']});
-    google.charts.setOnLoadCallback(drawChart);
-    function drawChart() {
-      var weighting = {{ weightings }};
-      var data = google.visualization.arrayToDataTable([
-        ["Index", "Value", { role: "style" } ],
-        ["Copper", parseFloat(weighting[0]), "#b87333"],
-        ["Silver", parseFloat(weighting[1]), "silver"],
-        ["Gold", parseFloat(weighting[2]), "gold"],
-        ["Platinum", parseFloat(weighting[3]), "color: #e5e4e2"]
-      ]);
 
-      var view = new google.visualization.DataView(data);
-      view.setColumns([0, 1,
-                       { calc: "stringify",
-                         sourceColumn: 1,
-                         type: "string",
-                         role: "annotation" },
-                       2]);
 
-      var options = {
-        title: "Weightings",
-        width: 600,
-        height: 400,
-        bar: {groupWidth: "95%"},
-        legend: { position: "none" },
-      };
-      var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
-      chart.draw(view, options);
-  }
-
-        </script>
-        <script language="JavaScript">
-         function drawChart() {
-            var arr = (function () { /*{{ histValues[-1] }}*/}).toString().split('\n').slice(1,-1).join('\n').split('...').join(" ").split("\n")
-
-            // Define the chart to be drawn.
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Month');
-            data.addColumn('number', 'Tokyo');
-            var table = new Array;
-            for(var i = 0, len = arr.length; i < len; i++){
-                var cur = arr[i].trim().split(" ");
-                table.push(new Array(cur[0], parseFloat(cur[5])));
-            }               
-            data.addRows(table);
-               
-            // Set chart options
-            var options = {'title' : 'histValues[-1]',
-               hAxis: {
-                  title: 'Date'
-               },
-               vAxis: {
-                  title: 'Value'
-               },   
-               'width':550,
-               'height':400   
-            };
-
-            // Instantiate and draw the chart.
-            var chart = new google.visualization.LineChart(document.getElementById('container'));
-            chart.draw(data, options);
-         }
-         google.charts.setOnLoadCallback(drawChart);
-
-        </script>
-    </script>
-
-          <script language = "JavaScript">
-             function drawChart() {
-                var arr = (function () { /*{{ histValues }}*/}).toString().split('\n').slice(1,-1).join('\n').split('...').join(" ").split("\n")
-
-                // Define the chart to be drawn.
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Month');
-                data.addColumn('number', 'Tokyo');
-                var table = new Array;
-                for(var i = 0, len = arr.length; i < len; i++){
-                    var cur = arr[i].trim().split(" ");
-                    table.push(new Array(cur[0], parseFloat(cur[5])));
-                }
-                data.addRows(table);
-
-                // Set chart options
-                var options = {'title' : 'histValues',
-                   hAxis: {
-                      title: 'Date'
-                   },
-                   vAxis: {
-                      title: 'Value'
-                   },
-                   'width':550,
-                   'height':400
-                };
-
-                // Instantiate and draw the chart.
-                var chart = new google.visualization.LineChart(document.getElementById('container2'));
-                chart.draw(data, options);
-             }
-             google.charts.setOnLoadCallback(drawChart);
-
-</script>
         {% endblock %}
 
         {% block content %}
@@ -129,77 +28,193 @@
     <input type="text" name="option" value="{{ option }}">
     <input type="text" name="portfolioName" value="{{ portfolioName }}">
 </div>
-<!-- Above is not displayed -->
-
-<div>
-    {{ portfolioName }}
-</div>
-<div class="container">
-    <center>
-        <div id="container" style="width: 550px; height: 400px; margin: 0 auto"></div>
-    </center>
-    <center>
-        <div id="container2" style="width: 550px; height: 400px; margin: 0 auto"></div>
-    </center>
-    <center>
-        <div id="columnchart_values" style="width: 900px; height: 300px;"></div>
-    </center>
-    <br><br><br>
-
-    <div class="row">
-
-        <div class="col-md-12">
-            <h2> I would like to see more detailed statistics on this portfolio! </h2>
-
-            {% if rolling > 1%}
-            <label class="switch">
-                <input type="checkbox">
-                <span class="slider round" id="toggle"></span>
-            </label>
-            <p class="text-muted"> Rolling Volatility, Sharpe Performance, Waterfalls and Drawdowns </p>
-            <hr>
-            <br>
-
-            <div id="details">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h3> {{rolling}}-day rolling Volatility </h3>
-                        <p class="text-muted"> Giving us an indication as to how stable this portfolio is </p>
-                        {{vols_plot}}
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <h3> {{rolling}}-day rolling Sharpe Ratio </h3>
-                        <p class="text-muted"> Where a larger value means a bigger bang for your buck (greater
-                            risk-adjusted returns) </p>
-                        {{sharpe_plot}}
-                    </div>
-                </div>
 
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <h3> Portfolio Drawdowns</h3>
-                        <p class="text-muted"> Showing how far the portfolio fell from it's highs</p>
+    {% if display == True %}
+        <div class="container text-center">
 
-                        {{underwater}}
-                        {{drawdown}}
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12">
-                    </div>
-                </div>
+            <div class="section-heading text-center">
+                <br>
+                <h2> Let's take a look at this portfolio</h2>
+                    <p class="text-muted"> A guided walk through of basic portfolio analysis </p>
+                <hr><br>
             </div>
 
-            {% else %}
-            <p class="text-muted"> Before we can do that, try backtesting over a longer period of time </p>
-            {% endif %}
+            <div class="row">
+                <div class="col-md-12">
+                    <h3> First off the bat, here is that portfolio in terms of weighting allocation </h3>
+                    <p class="text-muted"> Portfolio weights are nothing but the percentage of dollars allocated to the specific asset </p>
+                    {{pie}}
+                </div>
+                <br>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h3> Next up, we look at the portfolio's performance </h3>
+                    <p class="text-muted"> The cumulative returns tell us how much the portfolio grew over the horizon </p>
+                    {{plot}}
+                </div>
+                <br>
+            </div>
+
+
+            <div class="row">
+
+                    <div class="col-md-12">
+                        <h3> Some quick numbers at a glance further tell the performance story </h3>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="feature-item">
+                                <h4>{{ stats[0] }}&#37; </h4>
+                                <p class="text-muted"> Total Period Returns </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="feature-item">
+                            <h4> {{ '${:,.2f}'.format(stats[1]) }} </h4>
+                            <p class="text-muted"> Minimum Portfolio Value </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="feature-item">
+                            <h4> {{ '${:,.2f}'.format(stats[2]) }} </h4>
+                            <p class="text-muted"> Maximum Portfolio Value</p>
+                        </div>
+                    </div>
+                    <br>
+            </div>
+
+            <br><br><br>
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <h2> I would like to see more detailed statistics on this portfolio! </h2>
+
+                    {% if rolling > 1%}
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round" id="toggle"></span>
+                        </label>
+                        <p class="text-muted"> Rolling Volatility, Sharpe Performance, Waterfalls and Drawdowns </p>
+                        <hr><br>
+
+                        <div id="details">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3> {{rolling}}-day rolling Volatility </h3>
+                                    <p class="text-muted"> Giving us an indication as to how stable this portfolio is </p>
+                                    {{vols_plot}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3> {{rolling}}-day rolling Sharpe Ratio </h3>
+                                    <p class="text-muted"> Where a larger value means a bigger bang for your buck (greater risk-adjusted returns) </p>
+                                    {{sharpe_plot}}
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3> Portfolio Drawdowns</h3>
+                                    <p class="text-muted"> Showing how far the portfolio fell from it's highs</p>
+
+                                    {{underwater}}
+                                    {{drawdown}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                </div>
+                            </div>
+                        </div>
+
+                    {% else %}
+                        <p class="text-muted"> Before we can do that, try backtesting over a longer period of time </p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
+    {% endif %}
+<!-- Above is not displayed -->
+
+<!--<div>-->
+<!--    {{ portfolioName }}-->
+<!--</div>-->
+<!--<div class="container">-->
+<!--&lt;!&ndash;    <center>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div id="container" style="width: 550px; height: 400px; margin: 0 auto"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </center>&ndash;&gt;-->
+<!--&lt;!&ndash;    <center>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div id="container2" style="width: 550px; height: 400px; margin: 0 auto"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </center>&ndash;&gt;-->
+<!--&lt;!&ndash;    <center>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div id="columnchart_values" style="width: 900px; height: 300px;"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </center>&ndash;&gt;-->
+<!--    <br><br><br>-->
+
+<!--    <div class="row">-->
+
+<!--        <div class="col-md-12">-->
+<!--            <h2> I would like to see more detailed statistics on this portfolio! </h2>-->
+
+<!--            {% if rolling > 1%}-->
+<!--            <label class="switch">-->
+<!--                <input type="checkbox">-->
+<!--                <span class="slider round" id="toggle"></span>-->
+<!--            </label>-->
+<!--            <p class="text-muted"> Rolling Volatility, Sharpe Performance, Waterfalls and Drawdowns </p>-->
+<!--            <hr>-->
+<!--            <br>-->
+
+<!--            <div id="details">-->
+<!--                <div class="row">-->
+<!--                    <div class="col-md-12">-->
+<!--                        <h3> {{rolling}}-day rolling Volatility </h3>-->
+<!--                        <p class="text-muted"> Giving us an indication as to how stable this portfolio is </p>-->
+<!--                        {{vols_plot}}-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="row">-->
+<!--                    <div class="col-md-12">-->
+<!--                        <h3> {{rolling}}-day rolling Sharpe Ratio </h3>-->
+<!--                        <p class="text-muted"> Where a larger value means a bigger bang for your buck (greater-->
+<!--                            risk-adjusted returns) </p>-->
+<!--                        {{sharpe_plot}}-->
+<!--                    </div>-->
+<!--                </div>-->
+
+
+<!--                <div class="row">-->
+<!--                    <div class="col-md-12">-->
+<!--                        <h3> Portfolio Drawdowns</h3>-->
+<!--                        <p class="text-muted"> Showing how far the portfolio fell from it's highs</p>-->
+
+<!--                        {{underwater}}-->
+<!--                        {{drawdown}}-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="row">-->
+<!--                    <div class="col-md-12">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            {% else %}-->
+<!--            <p class="text-muted"> Before we can do that, try backtesting over a longer period of time </p>-->
+<!--            {% endif %}-->
+<!--        </div>-->
+<!--    </div>-->
 
 
     <!--    <div class="row">-->

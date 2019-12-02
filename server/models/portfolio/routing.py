@@ -231,8 +231,8 @@ def enhance():
 
             # hacky solution lol
             enhanced_values = \
-            back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(
-                axis=1)[-(len(portfolio_value) + 1):]
+                back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(
+                    axis=1)[-(len(portfolio_value) + 1):]
             back_returns = (enhanced_values / enhanced_values.shift(1) - 1).dropna()
             enhanced_values = cum_returns(back_returns, budget)
 
@@ -478,10 +478,10 @@ def portfolioview():
 
     # backtest over the previous 6 months
     values = back_test(p.x1.to_dict()['weight'],
-                                start_date=None,
-                                end_date=None,
-                                dollars=float(questionnaire["initialInvestment"]),
-                                tore=False)[0].sum(axis=1)[-132:]
+                       start_date=None,
+                       end_date=None,
+                       dollars=float(questionnaire["initialInvestment"]),
+                       tore=False)[0].sum(axis=1)[-132:]
 
     back_returns = (values / values.shift(1) - 1).dropna()
     port_values = cum_returns(back_returns, float(questionnaire["initialInvestment"]))
@@ -557,10 +557,14 @@ def portfolioview():
     # else:
     #     print(p.x1.to_dict())
     #     p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
-    #risk=risk,
+    # risk=risk,
     #  expectedRet=expectedReturn, expectedVol=expectedVol,
-    return render_template('portfolioview.jinja2', title='Sign In', weightings_1=weightings[0], weightings_2=weightings[1], histValues=histValues, long=None,
-                           short=None, portfolioName=portfolio_name, questionnaire=questionnaire, num_shares=num_shares, pie=pie, plot=plot, vols_plot=vols_plot, sharpe_plot=sharpe_plot, underwater_plot=underwater_plot, stats=stats)
+    return render_template('portfolioview.jinja2', title='Sign In', weightings_1=weightings[0],
+                           weightings_2=weightings[1], histValues=histValues, long=None,
+                           short=None, portfolioName=portfolio_name, questionnaire=questionnaire, num_shares=num_shares,
+                           pie=pie, plot=plot, vols_plot=vols_plot, sharpe_plot=sharpe_plot,
+                           underwater_plot=underwater_plot, stats=stats)
+
 
 def portfoliosnapshot():
     """
@@ -696,7 +700,6 @@ def portfoliodashboard():
         return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
     p = Portfolio(username=username, _id=_id, generate_new=False)
 
-
     df_to_display = fetch_all_questionnaires(username)
     latest_prices = fetchEodPrices(get_latest=True)[SYMBOLS]
 
@@ -714,7 +717,6 @@ def portfoliodashboard():
 
     option_type = getOptionTypeFromName(portfolio_name)
     questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
-
 
     #
     # username = current_user.username
@@ -741,7 +743,6 @@ def portfoliodashboard():
     #
     #
     #
-
 
     # print(weightings)
     # short = []
@@ -776,7 +777,6 @@ def portfoliodashboard():
     #     percentCompleted = None
     #     timeTilCompletion = None
 
-
     error = False
     success = True
 
@@ -787,7 +787,10 @@ def portfoliodashboard():
         # end_date = args[1]
 
         # rolling days assignment
-        start_date  = questionnaire['timestamp'].values[0]
+        six_month = datetime.utcnow() - relativedelta(months=6)
+        start_date = pd.to_datetime(str(questionnaire['timestamp'].values[0])) if pd.to_datetime(str(
+            questionnaire['timestamp'].values[
+                0])) < six_month else six_month  # pd.to_datetime(str(start_date)).strftime("%Y-%m-%d")
         bt_days = business_days(start_date, datetime.utcnow())
         rolling = 100 if bt_days > 1000 else max(int(bt_days / 10), 1)
 
@@ -796,7 +799,8 @@ def portfoliodashboard():
         weights = [(x / sum(values)) for x in values]
         portfolio = dict(zip(tickers, weights))
 
-        values, success, msg = back_test(portfolio, pd.to_datetime(str(start_date)).strftime("%Y-%m-%d"), end_date=None, dollars=sum(values), tore=True)
+        values, success, msg = back_test(portfolio, start_date.strftime("%Y-%m-%d"), end_date=None, dollars=sum(values),
+                                         tore=True)
     except:
         succcess, error = False, True
 
@@ -874,7 +878,7 @@ def portfoliodashboard():
         max_value = round(max(port_values), 2)
         stats = [total_returns, min_value, max_value]
 
-        return render_template('Option1.jinja2',
+        return render_template('portfoliodashboard.jinja2',
                                display=True,
                                error=False,
                                tickers=tickers,
@@ -886,20 +890,23 @@ def portfoliodashboard():
                                underwater=underwater_plot,
                                drawdown=drawdown,
                                stats=stats,
-                               rolling=rolling)
+                               rolling=rolling,
+                               questionnaire=questionnaire,
+                               option=option_type,
+                               portfolioName=portfolio_name)
 
     else:
-        return render_template('Option1.jinja2', display=False, error=True)
+        return render_template('portfoliodashboard.jinja2', display=False, error=True)
 
     # timeTilCompletion = targetDate - today
 
+    #
+    # return render_template('portfoliodashboard.jinja2', title='optiondecision',
+    #                        returnSinceInception=returnSinceInception, histValues=histValues, weightings=weightings,
+    #                        short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk,
+    #                        tickers=tickers, questionnaire=questionnaire, targetAmount=targetAmount,
+    #                        percentCompleted=percentCompleted, timeTilCompletion=timeTilCompletion)
 
-
-    return render_template('portfoliodashboard.jinja2', title='optiondecision',
-                           returnSinceInception=returnSinceInception, histValues=histValues, weightings=weightings,
-                           short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk,
-                           tickers=tickers, questionnaire=questionnaire, targetAmount=targetAmount,
-                           percentCompleted=percentCompleted, timeTilCompletion=timeTilCompletion)
 
 # @login_required
 def editportfolio():
@@ -924,7 +931,6 @@ def editportfolio():
         for question in op_to_q_map[option_type]:
             questionnaire[question] = request.args.get(question)
 
-
     # populate rest of questionnaire with ""
     questionnaire = populateQuestionnaire(questionnaire, option_type)
 
@@ -947,28 +953,74 @@ def editportfolio():
     return render_template('Build.jinja2', title='Sign In', questionnaire=questionnaire)
 
 
+#
+# def saveportfolio():
+#     username = current_user.username
+#
+#     # Updating questionnaire data
+#     portfolio_name = request.args.get('portfolioName')
+#     option_type = request.args.get("optionType")
+#     weightings_1 = request.args.get('weightings_1')
+#     weightings_1 = ast.literal_eval(weightings_1)
+#     weightings_2 = request.args.get('weightings_2')
+#     weightings_2 = ast.literal_eval(weightings_2)
+#     num_shares = request.args.get('num_shares')
+#     num_shares = ast.literal_eval(num_shares)
+#
+#
+#     questionnaire = {}
+#     is_new_portfolio = False
+#
+#     if option_type not in op_to_q_map:
+#         print(option_type)
+#         raise ValueError("Bad option type. Something went terribly wrong.")
+#
+#     for question in op_to_q_map[option_type]:
+#         if 'Date' in question:
+#             raw_dates = request.args.get(question).split('-')
+#             try:
+#                 questionnaire[question] = datetime(int(raw_dates[0]), int(raw_dates[1]), 1)
+#             except:
+#                 questionnaire[question] = datetime(int(raw_dates[0]), 1, 1)
+#         else:
+#             questionnaire[question] = request.args.get(question)
+#
+#     _id = getUuidFromPortfolioName(portfolio_name)
+#     # need to check if request no uuid, will create uuid
+#     if _id is None:
+#         _id = uuid.uuid4()
+#         is_new_portfolio = True
+#         initialize_new_questionnaire(questionnaire, option_type, uuid=_id)
+#     else:
+#         update_new_questionnaire(questionnaire, option_type, uuid=_id)
+#
+#     # Updating the portfolio data
+#     p = Portfolio(username, _id=_id, generate_new=is_new_portfolio)
+#     p.set_parameters(pd.DataFrame(weightings_1), pd.DataFrame(weightings_2), pd.DataFrame(num_shares)) #run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
+#
+#     if is_new_portfolio:
+#         p.make_new_portfolios(questionnaire['initialInvestment'], option_type, portfolio_name)
+#     else:
+#         p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
+#     return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
+
+
 def saveportfolio():
     username = current_user.username
 
     # Updating questionnaire data
     portfolio_name = request.args.get('portfolioName')
     option_type = request.args.get("optionType")
-    weightings_1 = request.args.get('weightings_1')
-    weightings_1 = ast.literal_eval(weightings_1)
-    weightings_2 = request.args.get('weightings_2')
-    weightings_2 = ast.literal_eval(weightings_2)
-    num_shares = request.args.get('num_shares')
-    num_shares = ast.literal_eval(num_shares)
-
-
     questionnaire = {}
     is_new_portfolio = False
 
     if option_type not in op_to_q_map:
+        print(option_type)
         raise ValueError("Bad option type. Something went terribly wrong.")
 
     for question in op_to_q_map[option_type]:
         if 'Date' in question:
+            print(request.args.get(question))
             raw_dates = request.args.get(question).split('-')
             try:
                 questionnaire[question] = datetime(int(raw_dates[0]), int(raw_dates[1]), 1)
@@ -976,6 +1028,8 @@ def saveportfolio():
                 questionnaire[question] = datetime(int(raw_dates[0]), 1, 1)
         else:
             questionnaire[question] = request.args.get(question)
+
+    print("questionnaire: ", questionnaire)
 
     _id = getUuidFromPortfolioName(portfolio_name)
     # need to check if request no uuid, will create uuid
@@ -988,12 +1042,14 @@ def saveportfolio():
 
     # Updating the portfolio data
     p = Portfolio(username, _id=_id, generate_new=is_new_portfolio)
-    p.set_parameters(weightings_1, weightings_2, num_shares) #run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
+    p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
 
     if is_new_portfolio:
         p.make_new_portfolios(questionnaire['initialInvestment'], option_type, portfolio_name)
     else:
+        print(p.x1.to_dict())
         p.update_existing_portfolio(_id, p.x1.to_dict()[list(p.x1.to_dict().keys())[0]])
+    print('FINISHED')
     return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
 
 

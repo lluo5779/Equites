@@ -99,14 +99,16 @@ class UserPortfolio(db.DATABASE.Model):
     JNJ_holdings = db.DATABASE.Column(db.DATABASE.Float())
     ED_holdings = db.DATABASE.Column(db.DATABASE.Float())
 
-    timestamp = db.DATABASE.Column(db.DATABASE.DateTime, index=True, default=datetime.utcnow)
-    preferences = db.DATABASE.relationship('user_preferences', backref='author', lazy='dynamic')
+    shares = db.DATABASE.Column(db.DATABASE.Float())
 
-
-    print(">>> datetime.utcnow", datetime.utcnow())
     timestamp = db.DATABASE.Column(db.DATABASE.DateTime, index=True, default=datetime.utcnow)
-    preferences = db.DATABASE.relationship('user_preferences', backref='author', lazy='dynamic')
+    # preferences = db.DATABASE.relationship('user_preferences', backref='author', lazy='dynamic')
+
     #
+    # print(">>> datetime.utcnow", datetime.utcnow())
+    # timestamp = db.DATABASE.Column(db.DATABASE.DateTime, index=True, default=datetime.utcnow)
+    # preferences = db.DATABASE.relationship('user_preferences', backref='author', lazy='dynamic')
+    # #
     # def __init__(self, username, portfolio_name, uuid, active, timestamp, portfolio_type, ITOT, DIA, SPY, XLG, AIA, GXC, XLY, XLE, XLF, XLV, XLI, XLB, XLK, XLU,
     #              ICLN, CGW, WOOD, IYR, ITOT2, DIA2, SPY2, XLG2, AIA2, GXC2, XLY2, XLE2, XLF2, XLV2, XLI2, XLB2, XLK2,
     #              XLU2, ICLN2, CGW2, WOOD2, IYR2, F, DIS, MCD, KO, PEP, JPM, AAPL, PFE, JNJ, ED, F2, DIS2, MCD2, KO2, PEP2, JPM2, AAPL2, PFE2, JNJ2, ED2, budget, preferences):
