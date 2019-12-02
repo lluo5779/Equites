@@ -20,30 +20,16 @@ def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=Tru
                 ticker = ticker.upper()
                 data[ticker] = tiingo(ticker, start_date, end_date)[data_point]  # Series with date as index and prices as values
         else:
-            if tore:
-                year, month, days = start_date.split('-')
-                print('WHY NO WORK: ', year, month, days)
-
-                preset_prices = fetchEodPrices(fromtimeon=datetime.datetime(year, month, 1))
-            else:
-                preset_prices = fetchEodPrices()
-
+            preset_prices = fetchEodPrices()
             data[preset_prices.columns] = preset_prices
 
     except Exception as e:
         if fail_safe:
-            print(e)
 
-            data = pd.read_csv(os.getcwd() + r'/data/%s.csv' % data_point, index_col=0)
+            data = pd.read_csv(os.getcwd() + r'./%s.csv' % data_point, index_col=0)
             data.index = pd.to_datetime(data.index)
-
-            print("\n\nERROR: could not retrieve new %s data ... retrieved old data" % data_point)
-            print('finished retrieving %s data in %f seconds.\n' % (data_point, time.time() - start))
-
             return data
         else:
-            print("\n\nERROR: could not retrieve new %s data." % data_point)
-
             return None
 
     data.index = pd.to_datetime(data.index, utc=True)
