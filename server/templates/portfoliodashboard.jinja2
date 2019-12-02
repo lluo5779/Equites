@@ -8,9 +8,6 @@
 
 {% block content %}
 <section id="main">
-    <form action="/editportfolio" method="get">
-        <input type="submit" value="Edit">
-    </form>
 
     <!-- Not Displayed -->
     <div style="display: none;">
@@ -30,29 +27,29 @@
 
             <div class="section-heading text-center">
                 <br>
-                <h2> Let's take a look at this portfolio</h2>
-                    <p class="text-muted"> A guided walk-through of basic portfolio analysis </p>
-                <hr><br>
+                <h2> Take a look at your portfolio </h2>
+                <hr><br><br>
             </div>
 
             <div class="row">
                 <div class="col-md-12">
-                    <h3> First off the bat, here is that portfolio in terms of weighting allocation </h3>
-                    <p class="text-muted"> Portfolio weights are nothing but the percentage of dollars allocated to the specific asset </p>
+                    <h3> Portfolio Allocation </h3>
+                    <p class="text-muted"> Here is what your portfolio is holding</p>
                     {{pie}}
                 </div>
                 <br>
             </div>
 
+            {% if show_plots %}
+
             <div class="row">
                 <div class="col-md-12">
-                    <h3> Next up, we look at the portfolio's performance </h3>
+                    <h3> Portfolio cumulative return portformance </h3>
                     <p class="text-muted"> The cumulative returns tell us how much the portfolio grew over the horizon </p>
                     {{plot}}
                 </div>
                 <br>
             </div>
-
 
             <div class="row">
 
@@ -86,7 +83,6 @@
             <br><br><br>
 
             <div class="row">
-
                 <div class="col-md-12">
                     <h2> I would like to see more detailed statistics on this portfolio! </h2>
 
@@ -137,8 +133,33 @@
                     {% endif %}
                 </div>
             </div>
+            {% else %}
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <h3> Come back tomorrow!</h3>
+                    <p class="text-muted"> Your portfolio is still new, so it's value has not changed yet. </p>
+                    <br><br>
+                </div>
+                <br>
+            </div>
+
+            {% endif %}
+
         </div>
     {% endif %}
+
+    <!-- <div class="row">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-6">
+            <form action="/editportfolio" method="get">
+                <input type="submit" value="Edit">
+            </form>
+        </div>
+    </div> -->
 
     {% endblock %}
 </section>

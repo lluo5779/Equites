@@ -699,7 +699,6 @@ def portfoliodashboard():
 
     portfolio_name = request.args.get('portfolioName')
     username = current_user.username
-    print('username: ', username)
 
     _id = getUuidFromPortfolioName(portfolio_name)
     if _id is None:
@@ -707,7 +706,7 @@ def portfoliodashboard():
 
     p = Portfolio(username=username, _id=_id, generate_new=False)
 
-    df_to_display = fetch_all_questionnaires(username)
+    df_to_display = fetch_all_questionnaires(username).loc[_id]
     latest_prices = fetchEodPrices(get_latest=True)[SYMBOLS]
 
     investment_target = df_to_display['target']
@@ -725,88 +724,57 @@ def portfoliodashboard():
     option_type = getOptionTypeFromName(portfolio_name)
     questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
 
-    #
-    # username = current_user.username
-    # df_to_display = fetch_all_questionnaires(username)
-    # latest_prices = fetchEodPrices(get_latest=True)[SYMBOLS]
-    # all_past_p = get_past_portfolios(username=username, get_all=True)
-    # initial_weights = all_past_p[0][SYMBOLS]
-    #
-    # investment_target = df_to_display['target']
-    #
-    # holding_names = [x + "_holdings" for x in SYMBOLS]
-    # latest_holdings = all_past_p[2][holding_names]
-    # df_to_display['percentCompleted'] = ""
-    # df_to_display['targetAmount'] = ""
-    # df_to_display['start_date'] = ""
-    # df_to_display['returns'] = 0
-    # for _id, portfolio in latest_holdings.iterrows():
-    #     # iterating over each portfolio
-    #
-    #     portfolio.index = SYMBOLS
-    #     start_date = all_past_p[2].loc[_id, 'timestamp'].to_pydatetime()
-    #     portfolio_value = latest_prices.dot(portfolio)
-    #     df_to_display.loc[_id, 'start_date'] = start_date.strftime("%Y-%m")
-    #
-    #
-    #
+    print("\n\n\nHEREHEHRE")
+    print(df_to_display)
+    print("\n\n\n")
 
-    # print(weightings)
-    # short = []
-    # long = []
-    # for i in range(len(weightings)):
-    #     if weightings[i] < 0:
-    #         short.append(weightings[i])
-    #     if weightings[i] > 0:
-    #         long.append(weightings[i])
-    #
-    # expectedReturn = p.get_portfolio_return()
-    # expectedVol = p.get_portfolio_volatility()
-    #
-    # option_type = getOptionTypeFromName(portfolio_name)
-    # questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
-    # risk = questionnaire['riskAppetite']
-    # # populate rest of questionnaire with ""
-    # questionnaire = populateQuestionnaire(questionnaire, option_type)
-    # print(">>> questionnaire: ", questionnaire)
-    #
-    # # regime? bull/bear
-    # if 'purchase' in option_type.lower():
-    #     targetAmount = questionnaire['purchaseAmount']
-    #     percentCompleted = histValues.iloc[-1].values[0] / float(targetAmount)
-    #     timeTilCompletion = questionnaire['purchaseDate'] - datetime.utcnow()
-    # elif 'retirement' in option_type.lower():
-    #     targetAmount = questionnaire['retirementAmount']
-    #     percentCompleted = histValues.iloc[-1].values[0] / float(targetAmount)
-    #     timeTilCompletion = questionnaire['retirementDate'] - datetime.utcnow()
-    # else:
-    #     targetAmount = None
-    #     percentCompleted = None
-    #     timeTilCompletion = None
+
+
+
+
 
     error = False
     success = True
+    show_plots = True
+
+    pie_weights = p.x1.round(2).loc[p.x1.iloc[:, 0] != 0]
+
+    # PORTFOLIO HOLDINGS
+    pie = plotly.offline.plot({"data": [Pie(labels=pie_weights.index, values=pie_weights.iloc[:, 0], hole=.1)]},
+                              output_type='div',
+                              include_plotlyjs=False,
+                              show_link=False,
+                              config={"displayModeBar": False})
 
     try:
-        # args = list(request.args.values())
-        #
-        # start_date = args[0]
-        # end_date = args[1]
+
+        inception_date = pd.to_datetime(str(questionnaire['timestamp'].values[0])).strftime("%Y-%m-%d")
+
+        print("\nFUCK THIS \n")
+        print(questionnaire)
+        print("FUCK THIS \n")
+
+        if datetime.now().date() == datetime.strptime(inception_date, "%Y-%m-%d").date():
+            return render_template('portfoliodashboard.jinja2',
+                                   display=True,
+                                   error=False,
+                                   show_plots = False,
+                                   pie=pie,
+                                   questionnaire=questionnaire,
+                                   option=option_type,
+                                   portfolioName=portfolio_name)
 
         # rolling days assignment
         six_month = datetime.utcnow() - relativedelta(months=6)
-        start_date = pd.to_datetime(str(questionnaire['timestamp'].values[0])) if pd.to_datetime(str(
-            questionnaire['timestamp'].values[
-                0])) < six_month else six_month  # pd.to_datetime(str(start_date)).strftime("%Y-%m-%d")
+
+        start_date = pd.to_datetime(str(questionnaire['timestamp'].values[0]))
         bt_days = business_days(start_date, datetime.utcnow())
         rolling = 100 if bt_days > 1000 else max(int(bt_days / 10), 1)
 
-        tickers = SYMBOLS
-        values = values.to_numpy().flatten()
-        weights = [(x / sum(values)) for x in values]
-        portfolio = dict(zip(tickers, weights))
-
-        values, success, msg = back_test(portfolio, start_date.strftime("%Y-%m-%d"), end_date=None, dollars=sum(values),
+        values, success, msg = back_test(p.x1.to_dict(),
+                                         start_date.strftime("%Y-%m-%d"),
+                                         end_date=None,
+                                         dollars=sum(values),
                                          tore=True)
     except:
         succcess, error = False, True
@@ -814,13 +782,6 @@ def portfoliodashboard():
     if success:
         port_values = values.sum(axis=1)
         port_values.rename(columns={'Unnamed: 0': 'value'}, inplace=True)
-
-        # PORTFOLIO HOLDINGS
-        pie = plotly.offline.plot({"data": [Pie(labels=tickers, values=weights, hole=.1)]},
-                                  output_type='div',
-                                  include_plotlyjs=False,
-                                  show_link=False,
-                                  config={"displayModeBar": False})
 
         # CUMULATIVE RETURNS
         plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines',
@@ -865,21 +826,6 @@ def portfoliodashboard():
                                               show_link=False,
                                               config={"displayModeBar": False})
 
-        # DRAWDOWN
-        drawdown = drawdown_table(port_returns)
-        drawdown_fig = go.Figure(data=[go.Table(header=dict(values=list(drawdown.columns),
-                                                            align='left'),
-                                                cells=dict(values=[drawdown["Net drawdown in %"],
-                                                                   drawdown["Peak date"],
-                                                                   drawdown["Valley date"],
-                                                                   drawdown["Recovery date"],
-                                                                   drawdown["Duration"]], align='center'))])
-        drawdown = plotly.offline.plot({"data": drawdown_fig},
-                                       output_type='div',
-                                       include_plotlyjs=False,
-                                       show_link=False,
-                                       config={"displayModeBar": False})
-
         total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
         min_value = round(min(port_values), 2)
         max_value = round(max(port_values), 2)
@@ -888,6 +834,7 @@ def portfoliodashboard():
         return render_template('portfoliodashboard.jinja2',
                                display=True,
                                error=False,
+                               show_plots=True,
                                tickers=tickers,
                                weightings=values,
                                pie=pie,
@@ -895,7 +842,6 @@ def portfoliodashboard():
                                vols_plot=vols_plot,
                                sharpe_plot=sharpe_plot,
                                underwater=underwater_plot,
-                               drawdown=drawdown,
                                stats=stats,
                                rolling=rolling,
                                questionnaire=questionnaire,
@@ -958,7 +904,6 @@ def editportfolio():
         questionnaire[date_key] = month + '/' + raw_date[0]
 
     return render_template('Build.jinja2', title='Sign In', questionnaire=questionnaire)
-
 
 #
 # def saveportfolio():
