@@ -25,6 +25,8 @@ import flask
 from plotly.graph_objs import Scatter, Pie, Layout
 import plotly.graph_objects as go
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 from io import BytesIO
 from flask import Blueprint
 import urllib
@@ -435,10 +437,39 @@ def portfolioview():
     # TODO: current_user.username
     p = Portfolio('test1', _id=_id, generate_new=is_new_portfolio)
 
+    if option_type == "Wealth":
+        horizon, return_target = 10, 0.15
+    elif option_type == "Retirement":
+        horizon = relativedelta(questionnaire["retirementDate"], datetime.today()).years
+        total_target =  float(questionnaire["retirementAmount"]) / float(questionnaire["initialInvestment"])
+        return_target = total_target / (2 * horizon)
+    else:
+        horizon = relativedelta(questionnaire["purchaseDate"], datetime.today()).years
+        total_target = float(questionnaire["purchaseAmount"]) / float(questionnaire["initialInvestment"])
+        return_target = total_target / (2 * horizon)
+
+    aversion = 1 if questionnaire['riskAppetite'] == 'High Risk' else (1 if questionnaire['riskAppetite'] == 'Med Risk' else 3)
+
+    alpha, multipliers, exposures, cardinality = risk_prefs(horizon,
+                                                            aversion,
+                                                            cardinal=15,
+                                                            return_target=return_target,
+                                                            l=5,
+                                                            mu_bl1=p.mu_bl1,
+                                                            mu_bl2=p.mu_bl2,
+                                                            cov_bl1=p.cov_bl1)
+
+    # assign the risk tolerances, specifying a SHARPE optimization
+    risk_tolerance = (multipliers, exposures, cardinality, 'MCVAR')
+
     if is_new_portfolio:
-        p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
+        p.run_optimization(risk_tolerance=risk_tolerance,
+                           alpha=alpha,
+                           return_target=return_target,
+                           budget=float(questionnaire["initialInvestment"]))[0]
 
     weightings = [p.x1, p.x2]
+
     expectedReturn = p.get_portfolio_return()
     expectedVol = p.get_portfolio_volatility()
     risk = p.get_portfolio_cvar()
@@ -731,10 +762,6 @@ def saveportfolio():
 
     # Updating the portfolio data
     p = Portfolio(username, _id=_id, generate_new=is_new_portfolio)
-
-    risk_prefs(horizon, aversion, cardinal, return_target, l, mu_bl1, mu_bl2, cov_bl1)
-
-
     p.run_optimization(risk_tolerance=getRiskToleranceFromQuestionnaire(questionnaire=questionnaire))
 
     if is_new_portfolio:
