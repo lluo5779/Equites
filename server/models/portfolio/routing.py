@@ -457,7 +457,7 @@ def portfolioview():
         return_target = total_target / (2 * horizon)
 
     aversion = 1 if questionnaire['riskAppetite'] == 'High Risk' else (
-        1 if questionnaire['riskAppetite'] == 'Med Risk' else 3)
+        2 if questionnaire['riskAppetite'] == 'Med Risk' else 3)
 
     alpha, multipliers, exposures, cardinality = risk_prefs(horizon,
                                                             aversion,
@@ -750,10 +750,6 @@ def portfoliodashboard():
 
         inception_date = pd.to_datetime(str(questionnaire['timestamp'].values[0])).strftime("%Y-%m-%d")
 
-        print("\nFUCK THIS \n")
-        print(questionnaire)
-        print("FUCK THIS \n")
-
         if datetime.now().date() == datetime.strptime(inception_date, "%Y-%m-%d").date():
             return render_template('portfoliodashboard.jinja2',
                                    display=True,
@@ -1009,7 +1005,7 @@ def saveportfolio():
         return_target = total_target / (2 * horizon)
 
     aversion = 1 if questionnaire['riskAppetite'] == 'High Risk' else (
-        1 if questionnaire['riskAppetite'] == 'Med Risk' else 3)
+        2 if questionnaire['riskAppetite'] == 'Med Risk' else 3)
 
     alpha, multipliers, exposures, cardinality = risk_prefs(horizon,
                                                             aversion,
