@@ -514,7 +514,7 @@ input[type=range]::-moz-range-thumb:active {
                                                         </h4>
 
                                                         <div class='input-group date' id='purchase_date'>
-                                                            <input type='text' id="purchaseDate" name="purchaseDate" class="form-control"min="2019-12-01" autofocus value="{{ questionnaire['purchaseDate'] }}" required                                                             onchange="nextButton('purchaseDate','next6',/^((20[2-9][0-9]|21[0-9][0-9])-(0[1-9])|(1[0-2]))$/)">
+                                                            <input type='text' id="purchaseDate" name="purchaseDate" class="form-control" min="2020-01-01" autofocus value="{{ questionnaire['purchaseDate'] }}" required onchange="nextButton('purchaseDate','next6',/^(((20[2-9][0-9])|(21[0-9][0-9]))-((0[1-9])|(1[0-2])))$/)">
                                                           <span class="input-group-addon">
                                                                 <span class="glyphicon glyphicon-calendar"></span>
                                                             </span>
