@@ -62,7 +62,6 @@ def back_test(portfolio, start_date, end_date=None, dollars=None, tore=False):
 
     # check if the portfolio's budget is under utilized
     budget = sum(portfolio.values())
-    portfolio['CASH'] = 1 - budget
 
     if budget != 1:
         msg += "\nWARNING: adding a CASH position since the budget of the portfolio was under-utilized."
@@ -70,6 +69,7 @@ def back_test(portfolio, start_date, end_date=None, dollars=None, tore=False):
         msg += "\nSUCCESS: budget is fully utilized."
 
     # get the number of shares
+    prices['CASH'] = 1.1
     shares = dollars * pd.Series(portfolio) / prices.iloc[0]
 
     # calculate portfolio value per share ... to recover portfolio value per day, do value.sum(axis=1)
