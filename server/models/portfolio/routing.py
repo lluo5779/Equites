@@ -231,7 +231,7 @@ def enhance():
 
             # hacky solution lol
             enhanced_values = \
-                back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=False)[0].sum(
+                back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=True)[0].sum(
                     axis=1)[-(len(portfolio_value) + 1):]
             back_returns = (enhanced_values / enhanced_values.shift(1) - 1).dropna()
             enhanced_values = cum_returns(back_returns, budget)
@@ -442,7 +442,7 @@ def portfolioview():
                        start_date=None,
                        end_date=None,
                        dollars=float(questionnaire["initialInvestment"]),
-                       tore=False)[0].sum(axis=1)[-132:]
+                       tore=True)[0].sum(axis=1)[-132:]
 
     back_returns = (values / values.shift(1) - 1).dropna()
     port_values = cum_returns(back_returns, float(questionnaire["initialInvestment"]))
@@ -617,10 +617,6 @@ def portfoliodashboard():
     option_type = getOptionTypeFromName(portfolio_name)
     questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
 
-    print("\n\n\nHEREHEHRE")
-    print(df_to_display)
-    print("\n\n\n")
-
     error = False
     success = True
     show_plots = True
@@ -655,16 +651,19 @@ def portfoliodashboard():
         bt_days = business_days(start_date, datetime.utcnow())
         rolling = 100 if bt_days > 1000 else max(int(bt_days / 10), 1)
 
-        values, success, msg = back_test(values.to_dict()['value'],
+
+        p_values, success, msg = back_test(p.x1.to_dict()[0],
                                          start_date.strftime("%Y-%m-%d"),
                                          end_date=None,
-                                         dollars=sum(values.values)[0],
+                                         dollars=float(values.sum()),
                                          tore=True)
     except:
+        print("\n\n\n FAILURE ... I AM GOING TO DIE NOW")
         succcess, error = False, True
 
     if success:
-        port_values = values.sum(axis=1) * p.budget.values[0]
+
+        port_values = p_values.sum(axis=1)
         port_values.rename(columns={'Unnamed: 0': 'value'}, inplace=True)
 
         # CUMULATIVE RETURNS
