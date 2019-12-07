@@ -62,7 +62,6 @@ def back_test(portfolio, start_date, end_date=None, dollars=None, tore=False):
 
     # check if the portfolio's budget is under utilized
     budget = sum(portfolio.values())
-    portfolio['CASH'] = 1 - budget
 
     if budget != 1:
         msg += "\nWARNING: adding a CASH position since the budget of the portfolio was under-utilized."

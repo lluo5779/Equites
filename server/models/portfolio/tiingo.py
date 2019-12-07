@@ -26,7 +26,7 @@ def get_data(tickers, data_point, start_date, end_date, save=True, fail_safe=Tru
     except Exception as e:
         if fail_safe:
 
-            data = pd.read_csv(os.getcwd() + r'./%s.csv' % data_point, index_col=0)
+            data = pd.read_csv(os.getcwd() + r'/server/models/portfolio/data/%s.csv' % data_point, index_col=0)
             data.index = pd.to_datetime(data.index)
             return data
         else:
