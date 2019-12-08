@@ -42,7 +42,7 @@ def back_test(portfolio, start_date, end_date=None, dollars=None, tore=False):
     if end_date is None: end_date = datetime.now().strftime("%Y-%m-%d")
     if dollars is None: dollars = 1
 
-    prices = get_data(portfolio.keys(), 'adjClose', start_date, end_date, save=False, fail_safe=True, tore=tore)
+    prices = get_data(portfolio.keys(), 'adjClose', start_date, end_date, save=False, fail_safe=(not tore), tore=tore)
 
     if prices is None:
         msg = "ERROR: could not retrieve pricing data for one or more of the assets given."

@@ -696,48 +696,51 @@ def portfoliodashboard():
         portfoliosnapshot
     """
 
-    portfolio_name = request.args.get('portfolioName')
-    username = current_user.username
+    try:
+        portfolio_name = request.args.get('portfolioName')
+        username = current_user.username
 
-    _id = getUuidFromPortfolioName(portfolio_name)
-    if _id is None:
-        return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
+        _id = getUuidFromPortfolioName(portfolio_name)
 
-    p = Portfolio(username=username, _id=_id, generate_new=False)
+        if _id is None:
+            return redirect(url_for('/.server_models_portfolio_routing_portfoliosnapshot'))
 
-    df_to_display = fetch_all_questionnaires(username).loc[_id]
-    latest_prices = fetchEodPrices(get_latest=True)[SYMBOLS]
+        p = Portfolio(username=username, _id=_id, generate_new=False)
 
-    investment_target = df_to_display['target']
+        df_to_display = fetch_all_questionnaires(username).loc[_id]
+        #latest_prices = fetchEodPrices(get_latest=True)[SYMBOLS]
 
-    holding_names = [x + "_holdings" for x in SYMBOLS]
-    num_shares = p.num_shares.T
-    num_shares.columns = SYMBOLS
-    portfolio_value = latest_prices.values[0] * num_shares.values[0]
+        investment_target = df_to_display['target']
 
-    weightings = p.num_shares.to_numpy().flatten()
-    values = portfolio_value
-    values = pd.DataFrame(values, columns=['value'], index=SYMBOLS)
-    tickers = list(p.x1.columns)
+        holding_names = [x + "_holdings" for x in SYMBOLS]
+        num_shares = p.num_shares.T
+        num_shares.columns = SYMBOLS
+        #portfolio_value = latest_prices.values[0] * num_shares.values[0]
 
-    option_type = getOptionTypeFromName(portfolio_name)
-    questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
+        weightings = p.num_shares.to_numpy().flatten()
+        #values = portfolio_value
+        #values = pd.DataFrame(values, columns=['value'], index=SYMBOLS)
+        tickers = list(p.x1.columns)
 
-    error = False
-    success = True
-    show_plots = True
+        option_type = getOptionTypeFromName(portfolio_name)
+        questionnaire = fetch_questionnaire_from_uuid_and_type(uuid=_id, option_type=option_type)
 
-    pie_weights = p.x1.round(2).loc[p.x1.iloc[:, 0] != 0]
+        error = False
+        success = True
+        show_plots = True
 
-    # PORTFOLIO HOLDINGS
-    pie = plotly.offline.plot({"data": [Pie(labels=pie_weights.index, values=pie_weights.iloc[:, 0], hole=.1)]},
-                              output_type='div',
-                              include_plotlyjs=False,
-                              show_link=False,
-                              config={"displayModeBar": False})
+        pie_weights = p.x1.round(2).loc[p.x1.iloc[:, 0] != 0]
+
+        # PORTFOLIO HOLDINGS
+        pie = plotly.offline.plot({"data": [Pie(labels=pie_weights.index, values=pie_weights.iloc[:, 0], hole=.1)]},
+                                  output_type='div',
+                                  include_plotlyjs=False,
+                                  show_link=False,
+                                  config={"displayModeBar": False})
+    except:
+        return render_template('portfoliodashboard.jinja2', display=False, error=True)
 
     try:
-
         inception_date = pd.to_datetime(str(questionnaire['timestamp'].values[0])).strftime("%Y-%m-%d")
 
         if datetime.now().date() == datetime.strptime(inception_date, "%Y-%m-%d").date():
@@ -751,102 +754,111 @@ def portfoliodashboard():
                                    portfolioName=portfolio_name)
 
         # rolling days assignment
-        six_month = datetime.utcnow() - relativedelta(months=6)
-
         start_date = pd.to_datetime(str(questionnaire['timestamp'].values[0]))
         bt_days = business_days(start_date, datetime.utcnow())
         rolling = 100 if bt_days > 1000 else max(int(bt_days / 10), 1)
 
         p_values, success, msg = back_test(p.x1.to_dict()[0],
-                                         start_date.strftime("%Y-%m-%d"),
-                                         end_date=None,
-                                         dollars=float(values.sum()),
-                                         tore=True)
+                                           start_date=start_date.strftime("%Y-%m-%d"),
+                                           end_date=None,
+                                           dollars=float(questionnaire['initialInvestment']),
+                                           tore=True)
+
+        if p_values is None:
+            return render_template('portfoliodashboard.jinja2',
+                                   display=True,
+                                   error=False,
+                                   show_plots=False,
+                                   pie=pie,
+                                   questionnaire=questionnaire,
+                                   option=option_type,
+                                   portfolioName=portfolio_name)
+
+
     except:
         print("\n\n\n FAILURE ... I AM GOING TO DIE NOW")
         succcess, error = False, True
 
     if success:
-        port_values = p_values.sum(axis=1)
-        port_values.rename(columns={'Unnamed: 0': 'value'}, inplace=True)
+        try:
+            port_values = p_values.sum(axis=1)
+            port_values.rename(columns={'Unnamed: 0': 'value'}, inplace=True)
 
-        # CUMULATIVE RETURNS
-        plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines',
-                                              line=dict(color='#3B4F66'))
-        plot = plotly.offline.plot({"data": plot_data},
-                                   output_type='div',
-                                   include_plotlyjs=False,
-                                   show_link=False,
-                                   config={"displayModeBar": False})
+            # CUMULATIVE RETURNS
+            plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines',
+                                                  line=dict(color='#3B4F66'))
+            plot = plotly.offline.plot({"data": plot_data},
+                                       output_type='div',
+                                       include_plotlyjs=False,
+                                       show_link=False,
+                                       config={"displayModeBar": False})
 
-        # calculate returns from the portfolio
-        port_returns = (port_values / port_values.shift(1) - 1).dropna()
+            # calculate returns from the portfolio
+            port_returns = (port_values / port_values.shift(1) - 1).dropna()
 
-        # ROLLING VOLATILITY
-        vols = rolling_volatility(port_returns, rolling).dropna()
-        vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines',
-                                                   line=dict(color='#3B4F66'))
-        vols_plot = plotly.offline.plot({"data": vols_plot_data},
-                                        output_type='div',
-                                        include_plotlyjs=False,
-                                        show_link=False,
-                                        config={"displayModeBar": False})
+            # ROLLING VOLATILITY
+            vols = rolling_volatility(port_returns, rolling).dropna()
+            vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines',
+                                                       line=dict(color='#3B4F66'))
+            vols_plot = plotly.offline.plot({"data": vols_plot_data},
+                                            output_type='div',
+                                            include_plotlyjs=False,
+                                            show_link=False,
+                                            config={"displayModeBar": False})
 
-        # ROLLING SHARPE
-        sharpe = rolling_sharpe(port_returns, rolling).dropna()
-        sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines',
-                                                     line=dict(color='#3B4F66'))
-        sharpe_plot = plotly.offline.plot({"data": sharpe_plot_data},
-                                          output_type='div',
-                                          include_plotlyjs=False,
-                                          show_link=False,
-                                          config={"displayModeBar": False})
-
-        # detailed statistics
-        underwater = drawdown_underwater(port_returns)
-
-        underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines',
-                                                    line=dict(color='#3B4F66'))
-        underwater_plot = plotly.offline.plot({"data": underwater_data},
+            # ROLLING SHARPE
+            sharpe = rolling_sharpe(port_returns, rolling).dropna()
+            sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines',
+                                                         line=dict(color='#3B4F66'))
+            sharpe_plot = plotly.offline.plot({"data": sharpe_plot_data},
                                               output_type='div',
                                               include_plotlyjs=False,
                                               show_link=False,
                                               config={"displayModeBar": False})
 
-        total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
-        min_value = round(min(port_values), 2)
-        max_value = round(max(port_values), 2)
-        stats = [total_returns, min_value, max_value]
+            # detailed statistics
+            underwater = drawdown_underwater(port_returns)
 
-        return render_template('portfoliodashboard.jinja2',
-                               display=True,
-                               error=False,
-                               show_plots=True,
-                               tickers=tickers,
-                               weightings=values,
-                               pie=pie,
-                               plot=plot,
-                               vols_plot=vols_plot,
-                               sharpe_plot=sharpe_plot,
-                               underwater=underwater_plot,
-                               stats=stats,
-                               rolling=rolling,
-                               questionnaire=questionnaire,
-                               option=option_type,
-                               portfolioName=portfolio_name)
+            underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines',
+                                                        line=dict(color='#3B4F66'))
+            underwater_plot = plotly.offline.plot({"data": underwater_data},
+                                                  output_type='div',
+                                                  include_plotlyjs=False,
+                                                  show_link=False,
+                                                  config={"displayModeBar": False})
+
+            total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
+            min_value = round(min(port_values), 2)
+            max_value = round(max(port_values), 2)
+            stats = [total_returns, min_value, max_value]
+
+            return render_template('portfoliodashboard.jinja2',
+                                   display=True,
+                                   error=False,
+                                   show_plots=True,
+                                   tickers=tickers,
+                                   pie=pie,
+                                   plot=plot,
+                                   vols_plot=vols_plot,
+                                   sharpe_plot=sharpe_plot,
+                                   underwater=underwater_plot,
+                                   stats=stats,
+                                   rolling=rolling,
+                                   questionnaire=questionnaire,
+                                   option=option_type,
+                                   portfolioName=portfolio_name)
+        except:
+            return render_template('portfoliodashboard.jinja2',
+                                   display=True,
+                                   error=False,
+                                   show_plots=False,
+                                   pie=pie,
+                                   questionnaire=questionnaire,
+                                   option=option_type,
+                                   portfolioName=portfolio_name)
 
     else:
         return render_template('portfoliodashboard.jinja2', display=False, error=True)
-
-    # timeTilCompletion = targetDate - today
-
-    #
-    # return render_template('portfoliodashboard.jinja2', title='optiondecision',
-    #                        returnSinceInception=returnSinceInception, histValues=histValues, weightings=weightings,
-    #                        short=short, long=long, expectedReturn=expectedReturn, expectedVol=expectedVol, risk=risk,
-    #                        tickers=tickers, questionnaire=questionnaire, targetAmount=targetAmount,
-    #                        percentCompleted=percentCompleted, timeTilCompletion=timeTilCompletion)
-
 
 
 @login_required
