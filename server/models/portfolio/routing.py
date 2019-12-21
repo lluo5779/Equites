@@ -78,93 +78,95 @@ def track():
             succcess, error = False, True
 
         if success:
-            port_values = values.sum(axis=1)
-            port_values.rename(columns={'Unnamed: 0': 'value'}, inplace=True)
+            try:
+                port_values = values.sum(axis=1)
+                port_values.rename(columns={'Unnamed: 0': 'value'}, inplace=True)
 
-            # PORTFOLIO HOLDINGS
-            pie = plotly.offline.plot({"data": [Pie(labels=tickers, values=weights, hole=.1)]},
-                                      output_type='div',
-                                      include_plotlyjs=False,
-                                      show_link=False,
-                                      config={"displayModeBar": False})
+                # PORTFOLIO HOLDINGS
+                pie = plotly.offline.plot({"data": [Pie(labels=tickers, values=weights, hole=.1)]},
+                                          output_type='div',
+                                          include_plotlyjs=False,
+                                          show_link=False,
+                                          config={"displayModeBar": False})
 
-            # CUMULATIVE RETURNS
-            plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines',
-                                                  line=dict(color='#3B4F66'))
-            plot = plotly.offline.plot({"data": plot_data},
-                                       output_type='div',
-                                       include_plotlyjs=False,
-                                       show_link=False,
-                                       config={"displayModeBar": False})
-
-            # calculate returns from the portfolio
-            port_returns = (port_values / port_values.shift(1) - 1).dropna()
-
-            # ROLLING VOLATILITY
-            vols = rolling_volatility(port_returns, rolling).dropna()
-            vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines',
-                                                       line=dict(color='#3B4F66'))
-            vols_plot = plotly.offline.plot({"data": vols_plot_data},
-                                            output_type='div',
-                                            include_plotlyjs=False,
-                                            show_link=False,
-                                            config={"displayModeBar": False})
-
-            # ROLLING SHARPE
-            sharpe = rolling_sharpe(port_returns, rolling).dropna()
-            sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines',
-                                                         line=dict(color='#3B4F66'))
-            sharpe_plot = plotly.offline.plot({"data": sharpe_plot_data},
-                                              output_type='div',
-                                              include_plotlyjs=False,
-                                              show_link=False,
-                                              config={"displayModeBar": False})
-
-            # detailed statistics
-            underwater = drawdown_underwater(port_returns)
-
-            underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines',
-                                                        line=dict(color='#3B4F66'))
-            underwater_plot = plotly.offline.plot({"data": underwater_data},
-                                                  output_type='div',
-                                                  include_plotlyjs=False,
-                                                  show_link=False,
-                                                  config={"displayModeBar": False})
-
-            # DRAWDOWN
-            drawdown = drawdown_table(port_returns)
-            drawdown_fig = go.Figure(data=[go.Table(header=dict(values=list(drawdown.columns),
-                                                                align='left'),
-                                                    cells=dict(values=[drawdown["Net drawdown in %"],
-                                                                       drawdown["Peak date"],
-                                                                       drawdown["Valley date"],
-                                                                       drawdown["Recovery date"],
-                                                                       drawdown["Duration"]], align='center'))])
-            drawdown = plotly.offline.plot({"data": drawdown_fig},
+                # CUMULATIVE RETURNS
+                plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=port_values, mode='lines',
+                                                      line=dict(color='#3B4F66'))
+                plot = plotly.offline.plot({"data": plot_data},
                                            output_type='div',
                                            include_plotlyjs=False,
                                            show_link=False,
                                            config={"displayModeBar": False})
 
-            total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
-            min_value = round(min(port_values), 2)
-            max_value = round(max(port_values), 2)
-            stats = [total_returns, min_value, max_value]
+                # calculate returns from the portfolio
+                port_returns = (port_values / port_values.shift(1) - 1).dropna()
 
-            return render_template('Option1.jinja2',
-                                   display=True,
-                                   error=False,
-                                   tickers=tickers,
-                                   weightings=values,
-                                   pie=pie,
-                                   plot=plot,
-                                   vols_plot=vols_plot,
-                                   sharpe_plot=sharpe_plot,
-                                   underwater=underwater_plot,
-                                   drawdown=drawdown,
-                                   stats=stats,
-                                   rolling=rolling)
+                # ROLLING VOLATILITY
+                vols = rolling_volatility(port_returns, rolling).dropna()
+                vols_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=vols, mode='lines',
+                                                           line=dict(color='#3B4F66'))
+                vols_plot = plotly.offline.plot({"data": vols_plot_data},
+                                                output_type='div',
+                                                include_plotlyjs=False,
+                                                show_link=False,
+                                                config={"displayModeBar": False})
 
+                # ROLLING SHARPE
+                sharpe = rolling_sharpe(port_returns, rolling).dropna()
+                sharpe_plot_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=sharpe, mode='lines',
+                                                             line=dict(color='#3B4F66'))
+                sharpe_plot = plotly.offline.plot({"data": sharpe_plot_data},
+                                                  output_type='div',
+                                                  include_plotlyjs=False,
+                                                  show_link=False,
+                                                  config={"displayModeBar": False})
+
+                # detailed statistics
+                underwater = drawdown_underwater(port_returns)
+
+                underwater_data = plotly.graph_objs.Scatter(x=list(port_values.index), y=underwater, mode='lines',
+                                                            line=dict(color='#3B4F66'))
+                underwater_plot = plotly.offline.plot({"data": underwater_data},
+                                                      output_type='div',
+                                                      include_plotlyjs=False,
+                                                      show_link=False,
+                                                      config={"displayModeBar": False})
+
+                # DRAWDOWN
+                drawdown = drawdown_table(port_returns)
+                drawdown_fig = go.Figure(data=[go.Table(header=dict(values=list(drawdown.columns),
+                                                                    align='left'),
+                                                        cells=dict(values=[drawdown["Net drawdown in %"],
+                                                                           drawdown["Peak date"],
+                                                                           drawdown["Valley date"],
+                                                                           drawdown["Recovery date"],
+                                                                           drawdown["Duration"]], align='center'))])
+                drawdown = plotly.offline.plot({"data": drawdown_fig},
+                                               output_type='div',
+                                               include_plotlyjs=False,
+                                               show_link=False,
+                                               config={"displayModeBar": False})
+
+                total_returns = round((port_values[-1] / port_values[0] - 1) * 100)
+                min_value = round(min(port_values), 2)
+                max_value = round(max(port_values), 2)
+                stats = [total_returns, min_value, max_value]
+
+                return render_template('Option1.jinja2',
+                                       display=True,
+                                       error=False,
+                                       tickers=tickers,
+                                       weightings=values,
+                                       pie=pie,
+                                       plot=plot,
+                                       vols_plot=vols_plot,
+                                       sharpe_plot=sharpe_plot,
+                                       underwater=underwater_plot,
+                                       drawdown=drawdown,
+                                       stats=stats,
+                                       rolling=rolling)
+            except:
+                return render_template('Option1.jinja2', display=False, error=True)
         else:
             return render_template('Option1.jinja2', display=False, error=True)
 
@@ -204,114 +206,117 @@ def enhance():
             success, error = False, True
 
         if success:
-            portfolio_value = values.sum(axis=1)
+            try:
+                portfolio_value = values.sum(axis=1)
 
-            # calculate portfolio returns
-            portfolio_returns = (portfolio_value / portfolio_value.shift(1) - 1).dropna()
+                # calculate portfolio returns
+                portfolio_returns = (portfolio_value / portfolio_value.shift(1) - 1).dropna()
 
-            # assign the target return and variance
-            return_target = float(gmean(portfolio_returns + 1, axis=0) - 1) * days
+                # assign the target return and variance
+                return_target = float(gmean(portfolio_returns + 1, axis=0) - 1) * days
 
-            # set the other parameters for a generalized maximization
-            horizon, aversion, l = 10, 1, 5
+                # set the other parameters for a generalized maximization
+                horizon, aversion, l = 10, 1, 5
 
-            # make the portfolio
-            p = Portfolio(current_user.username, generate_new=True)
-            alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, cardinal, return_target, l,
-                                                                    p.mu_bl1, p.mu_bl2, p.cov_bl1)
+                # make the portfolio
+                p = Portfolio(current_user.username, generate_new=True)
+                alpha, multipliers, exposures, cardinality = risk_prefs(horizon, aversion, cardinal, return_target, l,
+                                                                        p.mu_bl1, p.mu_bl2, p.cov_bl1)
 
-            # assign the risk tolerances, specifying a SHARPE optimization
-            risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')
+                # assign the risk tolerances, specifying a SHARPE optimization
+                risk_tolerance = (multipliers, exposures, cardinality, 'SHARPE')
 
-            # get the weights
-            weights = p.run_optimization(risk_tolerance=risk_tolerance,
-                                         alpha=alpha,
-                                         return_target=return_target,
-                                         budget=budget)[0]
+                # get the weights
+                weights = p.run_optimization(risk_tolerance=risk_tolerance,
+                                             alpha=alpha,
+                                             return_target=return_target,
+                                             budget=budget)[0]
 
-            # hacky solution lol
-            enhanced_values = \
-                back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=True)[0].sum(
-                    axis=1)[-(len(portfolio_value) + 1):]
-            back_returns = (enhanced_values / enhanced_values.shift(1) - 1).dropna()
-            enhanced_values = cum_returns(back_returns, budget)
+                # hacky solution lol
+                enhanced_values = \
+                    back_test(weights.to_dict()['weight'], start_date, end_date=None, dollars=budget, tore=True)[0].sum(
+                        axis=1)[-(len(portfolio_value) + 1):]
+                back_returns = (enhanced_values / enhanced_values.shift(1) - 1).dropna()
+                enhanced_values = cum_returns(back_returns, budget)
 
-            expected_returns = float(p.mu_bl1.T.dot(weights).iloc[0])
+                expected_returns = float(p.mu_bl1.T.dot(weights).iloc[0])
 
-            ## COMPARE PORTFOLIO RETURNS OVER THE PAST MONTHS
-            returns_data = []
+                ## COMPARE PORTFOLIO RETURNS OVER THE: PAST MONTHS
+                returns_data = []
 
-            benchmark = plotly.graph_objs.Scatter(x=list(portfolio_value.index),
-                                                  y=portfolio_value,
-                                                  mode='lines',
-                                                  name='benchmark',
-                                                  line=dict(color='#A7E66E'))
+                benchmark = plotly.graph_objs.Scatter(x=list(portfolio_value.index),
+                                                      y=portfolio_value,
+                                                      mode='lines',
+                                                      name='benchmark',
+                                                      line=dict(color='#A7E66E'))
 
-            returns_data.append(benchmark)
+                returns_data.append(benchmark)
 
-            enhanced = plotly.graph_objs.Scatter(x=list(enhanced_values.index),
-                                                 y=enhanced_values,
-                                                 mode='lines',
-                                                 name='enhanced',
-                                                 line=dict(color='#3B4F66'))
+                enhanced = plotly.graph_objs.Scatter(x=list(enhanced_values.index),
+                                                     y=enhanced_values,
+                                                     mode='lines',
+                                                     name='enhanced',
+                                                     line=dict(color='#3B4F66'))
 
-            returns_data.append(enhanced)
+                returns_data.append(enhanced)
 
-            plot = plotly.offline.plot({"data": returns_data},
-                                       output_type='div',
-                                       include_plotlyjs=False,
-                                       show_link=False,
-                                       config={"displayModeBar": False})
+                plot = plotly.offline.plot({"data": returns_data},
+                                           output_type='div',
+                                           include_plotlyjs=False,
+                                           show_link=False,
+                                           config={"displayModeBar": False})
 
-            # COMPARE PORTFOLIO SHARPE RATIO
-            sharpe_data = []
+                # COMPARE PORTFOLIO SHARPE RATIO
+                sharpe_data = []
 
-            portfolio_returns = (portfolio_value / portfolio_value.shift(1) - 1).dropna()
-            enhanced_returns = (enhanced_values / enhanced_values.shift(1) - 1).dropna()
+                portfolio_returns = (portfolio_value / portfolio_value.shift(1) - 1).dropna()
+                enhanced_returns = (enhanced_values / enhanced_values.shift(1) - 1).dropna()
 
-            benchmark_sharpe = rolling_sharpe(portfolio_returns, 10).dropna()
-            benchmark_sharpe_plot_data = plotly.graph_objs.Scatter(x=list(benchmark_sharpe.index),
-                                                                   y=benchmark_sharpe,
-                                                                   mode='lines',
-                                                                   name='benchmark',
-                                                                   line=dict(color='#A7E66E'))
+                benchmark_sharpe = rolling_sharpe(portfolio_returns, 10).dropna()
+                benchmark_sharpe_plot_data = plotly.graph_objs.Scatter(x=list(benchmark_sharpe.index),
+                                                                       y=benchmark_sharpe,
+                                                                       mode='lines',
+                                                                       name='benchmark',
+                                                                       line=dict(color='#A7E66E'))
 
-            sharpe_data.append(benchmark_sharpe_plot_data)
+                sharpe_data.append(benchmark_sharpe_plot_data)
 
-            enhanced_sharpe = rolling_sharpe(enhanced_returns, 10).dropna()
-            enhanced_sharpe_plot_data = plotly.graph_objs.Scatter(x=list(enhanced_sharpe.index),
-                                                                  y=enhanced_sharpe,
-                                                                  mode='lines',
-                                                                  name='enhanced',
-                                                                  line=dict(color='#3B4F66'))
+                enhanced_sharpe = rolling_sharpe(enhanced_returns, 10).dropna()
+                enhanced_sharpe_plot_data = plotly.graph_objs.Scatter(x=list(enhanced_sharpe.index),
+                                                                      y=enhanced_sharpe,
+                                                                      mode='lines',
+                                                                      name='enhanced',
+                                                                      line=dict(color='#3B4F66'))
 
-            sharpe_data.append(enhanced_sharpe_plot_data)
+                sharpe_data.append(enhanced_sharpe_plot_data)
 
-            sharpe_plot = plotly.offline.plot({"data": sharpe_data},
-                                              output_type='div',
-                                              include_plotlyjs=False,
-                                              show_link=False,
-                                              config={"displayModeBar": False})
+                sharpe_plot = plotly.offline.plot({"data": sharpe_data},
+                                                  output_type='div',
+                                                  include_plotlyjs=False,
+                                                  show_link=False,
+                                                  config={"displayModeBar": False})
 
-            # round the weights to a nice number for display
-            weights = weights.round(2).loc[weights['weight'] != 0]
+                # round the weights to a nice number for display
+                weights = weights.round(2).loc[weights['weight'] != 0]
 
-            # make the pie graph of recommended weights
-            fig = plotly.graph_objs.Figure(
-                data=[plotly.graph_objs.Pie(labels=weights.index, values=weights['weight'], hole=.1)])
-            pie = plotly.offline.plot({"data": fig},
-                                      output_type='div',
-                                      include_plotlyjs=False,
-                                      show_link=False,
-                                      config={"displayModeBar": False})
+                # make the pie graph of recommended weights
+                fig = plotly.graph_objs.Figure(
+                    data=[plotly.graph_objs.Pie(labels=weights.index, values=weights['weight'], hole=.1)])
+                pie = plotly.offline.plot({"data": fig},
+                                          output_type='div',
+                                          include_plotlyjs=False,
+                                          show_link=False,
+                                          config={"displayModeBar": False})
 
-            return render_template('Option2.jinja2',
-                                   display=True,
-                                   error=(not success),
-                                   cardinal=cardinal,
-                                   pie=pie,
-                                   plot=plot,
-                                   sharpe_plot=sharpe_plot)
+                return render_template('Option2.jinja2',
+                                       display=True,
+                                       error=(not success),
+                                       cardinal=cardinal,
+                                       pie=pie,
+                                       plot=plot,
+                                       sharpe_plot=sharpe_plot)
+            except:
+                return render_template('Option2.jinja2', display=False, error=(not success))
         else:
             return render_template('Option2.jinja2', display=False, error=(not success))
 
