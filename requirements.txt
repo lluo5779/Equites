@@ -61,7 +61,7 @@ soupsieve==1.9.5
 SQLAlchemy==1.3.8
 statsmodels==0.10.1
 swagger-ui-bundle==0.0.5
-urllib3==1.25.5
+urllib3==1.26.5
 wcwidth==0.1.7
 webencodings==0.5.1
 Werkzeug==0.16.0
